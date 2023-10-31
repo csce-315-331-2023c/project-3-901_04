@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+    <title>Menu</title>
+</head>
+<body>
+    <h1>Entrees</h1>
+    <% for (var i in entreeMenu) {%>
+        <p>Entree: <%=entreeMenu[i].entree_name%>, Price: <%=entreeMenu[i].price%> <p>
+    <% } %>
+
+    <h1>Drinks</h1>
+    <% for (var j in drinkMenu) {%>
+        <p>Drink: <%=drinkMenu[j].drink_name%>, Price: <%=drinkMenu[j].price%> <p>
+    <% } %>
+</body>
