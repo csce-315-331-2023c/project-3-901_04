@@ -1,8 +1,11 @@
 import React from 'react'
+import '../styles/Customer.css'
 
 function Customer() {
   return (
-    <div>Customer</div>
+    <div className='customer'>
+      <div>Customer</div>
+    </div>
   )
 }
 

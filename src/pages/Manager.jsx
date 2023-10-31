@@ -1,8 +1,11 @@
 import React from 'react'
+import '../styles/Manager.css'
 
 function Manager() {
   return (
-    <div>Manager</div>
+    <div className='manager'>
+      <div>Manager</div>
+    </div>
   )
 }
 

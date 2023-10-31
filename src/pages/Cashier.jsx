@@ -1,8 +1,12 @@
 import React from 'react'
+import '../styles/Cashier.css'
 
 function Cashier() {
   return (
-    <div>Cashier</div>
+    <div className='cashier'>
+      <div>Cashier</div>
+    </div>
+
   )
 }
 

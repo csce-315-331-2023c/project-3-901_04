@@ -1,9 +1,13 @@
 import React from 'react'
+import '../styles/Home.css'
 
 function Home() {
   return (
-    <div>Home, with NodeJS backend</div>
-    
+    <div className='home'>
+      <div>Home, with NodeJS backend</div>
+    </div>
+
+
   )
 }
 
