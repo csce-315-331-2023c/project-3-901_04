@@ -13,7 +13,11 @@ function Menu() {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-        return res.json();
+        return res.text();  
+      })
+      .then(text => {
+        console.log(text);
+        return JSON.parse(text);  
       })
       .then(data => {
         setMenu(data);
