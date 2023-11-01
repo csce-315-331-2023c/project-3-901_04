@@ -35,6 +35,8 @@ app.get('/api/menu', async (req, res) => {
             drinks: drinkRes.rows
         };
 
+        console.log("Query successful. Sending json.");
+
         res.json(menu);
     } catch (err) {
         console.error(err);

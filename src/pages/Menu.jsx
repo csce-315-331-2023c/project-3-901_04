@@ -20,14 +20,14 @@ function Menu() {
       <div className="entrees">
         <h1>Entrees</h1>
         {menu.entrees.map((entree, index) => (
-          <p key={index}>Entree: {entree.entree_name}, Price: {entree.price}</p>
+          <p key={index}>{entree.entree_name}: <b>{entree.price}</b></p>
         ))}
       </div>
 
       <div className="drinks">
         <h1>Drinks</h1>
         {menu.drinks.map((drink, index) => (
-          <p key={index}>Drink: {drink.drink_name}, Price: {drink.price}</p>
+          <p key={index}>{drink.drink_name}: <b>{drink.price}</b></p>
         ))}
       </div>
     </div>
