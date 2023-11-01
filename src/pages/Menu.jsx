@@ -8,8 +8,13 @@ function Menu() {
     const backendURL = process.env.NODE_ENV === 'production'
       ? 'https://project-3-901-04.vercel.app/api/menu'
       : 'http://localhost:3001/api/menu';
-    fetch(backendURL) //backend url
-      .then(res => res.json())
+    fetch(backendURL)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
         setMenu(data);
       })
