@@ -5,7 +5,10 @@ function Menu() {
   const [menu, setMenu] = useState({ entrees: [], drinks: [] });
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/menu') //backend url
+    const backendURL = process.env.NODE_ENV === 'production'
+      ? 'https://project-3-901-04.vercel.app/api/menu'
+      : 'http://localhost:3001/api/menu';
+    fetch(backendURL) //backend url
       .then(res => res.json())
       .then(data => {
         setMenu(data);
