@@ -12,6 +12,9 @@ function Menu() {
       .then(res => res.json())
       .then(data => {
         setMenu(data);
+      })
+      .catch(error => {
+        console.error('Error fetching menu:', error);
       });
   }, []);
 
