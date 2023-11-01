@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AccessibilityWidget.css'
-import Weather from '../components/weather';
 
 function AccessibilityWidget({ isDarkMode, setIsDarkMode }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,9 +29,6 @@ function AccessibilityWidget({ isDarkMode, setIsDarkMode }) {
                         <span className="close-button" onClick={handleCloseModal}>
                             &times;
                         </span>
-
-                        <h2> Weather </h2>
-                        <Weather/>
 
                         <h2>Accessibility Options</h2>
                         <button onClick={() => setIsDarkMode(!isDarkMode)}>

@@ -1,91 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/AccessibilityWidget.css'
-import geoloc from "react-geolocated";
+import '../styles/AccessibilityWidget.css';
 
-
+/**
+ * This function takes the geological location of Mo's (or the user) and queries the weather for it.
+ * This function then formats the weather data and exports it to a calling function.
+ * @returns HTML
+ */
 const Weather = () => {
-
-    //location can be set to mo's
-    console.log("called");
-    const [lat, setLat] = useState(null);
-    const [long, setLong] = useState(null);
-    const [location, setLocation] = useState(null);
-    const [weather, setWeather] = useState(null);
-
-    navigator.geolocation.getCurrentPosition(function(position) {
-        setLong(position.coords.longitude);
-        setLat(position.coords.latitude);
-        console.log("position: ");
-        console.log(long);
-        console.log(lat);
-    }) 
+    const [coords, setCoords] = useState({ lat: null, long: null });
+    const [weather, setWeather] = useState({weather: null, setWeather : null});
+    const [image, setImg] = useState({image: null, setImg: null});
 
     useEffect(() => {
-        const getData = async() => {
+        /*navigator.geolocation.getCurrentPosition(position => {
+            setCoords({
+                lat: position.coords.latitude,
+                long: position.coords.longitude
+            });
+        });*/
+        setCoords({
+            lat: 30.623835,
+            long: -96.339995
+        })
+    }, []);
 
-            await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + long + '&appid=b957bc70a33ca6ee14b39bd6e8b76a53&units=metric')
-            .then(response => response.json())
-            .then(data => {
-                setWeather(data);
-                setLocation(data.main);
-                console.log("weather data: ");
-                console.log(data.main);
-            })
-            .catch(error => console.log(error));
+    useEffect(() => {
+        if (coords.lat && coords.long) {
+            const getData = async () => {
+                try {
+                    const response = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + coords.lat + '&lon=' + coords.long + '&appid=b957bc70a33ca6ee14b39bd6e8b76a53&units=metric');
+                    const data = await response.json();
+                    setWeather(data);
+                    console.log("weather data: ", data.main);
+                    console.log("weather id: ", data.weather[0].icon );
+                    const imgResponse = await fetch('https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png'); 
+                    const imgBlob = await imgResponse.blob();
+                    const imgObj = URL.createObjectURL(imgBlob);
+                    setImg(imgObj);
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+            getData();
         }
-        getData();
-        console.log("usefff");
-    }, [])
+    }, [coords]);
 
     return (
         <div>
-            <h>test</h>
-        </div>
-        /*<div>
-            {(typeof weather.name != 'undefined') ? (
+            {(typeof(weather.name) != 'undefined' && weather.name != null) ? (
                 <div>
                 <p>Location: {weather.name}</p>
-                <p>Temperature: {weather.main.temp} °C</p>
+                <p>Temperature: {Math.round(celToFah(weather.main.temp))}°F / {Math.round(weather.main.temp)} °C</p>
+                <img src={image}/>
                 <p>Weather: {weather.weather[0].description}</p>
                 </div>
             ): (
-                <div>loading</div>
+                <h>loading...</h>
             )}
         </div>
-        <div>
-            <h>test</h>
-        </div>
-        /*<div className = "app">
-            <h1 className = "Weather">
-                Weather
-            </h1>
-            {weather.error && (
-                <p> NOT FOUND</p>
-            )}
-            {weather && weather.data && (
-                <p>FOUND</p>
-            )}
-        </div>*/
-        /*<div>
-            {weather ?(
-                <>
-                <h2>{weather.name}</h2>
-                <p>testing</p>
-                </>
-            ) : (
-                <p>Loading</p>
-            )}
-
-            {lat ?(
-                <>
-                <h2>{lat.main}</h2>
-                <p>testing2</p>
-                </>
-            ) : (
-                <p>Loading</p>
-            )}
-        </div>*/
     )
 }
 
 export default Weather;
+
+/**
+ * This function takes in a temperature in Celsius and returns its equivalent value in Fahrenheit.
+ * @param {*} cel 
+ * @returns the temperature in fahrenheit
+ */
+function celToFah(cel) {
+    return (9/5) * cel + 32;
+}
