@@ -5,6 +5,7 @@ import geoloc from "react-geolocated";
 
 const Weather = () => {
 
+    //location can be set to mo's
     console.log("called");
     const [lat, setLat] = useState(null);
     const [long, setLong] = useState(null);
@@ -33,12 +34,14 @@ const Weather = () => {
             .catch(error => console.log(error));
         }
         getData();
-    }, [lat, long])
-
+        console.log("usefff");
+    }, [])
 
     return (
-
         <div>
+            <h>test</h>
+        </div>
+        /*<div>
             {(typeof weather.name != 'undefined') ? (
                 <div>
                 <p>Location: {weather.name}</p>
@@ -48,6 +51,9 @@ const Weather = () => {
             ): (
                 <div>loading</div>
             )}
+        </div>
+        <div>
+            <h>test</h>
         </div>
         /*<div className = "app">
             <h1 className = "Weather">
@@ -79,7 +85,6 @@ const Weather = () => {
                 <p>Loading</p>
             )}
         </div>*/
-
     )
 }
 
