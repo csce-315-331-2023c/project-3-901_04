@@ -1,7 +1,15 @@
-.menu{
+.menu {
     width: 100vw;
-    height: 100vh;
+    height: 1000vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.menu .entrees,
+.menu .drinks {
+    width: 45%;
+    /* Adjust this as needed */
+    display: flex;
+    flex-direction: column;
 }
