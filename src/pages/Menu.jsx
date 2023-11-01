@@ -6,18 +6,19 @@ function Menu() {
 
   useEffect(() => {
     const backendURL = process.env.NODE_ENV === 'production'
-      ? 'https://project-3-901-04.vercel.app/api/menu'
+      ? '/api/menu'
       : 'http://localhost:3001/api/menu';
+
     fetch(backendURL)
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-        return res.text();  
+        return res.text();
       })
       .then(text => {
         console.log(text);
-        return JSON.parse(text);  
+        return JSON.parse(text);
       })
       .then(data => {
         setMenu(data);
