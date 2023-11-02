@@ -17,9 +17,7 @@ const pool = new Pool({
 });
 
 app.get('/', (req, res) => {
-    const gifPath = 'CRITICAL_FILE_DO_NOT_DELETE.gif';
-    res.sendFile(gifPath, { root: __dirname });
-    //res.send('Mos Irish Pub Backened!');
+    res.send('Mos Irish Pub Backened!');
 });
 
 app.get('/api/menu', async (req, res) => {
