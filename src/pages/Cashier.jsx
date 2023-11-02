@@ -7,6 +7,11 @@ function Cashier() {
   const [rows, setRows] = useState({rows: null, setRows: null});
   console.log("cashier called");
   const [array, setArray] = useState([]);
+
+  const buttonPress = () => {
+    console.log("button");
+  };
+
   useEffect(() => {
     const temparray = [];
     const getData = async () => {
@@ -18,11 +23,22 @@ function Cashier() {
         const res = await response.json();
         const numItems = await (Object.keys(res.entrees).length + Object.keys(res.drinks).length);
         const numEntrees = await (Object.keys(res.entrees).length);
+        const numDrinks = await (Object.keys(res.drinks).length);
         console.log("length: ", numItems);
         console.log("data success: ", res);
         setRows(res.data);
         for (var i = 0; i < numEntrees; i ++) {
-          temparray.push(<button>{res.entrees[i].entree_name}</button>);
+          const tempName = res.entrees[i].entree_name;
+          temparray.push(<button onClick={function buttonPress() {
+            console.log(tempName);
+          }}>{res.entrees[i].entree_name}</button>);
+          console.log("pushed: ", temparray[i]);
+        }
+        for (var i = 0; i < numDrinks; i ++) {
+          const tempName = res.drinks[i].drink_name;
+          temparray.push(<button onClick={function buttonPress() {
+            console.log(tempName);
+          }}>{res.drinks[i].drink_name}</button>);
           console.log("pushed: ", temparray[i]);
         }
         setArray(temparray);
@@ -48,12 +64,5 @@ function Cashier() {
 )
 }
 
-function getArray(arr) {
-  <div>
-    {arr.map((item) => {
-      return item;
-    })}
-  </div>
-}
 
 export default Cashier
