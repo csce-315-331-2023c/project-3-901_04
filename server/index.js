@@ -13,7 +13,7 @@ const pool = new Pool({
     host: process.env.PSQL_HOST,
     database: process.env.PSQL_DATABASE,
     password: process.env.PSQL_PASSWORD,
-    port: process.env.PSQL_PORT,
+    port: 5432,
 });
 
 app.get('/', (req, res) => {
