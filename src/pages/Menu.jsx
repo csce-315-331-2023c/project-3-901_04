@@ -6,12 +6,25 @@ function Menu() {
 
   useEffect(() => {
     const backendURL = process.env.NODE_ENV === 'production'
-      ? 'https://project-3-901-04.vercel.app/api/menu'
+      ? '/api/menu'
       : 'http://localhost:3001/api/menu';
-    fetch(backendURL) //backend url
-      .then(res => res.json())
+
+    fetch(backendURL)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.text();
+      })
+      .then(text => {
+        console.log(text);
+        return JSON.parse(text);
+      })
       .then(data => {
         setMenu(data);
+      })
+      .catch(error => {
+        console.error('Error fetching menu:', error);
       });
   }, []);
 
@@ -20,14 +33,14 @@ function Menu() {
       <div className="entrees">
         <h1>Entrees</h1>
         {menu.entrees.map((entree, index) => (
-          <p key={index}>Entree: {entree.entree_name}, Price: {entree.price}</p>
+          <p key={index}>{entree.entree_name}: <b>{entree.price}</b></p>
         ))}
       </div>
 
       <div className="drinks">
         <h1>Drinks</h1>
         {menu.drinks.map((drink, index) => (
-          <p key={index}>Drink: {drink.drink_name}, Price: {drink.price}</p>
+          <p key={index}>{drink.drink_name}: <b>{drink.price}</b></p>
         ))}
       </div>
     </div>
