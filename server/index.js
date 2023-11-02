@@ -35,7 +35,7 @@ app.get('/api/menu', async (req, res) => {
         res.json(menu);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Query Failure :(');
     }
 });
 
