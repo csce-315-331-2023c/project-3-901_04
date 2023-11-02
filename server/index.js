@@ -19,7 +19,7 @@ const pool = new Pool({
 app.get('/', (req, res) => {
     res.send('Mos Irish Pub Backened!');
 });
-
+/*
 app.get('/api/menu', async (req, res) => {
     try {
         const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
@@ -38,6 +38,7 @@ app.get('/api/menu', async (req, res) => {
         res.status(500).send('Query Failure :(');
     }
 });
+*/
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
