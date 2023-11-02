@@ -4,9 +4,14 @@ const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 // Setup CORS
-app.use(cors()); // enable cors for all routes
+// app.use(cors({
+//     origin: 'http://localhost:3000', // this allows requests from your frontend server
+//     optionsSuccessStatus: 200
+// }));
+app.use(cors()); //enable cors for all routes
 
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -16,8 +21,8 @@ const pool = new Pool({
     port: process.env.PSQL_PORT,
 });
 
-app.get('/api', (req, res) => {
-    res.send('Mos Irish Pub Backend!');
+app.get('/', (req, res) => {
+    res.send('Mos Irish Pub Backened!');
 });
 
 app.get('/api/menu', async (req, res) => {
@@ -39,4 +44,6 @@ app.get('/api/menu', async (req, res) => {
     }
 });
 
-module.exports = app;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
