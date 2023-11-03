@@ -6,11 +6,6 @@ const dotenv = require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Setup CORS
-// app.use(cors({
-//     origin: 'http://localhost:3000', // this allows requests from your frontend server
-//     optionsSuccessStatus: 200
-// }));
 app.use(cors()); //enable cors for all routes
 
 const pool = new Pool({
@@ -22,7 +17,9 @@ const pool = new Pool({
 });
 
 app.get('/', (req, res) => {
-    res.send('Mos Irish Pub Backened!');
+    const gifPath = 'CRITICAL_FILE_DO_NOT_DELETE.gif';
+    res.sendFile(gifPath, { root: __dirname });
+    //res.send('Mos Irish Pub Backened!');
 });
 
 app.get('/api/menu', async (req, res) => {
