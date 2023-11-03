@@ -9,12 +9,9 @@ function Cashier() {
   const [array, setArray] = useState([]);
   //array containing order items
   const [order, setOrder] = useState([]);
-  //array containing order items (for purpose of undo)
-  const [prevOrder, setPrev] = useState([]);
 
   useEffect(() => {
     const temparray = [];
-    const tempOrder = [];
     const getData = async () => {
       try {
         const backendURL = process.env.NODE_ENV === 'production'
@@ -31,7 +28,6 @@ function Cashier() {
           const tempName = res.entrees[i].entree_name;
           temparray.push(<button onClick={function itemPress() {
             console.log(tempName);
-            setPrev(order);
             setOrder(array => [...array, tempName + '\n'] );
           }}>{res.entrees[i].entree_name}</button>);
           console.log("pushed: ", temparray[i]);
@@ -40,7 +36,6 @@ function Cashier() {
           const tempName = res.drinks[i].drink_name;
           temparray.push(<button onClick={function itemPress() {
             console.log(tempName);
-            setPrev(order);
             setOrder(array => [...array, tempName + '\n'] );
           }}>{res.drinks[i].drink_name}</button>);
           console.log("pushed: ", temparray[i]);
@@ -58,8 +53,11 @@ function Cashier() {
   return (
     <div>
         {(array.length > 0) ? (
-            <div>
+            <div> 
+              {/*All menu item buttons*/}
               {array}
+
+              {/*Textbox for viewing current order TODO*/}
               <TextField
                 disabled
                 id="outlined-multiline-flexible"
@@ -70,6 +68,21 @@ function Cashier() {
                 helperText="Total: "
                 onChange={order}
               />
+
+              <button onClick={function removeOne() {
+                  console.log('Undo called');
+                  setOrder(array => [...array.slice(0,-1)] );
+              }}>Remove Last Item</button>
+
+              <button onClick={function clearAll() {
+                  console.log('Clear all called');
+                  setOrder([]);
+              }}>Clear All</button>
+
+              {/*TODO*/}
+              <button onClick={function submit() {
+                  console.log('Place order called');
+              }}>Place Order</button>
             </div>
         ): (
             <h>loading...</h>
