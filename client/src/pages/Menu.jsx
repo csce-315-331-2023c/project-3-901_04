@@ -6,7 +6,7 @@ function Menu() {
 
   useEffect(() => {
     const backendURL = process.env.NODE_ENV === 'production'
-      ? 'https://project-3-901-04.vercel.app/api/menu'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
       : 'http://localhost:3001/api/menu';
     fetch(backendURL) //backend url
       .then(res => res.json())

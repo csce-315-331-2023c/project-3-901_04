@@ -13,13 +13,11 @@ const pool = new Pool({
     host: process.env.PSQL_HOST,
     database: process.env.PSQL_DATABASE,
     password: process.env.PSQL_PASSWORD,
-    port: process.env.PSQL_PORT,
+    port: 5432,
 });
 
 app.get('/', (req, res) => {
-    const gifPath = 'CRITICAL_FILE_DO_NOT_DELETE.gif';
-    res.sendFile(gifPath, { root: __dirname });
-    //res.send('Mos Irish Pub Backened!');
+    res.send('Mos Irish Pub Backened!');
 });
 
 app.get('/api/menu', async (req, res) => {
@@ -37,7 +35,7 @@ app.get('/api/menu', async (req, res) => {
         res.json(menu);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Server Error");
+        res.status(500).send('Query Failure :(');
     }
 });
 
