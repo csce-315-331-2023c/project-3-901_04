@@ -1,18 +1,19 @@
 //import React from 'react'
 import React, { useEffect, useState } from 'react';
 import '../styles/Cashier.css';
-import axios from 'axios';
 
+/**
+ * This function sets up the Cashier page's HTML.
+ * It populates the page with buttons of menu items. 
+ * @returns HTML
+ */
 function Cashier() {
   const [rows, setRows] = useState({rows: null, setRows: null});
-  console.log("cashier called");
+  //stores the menu item buttons
   const [array, setArray] = useState([]);
 
-  const buttonPress = () => {
-    console.log("button");
-  };
-
   useEffect(() => {
+    //this is necessary; otherwise changes to array will be erased after useEffect().
     const temparray = [];
     const getData = async () => {
       try {
@@ -24,23 +25,22 @@ function Cashier() {
         const numItems = await (Object.keys(res.entrees).length + Object.keys(res.drinks).length);
         const numEntrees = await (Object.keys(res.entrees).length);
         const numDrinks = await (Object.keys(res.drinks).length);
-        console.log("length: ", numItems);
-        console.log("data success: ", res);
         setRows(res.data);
         for (var i = 0; i < numEntrees; i ++) {
           const tempName = res.entrees[i].entree_name;
           temparray.push(<button onClick={function buttonPress() {
             console.log(tempName);
           }}>{res.entrees[i].entree_name}</button>);
-          console.log("pushed: ", temparray[i]);
+          //console.log("pushed: ", temparray[i]);
         }
         for (var i = 0; i < numDrinks; i ++) {
           const tempName = res.drinks[i].drink_name;
           temparray.push(<button onClick={function buttonPress() {
             console.log(tempName);
           }}>{res.drinks[i].drink_name}</button>);
-          console.log("pushed: ", temparray[i]);
+          //console.log("pushed: ", temparray[i]);
         }
+        //necessary, or else array will not be changed.
         setArray(temparray);
         console.log("length after", temparray.length);
       }
