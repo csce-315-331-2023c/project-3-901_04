@@ -1,19 +1,20 @@
 //import React from 'react'
 import React, { useEffect, useState } from 'react';
 import '../styles/Cashier.css';
-import axios from 'axios';
+import '@mui/material'; 
+import { TextField } from '@mui/material';
 
 function Cashier() {
-  const [rows, setRows] = useState({rows: null, setRows: null});
-  console.log("cashier called");
+  //array of all menu items
   const [array, setArray] = useState([]);
-
-  const buttonPress = () => {
-    console.log("button");
-  };
+  //array containing order items
+  const [order, setOrder] = useState([]);
+  //array containing order items (for purpose of undo)
+  const [prevOrder, setPrev] = useState([]);
 
   useEffect(() => {
     const temparray = [];
+    const tempOrder = [];
     const getData = async () => {
       try {
         const backendURL = process.env.NODE_ENV === 'production'
@@ -26,18 +27,21 @@ function Cashier() {
         const numDrinks = await (Object.keys(res.drinks).length);
         console.log("length: ", numItems);
         console.log("data success: ", res);
-        setRows(res.data);
         for (var i = 0; i < numEntrees; i ++) {
           const tempName = res.entrees[i].entree_name;
-          temparray.push(<button onClick={function buttonPress() {
+          temparray.push(<button onClick={function itemPress() {
             console.log(tempName);
+            setPrev(order);
+            setOrder(array => [...array, tempName + '\n'] );
           }}>{res.entrees[i].entree_name}</button>);
           console.log("pushed: ", temparray[i]);
         }
         for (var i = 0; i < numDrinks; i ++) {
           const tempName = res.drinks[i].drink_name;
-          temparray.push(<button onClick={function buttonPress() {
+          temparray.push(<button onClick={function itemPress() {
             console.log(tempName);
+            setPrev(order);
+            setOrder(array => [...array, tempName + '\n'] );
           }}>{res.drinks[i].drink_name}</button>);
           console.log("pushed: ", temparray[i]);
         }
@@ -56,6 +60,16 @@ function Cashier() {
         {(array.length > 0) ? (
             <div>
               {array}
+              <TextField
+                disabled
+                id="outlined-multiline-flexible"
+                multiline
+                //defaultvalue="Ordered items will show up here"
+                value={order}
+                label="Order"
+                helperText="Total: "
+                onChange={order}
+              />
             </div>
         ): (
             <h>loading...</h>
