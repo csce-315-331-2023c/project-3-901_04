@@ -4,6 +4,7 @@ import '../styles/Cashier.css';
 import '@mui/material'; 
 import { TextField } from '@mui/material';
 import {Grid} from '@mui/material';
+import {DateTime} from "react-intl-datetime-format"
 
 function Cashier() {
   //array of all menu items
@@ -12,6 +13,13 @@ function Cashier() {
   const [order, setOrder] = useState([]);
   //array containing order prices
   const [orderPrices, setOrderP] = useState([]);
+  //customer name
+  const [custName, setCust] = useState("");
+  //table number
+  const [tableNum, setTable] = useState("");
+  //timestamp
+  const time = Date.now();
+  console.log(new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(time));
 
   //gets the menu contents just once and sets up all menu item buttons and their functions.
   useEffect(() => {
@@ -71,6 +79,27 @@ function Cashier() {
 
                 {/*Textbox for viewing current order TODO need to mess with disabled state*/}
                 <Grid item xs container spacing = {0}>
+
+                  {/*The name of the customer*/}
+                  <TextField item xs={3}
+                    id="outlined-multiline-flexible"
+                    multiline
+                    value={custName}
+                    onChange={(e) => {setCust(e.target.value)}}
+                    label="Name"
+                    //maxRows = {order.length}
+                  />
+
+                  {/*The table number*/}
+                  <TextField item xs={1}
+                    id="outlined-multiline-flexible"
+                    multiline
+                    value={tableNum}
+                    onChange={(e) => {setTable(e.target.value)}}
+                    label="Table Number"
+                    //maxRows = {order.length}
+                  />
+
                   {/*The names of ordered items*/}
                   <TextField
                     fullwidth
@@ -113,6 +142,8 @@ function Cashier() {
                     {/*TODO need to implement SQL*/}
                     <button onClick={function submit() {
                         console.log('Place order called');
+                        console.log('name: ' + custName);
+                        console.log('tablenum: ' + tableNum);
                     }}>Place Order</button>
                   </Grid>
                 </Grid>
