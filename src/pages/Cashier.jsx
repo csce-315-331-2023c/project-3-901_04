@@ -4,7 +4,6 @@ import '../styles/Cashier.css';
 import '@mui/material'; 
 import { TextField } from '@mui/material';
 import {Grid} from '@mui/material';
-import {DateTime} from "react-intl-datetime-format"
 
 function Cashier() {
   //array of all menu items
@@ -17,9 +16,6 @@ function Cashier() {
   const [custName, setCust] = useState("");
   //table number
   const [tableNum, setTable] = useState("");
-  //timestamp
-  const time = Date.now();
-  console.log(new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(time));
 
   //gets the menu contents just once and sets up all menu item buttons and their functions.
   useEffect(() => {
@@ -143,7 +139,8 @@ function Cashier() {
                     <button onClick={function submit() {
                         console.log('Place order called');
                         console.log('name: ' + custName);
-                        console.log('tablenum: ' + tableNum);
+                        console.log('tablenum: ' + tableNum); 
+                        console.log(getTimeDate());
                     }}>Place Order</button>
                   </Grid>
                 </Grid>
@@ -154,6 +151,17 @@ function Cashier() {
         )}
     </div>
 )
+}
+
+function getTimeDate() {
+  const time = new Date();
+  const year = time.getFullYear();
+  const day = time.toLocaleString("en-US", { day : '2-digit'})
+  const month = time.getMonth() + 1;
+  const hour = time.getHours();
+  const minute = time.getMinutes();
+  const second = time.getSeconds();
+  return(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
 }
 
 export default Cashier
