@@ -1,7 +1,78 @@
-.cashier {
-    width: 100vw;     
-    height: 100vh;     
-    display: flex;     
-    justify-content: center;
-    align-items: center;     
-}
+/* Cashier.css */
+.Cashier {
+    padding: 20px;
+    /* background-color: #f4f4f4; Light cream background */
+    color: #0a3a0a; /* Dark green text */
+    height: auto;
+  }
+  
+  h2 {
+    color: #005030; /* Slightly darker green for headings */
+  }
+  
+  .Button {
+    margin: 5px;
+    border: 1px solid #c8e6c9; /* Light green border */
+    background-color: #a5d6a7; /* Light green background */
+    color: #0a3a0a; /* Dark green text */
+  }
+  
+  .Button:hover {
+    background-color: #81c784; /* Darker green on hover */
+  }
+  
+  .OrderItem {
+    background-color: #e8f5e9; /* Very light green for order items */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+
+  /* Cashier.css */
+ .OrderItem:hover {
+    background-color: #ffcccc; /* Light red color on hover */
+    cursor: pointer; /* Change cursor to indicate item is clickable */
+  }
+  
+  
+  .OrderTotal {
+    background-color: #c8e6c9; /* Light green for total */
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .OrderTotal strong {
+    color: #1b5e20; /* Even darker green for the total "Total" */
+  }
+  
+  /* Update the button styles */
+  .Button {
+    border-radius: 4px;
+    padding: 10px 15px;
+  }
+  
+  /* Secondary buttons */
+  .Button--secondary {
+    background-color: #ffcc80; /* Soft orange */
+    color: #5d4037; /* Brown text */
+  }
+  
+  .Button--secondary:hover {
+    background-color: #ffa726; /* Darker orange */
+  }
+  
+  /* Primary button */
+  .Button--primary {
+    background-color: #ffb74d; /* Orange */
+    color: #ffffff; /* White text */
+  }
+  
+  .Button--primary:hover {
+    background-color: #ff9800; /* Darker orange */
+  }
+  
+  /* Add some space between buttons and their labels */
+  .Button + span {
+    margin-left: 8px;
+  }
+  

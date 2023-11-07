@@ -32,13 +32,15 @@ function App() {
     <div className={isDarkMode ? "dark-mode" : ""}>
       <Router>
         <Navbar />
-        <Routes>
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/customer" element={<Customer />} />
-          <Route path="/" exact element={<Home />} />
-          <Route path="/cashier" element={<Cashier />} />
-          <Route path="/manager" element={<Manager />} />
-        </Routes>
+        <div className="main-content"> 
+          <Routes>
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/customer" element={<Customer />} />
+            <Route path="/" exact element={<Home />} />
+            <Route path="/cashier" element={<Cashier />} />
+            <Route path="/manager" element={<Manager />} />
+          </Routes>
+        </div>
       </Router>
       <AccessibilityWidget isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
     </div>
