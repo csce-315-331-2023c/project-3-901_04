@@ -24,7 +24,7 @@ const Navbar = () => {
             <nav className={visible ? 'navbar visible' : 'navbar hidden'}>
                 <Link to="/menu">Menu</Link>
                 <Link to="/customer">Customer</Link>
-                <Link to="/" className="home-link">
+                <Link to="/home" className="home-link">
                     <img src={logoimg} alt="logo" height="40" width="100" />
                 </Link>
                 <Link to="/cashier">Cashier</Link>

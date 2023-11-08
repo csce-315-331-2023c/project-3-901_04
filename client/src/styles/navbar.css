@@ -16,7 +16,7 @@
 }
 
 .navbar.hidden {
-    top: -60px; /* Adjust as needed based on the height of your navbar */
+    top: -60px; 
 }
 
 .navbar.visible {
