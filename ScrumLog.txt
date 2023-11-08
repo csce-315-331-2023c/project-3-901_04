@@ -1,6 +1,8 @@
 Scrum Meetings will take place every Monday and Wednesday during or directly after lab sessions, and on Fridays in the workday lecture.
 
-10/27: Absent: Jack Smith, Dylan Syahputra, William Yang
+#### Sprint 1 ####
+
+10/27 (Planning Meeting): Absent: Jack Smith, Dylan Syahputra, William Yang
 No Scrum meeting took place as I (Willem) had nobody to have a meeting with.
 
 10/30: Full Attendance
@@ -12,7 +14,9 @@ Everyone acknowledged we were behind. We decided that we needed to quickly get s
 11/3: Absent: Jack Smith
 Now that the SQL queries are functional, the cashier can continue to be fleshed out. William continued to work on that cashier and I (Willem) was to work on integrating current branches on Github into the new file structure created when I was refactoring our project to get the SQL queries to work. I also was to begin work on the Google Translate API.
 
-11/6:
+#### Sprint 2 ####
+
+11/6 (Planning Meeting): Full Attendance
 
 
 11/8:
