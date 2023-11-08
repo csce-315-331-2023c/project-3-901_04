@@ -8,10 +8,10 @@ import '../styles/AccessibilityWidget.css';
  */
 const Weather = () => {
     const [coords, setCoords] = useState({ lat: null, long: null });
-    const [weather, setWeather] = useState({weather: null, setWeather : null});
-    const [image, setImg] = useState({image: null, setImg: null});
-    const [futureWeather, setFutureW] = useState({futureWeather: null, setFutureW : null});
-    const [futureImage, setFutureI] = useState({futureImage: null, setFutureI: null});
+    const [weather, setWeather] = useState({ weather: null, setWeather: null });
+    const [image, setImg] = useState({ image: null, setImg: null });
+    const [futureWeather, setFutureW] = useState({ futureWeather: null, setFutureW: null });
+    const [futureImage, setFutureI] = useState({ futureImage: null, setFutureI: null });
 
     useEffect(() => {
         /*navigator.geolocation.getCurrentPosition(position => {
@@ -35,16 +35,16 @@ const Weather = () => {
                     const data = await response.json();
                     setWeather(data);
                     console.log("weather data: ", data.main);
-                    console.log("weather id: ", data.weather[0].icon );
+                    console.log("weather id: ", data.weather[0].icon);
 
                     //gets current weather image
-                    const imgResponse = await fetch('https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png'); 
+                    const imgResponse = await fetch('https://openweathermap.org/img/wn/' + data.weather[0].icon + '@2x.png');
                     const imgBlob = await imgResponse.blob();
                     const imgObj = URL.createObjectURL(imgBlob);
                     setImg(imgObj);
 
                     //gets forecast
-                    const futureResponse = await fetch('api.openweathermap.org/data/2.5/forecast?lat=' + coords.lat + '&lon=' + coords.long +  '&appid=b957bc70a33ca6ee14b39bd6e8b76a53&units=metric');
+                    const futureResponse = await fetch('api.openweathermap.org/data/2.5/forecast?lat=' + coords.lat + '&lon=' + coords.long + '&appid=b957bc70a33ca6ee14b39bd6e8b76a53&units=metric');
                     const futureData = await futureResponse.json();
                     setFutureW(futureData);
                     console.log("future weather data: ", futureData.list[0].main);
@@ -61,14 +61,14 @@ const Weather = () => {
 
     return (
         <div>
-            {(typeof(weather.name) != 'undefined' && weather.name != null) ? (
+            {(typeof (weather.name) != 'undefined' && weather.name != null) ? (
                 <div>
-                <p>Location: {weather.name}</p>
-                <p>Temperature: {Math.round(celToFah(weather.main.temp))}°F/{Math.round(weather.main.temp)}°C</p>
-                <img src={image}/>
-                <p>Weather: {weather.weather[0].description}</p>
+                    <p>Location: {weather.name}</p>
+                    <p>Temperature: {Math.round(celToFah(weather.main.temp))}°F/{Math.round(weather.main.temp)}°C</p>
+                    <img src={image} />
+                    <p>Weather: {weather.weather[0].description}</p>
                 </div>
-            ): (
+            ) : (
                 <h>loading...</h>
             )}
         </div>
@@ -83,5 +83,5 @@ export default Weather;
  * @returns the temperature in fahrenheit
  */
 function celToFah(cel) {
-    return (9/5) * cel + 32;
+    return (9 / 5) * cel + 32;
 }
