@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Cashier.css';
 import Button from '@mui/material/Button';
 import { TextField, Grid } from '@mui/material';
+//import { getTime } from 'date-fns'; 
+import axios from 'axios';
 
 function Cashier() {
   const [entrees, setEntrees] = useState([]);
@@ -12,9 +14,12 @@ function Cashier() {
   const [showEntrees, setShowEntrees] = useState(false);
   const [showDrinks, setShowDrinks] = useState(false);
 
+  //customer name
+  const [custName, setCust] = useState("");
+
   useEffect(() => {
     const backendURL = process.env.NODE_ENV === 'production'
-      ? 'https://your-production-url/api/menu'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
       : 'http://localhost:3001/api/menu';
 
     const getData = async () => {
@@ -53,9 +58,28 @@ function Cashier() {
     setOrderPrices([]);
   };
 
+  async function getId(e) {
+    console.log('test1');
+    const backendURL2 = process.env.NODE_ENV === 'production'
+    ? 'https://mos-irish-server-901-04.vercel.app/postid'
+    : 'http://localhost:3001/postid';
+    try {
+        const response = await axios.post(backendURL2, order);
+        console.log('test2');
+        console.log(response.data.id);
+    } catch (error) {
+        console.error('Login error', error);
+    }
+    console.log('test3');
+  }
+
   const handlePlaceOrder = () => {
     console.log('Order placed:', order, orderPrices);
+    console.log("order timestamp: " + getTimeDate());
+    console.log("customer name: " + custName);
+    console.log("table num: " + parseInt(30 * Math.random() + 1));
     // TODO: Add functionality to submit order data to backend or database
+    getId();
   };
 
   return (
@@ -70,6 +94,17 @@ function Cashier() {
           <Button variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
             {showDrinks ? 'Hide Drinks' : 'Show Drinks'}
           </Button>
+
+          {/*For the customer name*/}
+          {'   '}
+          <TextField 
+              value={custName}
+              onChange={(e) => {setCust(e.target.value)}}
+              label="Customer Name"
+              margin="dense"
+              maxRows="1"
+              size="small"
+          />
 
           {/* Display Entrees or Drinks based on state */}
           {showEntrees && (
@@ -125,6 +160,7 @@ function Cashier() {
 
         {/* Right side */}
         <Grid item xs={3.6}> {/* 30% of 12*/}
+          
           <h2>Order</h2>
 
           {/* Iterate over the order array to display each item with its price */}
@@ -139,7 +175,6 @@ function Cashier() {
               <span style={{ marginLeft: 'auto' }}>${orderPrices[index].toFixed(2)}</span>
             </div>
           ))}
-
 
           <div className="OrderTotal">
             <strong>Total:</strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}
@@ -186,6 +221,17 @@ function Cashier() {
       </Grid>
     </div>
   );
+}
+
+function getTimeDate() {
+  const time = new Date();
+  const year = time.getFullYear();
+  const day = time.toLocaleString("en-US", { day : '2-digit'})
+  const month = time.getMonth() + 1;
+  const hour = time.getHours();
+  const minute = time.getMinutes();
+  const second = time.getSeconds();
+  return(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
 }
 
 export default Cashier;
