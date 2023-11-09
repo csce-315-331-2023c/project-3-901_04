@@ -30,6 +30,44 @@ app.get('/api/menu', async (req, res) => {
             drinks: drinkRes.rows
         };
 
+        console.log("menu Query successful. Sending json.");
+
+        res.json(menu);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Query Failure :(');
+    }
+});
+
+app.get('/api/managerMenu', async (req, res) => {
+    try {
+        const menuRes = await pool.query('(SELECT entree_name AS "item_name" FROM entrees UNION SELECT drink_name FROM drinks) ORDER BY item_name;');
+        const inventoryRes = await pool.query('SELECT item_name FROM inventory ORDER BY item_name;');
+        
+        const managerMenu = {
+            menuItems: menuRes.rows,
+            inventoryItems: inventoryRes.rows
+        };
+
+        console.log("managerMenu Query successful. Sending json.");
+        res.json(managerMenu);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Query Failure :(');
+    }
+});
+
+app.get('/api/menu', async (req, res) => {
+    try {
+        const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
+        const drinkRes = await pool.query('SELECT drink_name, price FROM drinks');
+
+        const menu = {
+            entrees: entreeRes.rows,
+            drinks: drinkRes.rows
+        };
+
         console.log("Query successful. Sending json.");
 
         res.json(menu);
