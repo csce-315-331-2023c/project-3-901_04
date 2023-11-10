@@ -64,9 +64,9 @@ function Cashier() {
     ? 'https://mos-irish-server-901-04.vercel.app/postid'
     : 'http://localhost:3001/postid';
     try {
-        const response = await axios.post(backendURL2, order);
+        const response = await axios.post(backendURL2, {order, orderPrices, custName});
         console.log('test2');
-        console.log(response.data.id);
+        console.log(response.data);
     } catch (error) {
         console.error('Login error', error);
     }
@@ -75,7 +75,6 @@ function Cashier() {
 
   const handlePlaceOrder = () => {
     console.log('Order placed:', order, orderPrices);
-    console.log("order timestamp: " + getTimeDate());
     console.log("customer name: " + custName);
     console.log("table num: " + parseInt(30 * Math.random() + 1));
     // TODO: Add functionality to submit order data to backend or database
@@ -221,17 +220,6 @@ function Cashier() {
       </Grid>
     </div>
   );
-}
-
-function getTimeDate() {
-  const time = new Date();
-  const year = time.getFullYear();
-  const day = time.toLocaleString("en-US", { day : '2-digit'})
-  const month = time.getMonth() + 1;
-  const hour = time.getHours();
-  const minute = time.getMinutes();
-  const second = time.getSeconds();
-  return(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
 }
 
 export default Cashier;
