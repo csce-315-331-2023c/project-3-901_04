@@ -58,27 +58,23 @@ function Cashier() {
     setOrderPrices([]);
   };
 
-  async function getId(e) {
-    console.log('test1');
+  async function placeOrder(e) {
     const backendURL2 = process.env.NODE_ENV === 'production'
     ? 'https://mos-irish-server-901-04.vercel.app/postid'
     : 'http://localhost:3001/postid';
     try {
         const response = await axios.post(backendURL2, {order, orderPrices, custName});
-        console.log('test2');
         console.log(response.data);
     } catch (error) {
-        console.error('Login error', error);
+        console.error('Order error', error);
     }
-    console.log('test3');
   }
 
   const handlePlaceOrder = () => {
     console.log('Order placed:', order, orderPrices);
     console.log("customer name: " + custName);
-    console.log("table num: " + parseInt(30 * Math.random() + 1));
-    // TODO: Add functionality to submit order data to backend or database
-    getId();
+    // TODO: Need to update inventory, employee id
+    placeOrder();
   };
 
   return (

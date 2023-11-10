@@ -40,17 +40,19 @@ app.get('/api/menu', async (req, res) => {
     }
 });
 
+/**
+ * Called when an order is placed. Will update the orders, orderentreecontents, and orderdrinkcontents tables.
+ */
 app.post('/postid', async (req, res) => {
     const orders = req.body['order'];
     const orderPrices = req.body['orderPrices'];
     const custName = req.body['custName'];
 
-    //will be how many items there are
     var count = 0;
     var idarr = [];
-    //gets the ids of items
+    //Gets the ids of items
     try {
-        //arbitrary amount
+        //Arbitrary amount; surely no one orders 100 items in a single sitting right?
         while (count < 100){
             if (orders[count] == null) {
                 break;
@@ -64,7 +66,7 @@ app.post('/postid', async (req, res) => {
         console.error(err);
     }
 
-    //sort btwn negative and positive ids
+    //Sort the array of all ids into positive and negative ids (for entrees and drinks)
     entreearr = []
     drinkarr = []
     
@@ -77,44 +79,49 @@ app.post('/postid', async (req, res) => {
         }
     })
 
-    /*res.send((JSON.stringify(drinkarr[1])));
-    res.send((JSON.stringify(entreearr.length)));*/
-
-    //make the new order TODO employee id
+    //Make the new order TODO employee id
     try {
         var highestOrderId = await pool.query("SELECT id FROM orders ORDER BY id DESC LIMIT 1;");
         pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');");
-        //res.send("success?");
     }
     catch (er) {
         console.log(er);
     }
 
 
-    //insert into orderentreecontents
-    var orderEntreeString = "INSERT INTO orderentreecontents (id, order_id, entree_id) VALUES";
-    var highestEntreeContentId = await pool.query("SELECT id FROM orderentreecontents ORDER BY id DESC LIMIT 1");
-    highestEntreeContentId = parseInt(highestEntreeContentId.rows[0].id) + 1;
+    //Insert into orderentreecontents
+    var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
     try {
         for (var i = 0; i < entreearr.length; i ++) {
             if (i != 0) {
                 orderEntreeString = orderEntreeString + ",";
             }
-            orderEntreeString = orderEntreeString + " (" + highestEntreeContentId + "," + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
-            highestEntreeContentId += 1;
+            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
         }
         orderEntreeString = orderEntreeString + ";";
-        res.send(orderEntreeString);
-        //pool.query(orderEntreeString);
+        pool.query(orderEntreeString);
     }
     catch (e) {
         console.log(e);
     }
 
+    //Insert into orderdrinkcontents
+    var orderDrinkString = "INSERT INTO orderdrinkcontents (order_id, drink_id) VALUES";
+    try {
+        for (var i = 0; i < drinkarr.length; i ++) {
+            if (i != 0) {
+                orderDrinkString = orderDrinkString + ",";
+            }
+            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] +")";
+        }
+        orderDrinkString = orderDrinkString + ";";
+        pool.query(orderDrinkString);
+    }
+    catch (e) {
+        console.log(e);
+    }
 
-
-    //insert into orderdrinkcontents
-
+    res.send("Success!");
 });
 
 function getTimeDate() {
