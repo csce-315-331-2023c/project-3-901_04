@@ -17,9 +17,13 @@ Now that the SQL queries are functional, the cashier can continue to be fleshed 
 #### Sprint 2 ####
 
 11/6 (Planning Meeting): Full Attendance
-
+Plan is as follows:
+  Willem - Format the Menu and begin Manager functionality.
+  Jack - Implement the translate and Map API.
+  Dylan - Focus on getting the Login API implemented.
+  William - Continue work on getting the cashier finished and communicating with the database.
 
 11/8:
-
+  Identifed what needs to be done and what has been done. Dylan has made exceptional progress on the login API. William has progressed smoothly on the cashier. We also discussed our presentation on Friday and developed a plan for presenting it and did a little rehearsal.
 
 11/10:
