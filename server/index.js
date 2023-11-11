@@ -48,7 +48,6 @@ app.post('/postid', async (req, res) => {
     const orders = req.body['order'];
     const orderPrices = req.body['orderPrices'];
     const custName = req.body['custName'];
-
     var count = 0;
     var idarr = [];
     //Gets the ids of items
@@ -70,7 +69,6 @@ app.post('/postid', async (req, res) => {
     //Sort the array of all ids into positive and negative ids (for entrees and drinks)
     entreearr = []
     drinkarr = []
-    
     idarr.map((id) => {
         if (id > -1) {
             entreearr.push(id);
@@ -88,7 +86,6 @@ app.post('/postid', async (req, res) => {
     catch (er) {
         console.log(er);
     }
-
 
     //Insert into orderentreecontents
     var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
@@ -152,29 +149,17 @@ app.post('/postid', async (req, res) => {
     }
 
     //Subtract inventory based on recipes
-    var updateInventory = "UPDATE inventory SET stock = CASE item_name"
-    var tempItem;
+    var updateInventory;
     var allInventoryLen = parseInt(JSON.stringify(Object.keys(allInventory).length));
     try {
         for (var i = 0; i < allInventoryLen; i++) {
-            tempItem = " WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity);
-            updateInventory = updateInventory + tempItem;
+            updateInventory = "UPDATE inventory SET stock = CASE item_name WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity) + " ELSE 0 END WHERE inventory.item_name in (" + "'" + allInventory[i].item_name + "'" + ");";
+            pool.query(updateInventory);
         }
-        //change this to 0 when it works
-        updateInventory = updateInventory + " ELSE 250 END WHERE inventory.item_name in ("
-        for (var i = 0; i < allInventoryLen; i ++) {
-            if (i != 0) {
-                updateInventory = updateInventory + ",";
-            }
-            updateInventory = updateInventory + "'" + allInventory[i].item_name + "'"
-        }
-        updateInventory = updateInventory+ ");"
-        pool.query(updateInventory);
     }
     catch (erm) {
         console.log(erm);
     }
-
     res.send("Success!");
 });
 
