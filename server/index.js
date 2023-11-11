@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const { all } = require('axios');
 const dotenv = require('dotenv').config();
 
 const app = express();
@@ -119,6 +120,59 @@ app.post('/postid', async (req, res) => {
     }
     catch (e) {
         console.log(e);
+    }
+
+    //Get recipe of each drink/entree
+    var getEntreeInventory = "SELECT DISTINCT entree_name, item_name, quantity FROM entreerecipes JOIN entrees ON entrees.id = entreerecipes.entree_id JOIN inventory ON inventory.id = entreerecipes.inventory_id WHERE entree_id in (";
+    var getDrinkInventory = "SELECT DISTINCT drink_name, item_name, quantity FROM drinkrecipes JOIN drinks ON drinks.id = drinkrecipes.drink_id JOIN inventory ON inventory.id = drinkrecipes.inventory_id WHERE drink_id in (";
+    var allInventory;
+    try {
+        for (var i = 0; i < entreearr.length; i ++) {
+            if (i != 0) {
+                getEntreeInventory = getEntreeInventory + ",";
+            }
+            getEntreeInventory = getEntreeInventory + parseInt(entreearr[i]);
+        }
+        getEntreeInventory = getEntreeInventory + ");"
+        const entreeInventoryQuantities = await pool.query(getEntreeInventory);
+        //res.send(JSON.stringify((entreeInventoryQuantities).rows[0].quantity));
+
+        for (var i = 0; i < drinkarr.length; i ++) {
+            if (i != 0) {
+                getDrinkInventory = getDrinkInventory + ",";
+            }
+            getDrinkInventory = getDrinkInventory + parseInt(drinkarr[i]);
+        }
+        getDrinkInventory = getDrinkInventory + ");"
+        const drinkInventoryQuantities = await pool.query(getDrinkInventory);
+        allInventory = Object.assign({}, entreeInventoryQuantities.rows, drinkInventoryQuantities.rows);
+    }
+    catch (errr) {
+        console.log(errr);
+    }
+
+    //Subtract inventory based on recipes
+    var updateInventory = "UPDATE inventory SET stock = CASE item_name"
+    var tempItem;
+    var allInventoryLen = parseInt(JSON.stringify(Object.keys(allInventory).length));
+    try {
+        for (var i = 0; i < allInventoryLen; i++) {
+            tempItem = " WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity);
+            updateInventory = updateInventory + tempItem;
+        }
+        //change this to 0 when it works
+        updateInventory = updateInventory + " ELSE 250 END WHERE inventory.item_name in ("
+        for (var i = 0; i < allInventoryLen; i ++) {
+            if (i != 0) {
+                updateInventory = updateInventory + ",";
+            }
+            updateInventory = updateInventory + "'" + allInventory[i].item_name + "'"
+        }
+        updateInventory = updateInventory+ ");"
+        pool.query(updateInventory);
+    }
+    catch (erm) {
+        console.log(erm);
     }
 
     res.send("Success!");
