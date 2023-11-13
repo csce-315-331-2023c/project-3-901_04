@@ -11,6 +11,11 @@
     width: '100%';
 }
 
+.rightGrid{
+    display: 'flex';
+    width: '100%';
+}
+
 .scrollView{
     flex: 1;
     width: '33%';
@@ -23,6 +28,15 @@
     display: inline;
     width: 27vw;
 }
+
 .managerMenuSwapButton{
     
+}
+
+.editPane{
+    display: inline;
+}
+
+.editPaneItem{
+    text-align: center;
 }
