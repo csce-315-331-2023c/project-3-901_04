@@ -41,7 +41,6 @@ app.get('/api/menu', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -73,7 +72,7 @@ app.post('/signup', async (req, res) => {
         res.status(500).send('Error signing up');
     }
 });
-=======
+
 /**
  * Called when an order is placed. Will update the orders, orderentreecontents, and orderdrinkcontents tables.
  */
@@ -241,7 +240,6 @@ function getSecond() {
     const time = new Date();
     return time.getSeconds();
 }
->>>>>>> wy4
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
