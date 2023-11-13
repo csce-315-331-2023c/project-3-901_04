@@ -27,3 +27,4 @@ Plan is as follows:
   Identifed what needs to be done and what has been done. Dylan has made exceptional progress on the login API. William has progressed smoothly on the cashier. We also discussed our presentation on Friday and developed a plan for presenting it and did a little rehearsal.
 
 11/10:
+  Wanted to discuss where the project is and how progress is going. We went over the product backlog and identified where we are, the pace we're moving at, and the likilehood of completing the project as a whole. Consensus was optimism.
