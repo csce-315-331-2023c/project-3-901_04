@@ -6,9 +6,9 @@
     height: auto;
   }
   
-  h2 {
-    color: #005030; /* Slightly darker green for headings */
-  }
+  /*h2 {
+    color: #005030; /* Slightly darker green for headings 
+  }*/
   
   .Button {
     margin: 5px;
@@ -33,7 +33,10 @@
     background-color: #ffcccc; /* Light red color on hover */
     cursor: pointer; /* Change cursor to indicate item is clickable */
   }
-  
+
+  h2.heading {
+    color:#6fbe72; /*heading color*/
+  }
   
   .OrderTotal {
     background-color: #c8e6c9; /* Light green for total */
