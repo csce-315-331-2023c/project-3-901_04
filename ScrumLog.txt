@@ -1,6 +1,8 @@
 Scrum Meetings will take place every Monday and Wednesday during or directly after lab sessions, and on Fridays in the workday lecture.
 
-10/27: Absent: Jack Smith, Dylan Syahputra, William Yang
+#### Sprint 1 ####
+
+10/27 (Planning Meeting): Absent: Jack Smith, Dylan Syahputra, William Yang
 No Scrum meeting took place as I (Willem) had nobody to have a meeting with.
 
 10/30: Full Attendance
@@ -12,10 +14,20 @@ Everyone acknowledged we were behind. We decided that we needed to quickly get s
 11/3: Absent: Jack Smith
 Now that the SQL queries are functional, the cashier can continue to be fleshed out. William continued to work on that cashier and I (Willem) was to work on integrating current branches on Github into the new file structure created when I was refactoring our project to get the SQL queries to work. I also was to begin work on the Google Translate API.
 
-11/6:
+#### Sprint 2 ####
 
+11/6 (Planning Meeting): Full Attendance
+Plan is as follows:
+  Willem - Format the Menu and begin Manager functionality.
+  Jack - Implement the translate and Map API.
+  Dylan - Focus on getting the Login API implemented.
+  William - Continue work on getting the cashier finished and communicating with the database.
 
 11/8:
-
+  Identifed what needs to be done and what has been done. Dylan has made exceptional progress on the login API. William has progressed smoothly on the cashier. We also discussed our presentation on Friday and developed a plan for presenting it and did a little rehearsal.
 
 11/10:
+  Wanted to discuss where the project is and how progress is going. We went over the product backlog and identified where we are, the pace we're moving at, and the likilehood of completing the project as a whole. Consensus was optimism.
+
+11/13:
+  Discussion focuses on tomorrow night's github Release. We're going to implement all APIs and have our completed Cashier page to show. Manager and Customer pages also have significant progress to show off. William has finished Cashier and has a busy day of tests ahead of him, so he's done his part. Dylan, too, has done his part in implementing the login API. Jack is close to getting the Translate and Map APIs functional, and will have them done by Tuesday night. I am going to wrap up all reading funcitonality for the manager page.

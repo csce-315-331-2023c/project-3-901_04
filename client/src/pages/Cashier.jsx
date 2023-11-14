@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Cashier.css';
 import Button from '@mui/material/Button';
 import { TextField, Grid } from '@mui/material';
+//import { getTime } from 'date-fns'; 
+import axios from 'axios';
 
 function Cashier() {
   const [entrees, setEntrees] = useState([]);
@@ -12,9 +14,12 @@ function Cashier() {
   const [showEntrees, setShowEntrees] = useState(false);
   const [showDrinks, setShowDrinks] = useState(false);
 
+  //customer name
+  const [custName, setCust] = useState("");
+
   useEffect(() => {
     const backendURL = process.env.NODE_ENV === 'production'
-      ? 'https://your-production-url/api/menu'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
       : 'http://localhost:3001/api/menu';
 
     const getData = async () => {
@@ -53,9 +58,24 @@ function Cashier() {
     setOrderPrices([]);
   };
 
+  async function placeOrder(e) {
+    const backendURL2 = process.env.NODE_ENV === 'production'
+    ? 'https://mos-irish-server-901-04.vercel.app/postid'
+    : 'http://localhost:3001/postid';
+    try {
+        const response = await axios.post(backendURL2, {order, orderPrices, custName});
+        console.log(response.data);
+    } catch (error) {
+        console.error('Order error', error);
+    }
+  }
+
   const handlePlaceOrder = () => {
     console.log('Order placed:', order, orderPrices);
-    // TODO: Add functionality to submit order data to backend or database
+    console.log("customer name: " + custName);
+    // TODO: Need to update inventory, employee id
+    placeOrder();
+    handleClearOrder();
   };
 
   return (
@@ -74,7 +94,7 @@ function Cashier() {
           {/* Display Entrees or Drinks based on state */}
           {showEntrees && (
             <div>
-              <h2>Entrees</h2>
+              <h2 class="heading">Entrees</h2>
               {entrees.map((entree) => (
                 <Button
                   key={entree.entree_name}
@@ -99,7 +119,7 @@ function Cashier() {
 
           {showDrinks && (
             <div>
-              <h2>Drinks</h2>
+              <h2 class="heading">Drinks</h2>
               {drinks.map((drink) => (
                 <Button
                   key={drink.drink_name}
@@ -125,7 +145,35 @@ function Cashier() {
 
         {/* Right side */}
         <Grid item xs={3.6}> {/* 30% of 12*/}
-          <h2>Order</h2>
+
+          <Grid container spacing={2}>
+            <Grid item xs={2} className='Ordersign'>
+              <h2 class="heading">Order</h2>
+            </Grid>
+            
+            <Grid item xs={10}>
+              {/*For the customer name*/}
+              {''}
+              <TextField 
+                  value={custName}
+                  onChange={(e) => {setCust(e.target.value)}}
+                  label="Customer Name"
+                  margin="dense"
+                  maxRows="1"
+                  size="small"
+                  fullWidth
+                  variant="filled"
+                  sx={{
+                    input: {
+                      color: "black",
+                      background: "#c8e6c9"
+                    }
+                  }}
+                  color="success"
+                  
+              />
+            </Grid>
+          </Grid>
 
           {/* Iterate over the order array to display each item with its price */}
           {order.map((item, index) => (
@@ -136,10 +184,9 @@ function Cashier() {
               style={{ padding: '10px', margin: '5px 0', borderRadius: '4px', transition: 'background-color 0.3s' }}
             >
               <span>{item}</span>
-              <span style={{ marginLeft: 'auto' }}>${orderPrices[index].toFixed(2)}</span>
+              <span style={{ marginLeft: 'auto' }}> ${orderPrices[index].toFixed(2)}</span>
             </div>
           ))}
-
 
           <div className="OrderTotal">
             <strong>Total:</strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}
