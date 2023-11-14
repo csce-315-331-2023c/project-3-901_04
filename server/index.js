@@ -57,19 +57,36 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body; 
+    const { name, email, password } = req.body;
     try {
         let user = await User.findOne({ email });
         if (user) {
             res.json({ status: 'error', error: 'User already exists' });
         } else {
-            user = new User({ name, email, password }); 
+            user = new User({ name, email, password });
             await user.save();
-            res.json({ status: 'ok', user: user }); 
+            res.json({ status: 'ok', user: user });
         }
     } catch (err) {
         console.error(err);
         res.status(500).send('Error signing up');
+    }
+});
+
+app.get('/api/isEmployee', async (req, res) => {
+    const { name } = req.query; // Get the name from query parameter
+
+    try {
+        // Query to check if an employee with the given name exists
+        const result = await pool.query('SELECT id, name FROM employees WHERE name = $1', [name]);
+
+        // Check if any rows are returned
+        const isEmployee = result.rows.length > 0;
+
+        res.json({ isEmployee });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
     }
 });
 
@@ -240,6 +257,7 @@ function getSecond() {
     const time = new Date();
     return time.getSeconds();
 }
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
