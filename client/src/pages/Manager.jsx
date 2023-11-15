@@ -3,6 +3,7 @@ import '../styles/Manager.css';
 import Button from '@mui/material/Button';
 import { TextField, Grid } from '@mui/material';
 import axios from 'axios';
+import Greeting from '../components/Greeting';
 
 function Manager() {
   
@@ -15,12 +16,27 @@ function Manager() {
   const [activeGrid, setActiveGrid] = useState(2);
 
   const [menuItemName, setMenuItemName] = useState('Select a Menu Item');
-  let menuItemPrice;
-  let menuItemTogo;
+  const [displayedMenuItemName, setDisplayedMenuItemName] = useState();
+
+  const [menuItemPrice, setMenuItemPrice] = useState('Select a Menu Item');
+  const [displayedMenuItemPrice, setDisplayedMenuItemPrice] = useState();
+
+  const [menuItemTogo, setMenuitemTogo] = useState('Select a Menu Item');
+  const [displayedMenuItemTogo, setDisplayedMenuitemTogo] = useState();
+
   
-  let invItemName;
-  let invItemStock;
-  let invItemCost;
+  const [invItemName, setInvItemName] = useState('Select an Inventory Item');
+  const [displayedInvItemName, setDisplayedInvItemName] = useState();
+
+  const [invItemStock, setInvItemStock] = useState('Select an Inventory Item');
+  const [displayedInvItemStock, setDisplayedInvItemStock] = useState();
+
+  const [invItemCost, setInvItemCost] = useState('Select an Inventory Item');
+  const [displayedInvItemCost, setDisplayedInvItemCost] = useState();
+
+  const [invItemMinimum, setinvItemMinimum] = useState('Select an Inventory Item');
+  const [displayedInvItemMinimum, setDisplayedinvItemMinimum] = useState();
+
 
   const [showingMenu, setShowingMenu] = useState(true);
 
@@ -35,7 +51,7 @@ function Manager() {
         setActiveView(DBItems.menuItems);
         console.log(data);
       });
-    handleViewToggle();
+      handleViewToggle();
   }, []);
 
   useEffect(() => {
@@ -50,6 +66,30 @@ function Manager() {
 
   }, [menuItemRecipe]);
 
+  useEffect(() => {
+    console.log("Updated menuItemName: ", menuItemName);
+    console.log("Updated menuItemPrice: ", menuItemPrice);
+    console.log("Updated menuItemTogo: ", menuItemTogo);
+    console.log("Updated invItemName: ", invItemName);
+    console.log("Updated invItemStock: ", invItemStock);
+    console.log("Updated invItemCost: ", invItemCost);
+    console.log("Updated invItemMinimum: ", invItemMinimum);
+
+    setDisplayedMenuItemName(menuItemName);
+    setDisplayedMenuItemPrice(menuItemPrice);
+    if(menuItemTogo){
+      setDisplayedMenuitemTogo('☑');
+    }
+    else{
+      setDisplayedMenuitemTogo('☒');
+    }
+    setDisplayedInvItemName(invItemName);
+    setDisplayedInvItemStock(invItemStock);
+    setDisplayedInvItemCost(invItemCost);
+    setDisplayedinvItemMinimum(invItemMinimum);
+
+  }, [menuItemName, menuItemPrice, menuItemTogo, invItemName, invItemStock, invItemCost, invItemMinimum]);
+
   function handleItemButtonClick(buttonText) {
     console.log('Button clicked: ', buttonText);
     const backendURL2 = process.env.NODE_ENV === 'production'
@@ -57,13 +97,21 @@ function Manager() {
     : 'http://localhost:3001/api/recipe';
     const fetchRecipeData = async () => {
       try {
-        const recipeQuery = await axios.get(backendURL2, {
+        const itemQuery = await axios.get(backendURL2, {
           params: {
             requestedItem: buttonText,
           },
         });
-        console.log(recipeQuery.data.recipe);
-        setRecipe(recipeQuery.data.recipe);
+
+        setRecipe(itemQuery.data.recipe);
+        setMenuItemName(itemQuery.data.menuItemInfo[0].item_name);
+        setMenuItemPrice(itemQuery.data.menuItemInfo[0].price);
+        setMenuitemTogo(itemQuery.data.menuItemInfo[0].togo);
+        setInvItemName(itemQuery.data.invItemInfo[0].item_name);
+        setInvItemStock(itemQuery.data.invItemInfo[0].stock);
+        setInvItemCost(itemQuery.data.invItemInfo[0].cost);
+        setinvItemMinimum(itemQuery.data.invItemInfo[0].min_stock_warning);
+
       } catch (error) {
         console.error('Recipe error', error);
       }
@@ -73,44 +121,45 @@ function Manager() {
 
   const inventoryDataDisplay = () => {
     return (
+      
       <Grid container spacing={2}>
             <Grid item xs={6}>
-              <h3>Name</h3>
+              <h3>Name: <div className="displayedValue">{displayedInvItemName}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="Input New Name"
               >
               </TextField>
             </Grid>
             <Grid item xs={6}>
-              <h3>Stock</h3>
+              <h3>Stock: <div className="displayedValue">{displayedInvItemStock}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="Input New Stock"
               >
               </TextField>
             </Grid>
             <Grid item xs={6}>
-              <h3>Cost</h3>
+              <h3>Cost: <div className="displayedValue">${displayedInvItemCost}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="Input New Cost"
               >
               </TextField>
             </Grid>
             <Grid item xs={6}>
-              <h3>Minimum Stock Warning</h3>
+              <h3>Minimum Stock Warning: <div className="displayedValue">{displayedInvItemMinimum}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="Input New MSW"
               >
               </TextField>
             </Grid>
@@ -122,32 +171,32 @@ function Manager() {
     return (
       <Grid container spacing={2}>
             <Grid item xs={6} className="editPaneItem">
-              <h3>Name</h3>
+              <h3>Name: <div className="displayedValue">{displayedMenuItemName}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="Input New Name"
               >
               </TextField>
             </Grid>
             <Grid item xs={6} className="editPaneItem">
-              <h3>Price</h3>
+              <h3>Price: <div className="displayedValue">${displayedMenuItemPrice}</div></h3>
             <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="Input New Price"
               >
               </TextField>
             </Grid>
             <Grid item xs={6} className="editPaneItem">
-              <h3>To-Go</h3>
+              <h3>To-Go: <div className="displayedValue">{displayedMenuItemTogo}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
               //onChange={handleInputChange}
-              placeholder="Select an item to update"
+              placeholder="True/False"
               >
               </TextField>
             </Grid>
@@ -160,6 +209,13 @@ function Manager() {
     setActiveView(activeView === DBItems.menuItems ? DBItems.inventoryItems : DBItems.menuItems);
     setShowingMenu(!showingMenu);
     setRecipe( [{ item_name: 'Select a menu item to update', quantity: 0}] );
+    setMenuItemName('Select a Menu Item');
+    setMenuItemPrice('Select a Menu Item');
+    setMenuitemTogo('Select a Menu Item');
+    setInvItemName('Select an Inventory Item');
+    setInvItemCost('Select an Inventory Item');
+    setInvItemStock('Select an Inventory Item');
+    setinvItemMinimum('Select an Inventory Item');
   };
 
   const dataGridContainer = () => {
@@ -211,7 +267,7 @@ function Manager() {
 
           <Grid item xs={3}>
             <div className='rightGrid'>
-              <div className='scrollView'>
+              <div>
                 <div>
                   <h1>Recipe</h1>
                 </div>
@@ -243,11 +299,11 @@ function Manager() {
             <div className='leftGrid'>
               <div className='scrollView'>
                 <div>
-                  <Button className="managerMenuSwapButton" variant="contained" disableElevation onClick={handleViewToggle}>
+                  <Button className= "managerMenuSwapButton" variant="contained" disableElevation onClick={handleViewToggle}>
                     Swap Menu/Inventory
                   </Button>
                 </div>
-                <ManagerNavButtons items={activeView}/>
+                <ManagerNavButtons  items={activeView}/>
               </div>
             </div>
           </Grid>
