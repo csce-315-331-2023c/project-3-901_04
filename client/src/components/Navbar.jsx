@@ -6,8 +6,6 @@ const Navbar = () => {
     const [visible, setVisible] = useState(true);
     const isEmployee = JSON.parse(localStorage.getItem('isEmployee')); // Retrieve the isEmployee flag
 
-    console.log(isEmployee);
-
     const handleScroll = () => {
         const currentScrollPos = window.scrollY;
         setVisible(currentScrollPos <= 0);
