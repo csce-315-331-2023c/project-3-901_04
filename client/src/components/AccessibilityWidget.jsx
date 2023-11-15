@@ -13,33 +13,8 @@ function AccessibilityWidget({ isDarkMode, setIsDarkMode }) {
         setIsOpen(false);
     };
 
-    const weglotContainerRef = useRef(null);
-
-  useEffect(() => {
-    // Load Weglot script dynamically
-    const script = document.createElement('script');
-    script.src = 'https://cdn.weglot.com/weglot.min.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    script.onload = () => {
-        if (weglotContainerRef.current) {
-          window.Weglot.initialize({
-            api_key: 'wg_12137e766e1482a9e70dd617bdb421029',
-            targetLang: 'en', // Set the target language directly
-          });
-        }
-      };
-
-    // Cleanup: remove the script when the component unmounts
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
     return (
         <div className>
-            <div ref={weglotContainerRef}>
             <div className="accessibility-widget" onClick={handleWidgetClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ fill: 'white' }} viewBox="0 0 24 24" width="30px" height="30px">
                     <path d="M0 0h24v24H0V0z" fill="none"></path>
@@ -62,7 +37,7 @@ function AccessibilityWidget({ isDarkMode, setIsDarkMode }) {
                     </div>
                 </div>
             )}
-            </div>
+
         </div>
     );
 }
