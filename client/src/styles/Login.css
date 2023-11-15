@@ -1,0 +1,95 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+}
+
+.login h1 {
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 8px;
+}
+
+.login input {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.login button {
+    padding: 1rem;
+    border: none;
+    background-color: #5cb85c;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.login button:hover {
+    background-color: #4cae4c;
+}
+
+.login p {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.login a {
+    color: #5cb85c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login a:hover {
+    text-decoration: underline;
+}
+
+#signInButton {
+    margin-top: 1rem; /* Spacing above the Google login button */
+    text-align: center; /* Center the button if it's not full-width */
+  }
+  
+ 
+  .google-button {
+    display: inline-block;
+    background-color: #db4437; 
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+  }
+  
+  .google-button:hover {
+    background-color: #c1351d; /* A darker shade when hovered */
+  }
+  
+  
+  #signInButton > div > div {
+    margin: auto; /* Center the button container */
+  }
+  
+  #signInButton > div > div > button {
+    width: 100%; /* Full width button */
+  }
+  

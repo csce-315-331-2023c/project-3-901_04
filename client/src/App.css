@@ -1,4 +1,4 @@
-body{
+body {
   background-color: white;
   color: black;
 }
@@ -7,4 +7,12 @@ body{
   background-color: #333;
   color: #fff;
   /* add other dark mode styles as needed */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.main-content {
+  padding-top: 60px; /* Height of the navbar*/
 }
