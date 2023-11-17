@@ -31,3 +31,8 @@ Plan is as follows:
 
 11/13:
   Discussion focuses on tomorrow night's github Release. We're going to implement all APIs and have our completed Cashier page to show. Manager and Customer pages also have significant progress to show off. William has finished Cashier and has a busy day of tests ahead of him, so he's done his part. Dylan, too, has done his part in implementing the login API. Jack is close to getting the Translate and Map APIs functional, and will have them done by Tuesday night. I am going to wrap up all reading funcitonality for the manager page.
+
+11/15 Sprint Retrospective:
+  what went right and wrong during the previous sprint: Planning went exceptionally well. Everybody knew exactly what they needed to get done by the sprint's completion.
+  what changes (if any) need to be made regarding procedure: Risk assessment needs improvement
+  what adjustments might need to be made to the product backlog: Stretch goals are seasonal items and collapsing identical items in the cashier/customer menu, high contrast mode is a stretch goal. Change text enlarging functionality with a magnifier
