@@ -16,14 +16,19 @@ function Customer() {
   const [showDrinks, setShowDrinks] = useState(true);
   const [loading, setLoad] = useState(true);
 
-  const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name);
-  console.log(custName); // Retrieve the user data)
+  const [orderHist, setHist] = useState([]);
+//const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
+  const custName = "Name1";
 
   useEffect(() => {
     setLoad(true);
     const backendURL = process.env.NODE_ENV === 'production'
       ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
       : 'http://localhost:3001/api/menu';
+    
+    const backendURL3 = process.env.NODE_ENV === 'production'
+    ? 'https://mos-irish-server-901-04.vercel.app/orderHistory'
+    : 'http://localhost:3001/orderHistory';
 
     const getData = async () => {
       try {
@@ -32,6 +37,11 @@ function Customer() {
 
         setEntrees(cloneDeep(res.entrees));
         setDrinks(cloneDeep(res.drinks));
+
+        const response2 = await axios.post(backendURL3, {custName});
+        const res2 = await response2.data;
+
+        console.log(res2);
       } catch (e) {
         console.log(e);
       }

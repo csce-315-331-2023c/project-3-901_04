@@ -61,25 +61,20 @@ app.get('/api/managerMenu', async (req, res) => {
     }
 });
 
-app.get('/api/menu', async (req, res) => {
+app.post('/orderHistory', async (req, res) => {
     try {
-        const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
-        const drinkRes = await pool.query('SELECT drink_name, price FROM drinks');
-
-        const menu = {
-            entrees: entreeRes.rows,
-            drinks: drinkRes.rows
-        };
-
-        console.log("Query successful. Sending json.");
-
-        res.json(menu);
+        const custName = req.body.custName;
+        var drinkQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, drinks.drink_name, drinks.price,  order_timestamp FROM orders JOIN orderdrinkcontents ON orderdrinkcontents.order_id=orders.id JOIN drinks ON drinks.id = orderdrinkcontents.drink_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        const drinkHist = (await pool.query(drinkQuery));
+        var entreeQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, entrees.entree_name, entrees.price,  order_timestamp FROM orders JOIN orderentreecontents ON orderentreecontents.order_id=orders.id JOIN entrees ON entrees.id = orderentreecontents.entree_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;"
+        const entreeHist = (await pool.query(entreeQuery));
+        const orderHist = drinkHist.rows.concat(entreeHist.rows);
+        res.json(orderHist);
     } catch (err) {
         console.error(err);
         res.status(500).send('Query Failure :(');
     }
 });
-
 
 app.get('/api/recipe', async (req, res) => {
 
