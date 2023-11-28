@@ -118,7 +118,7 @@ function Customer() {
           {showEntrees && (
             <div>
               <h2 class="heading">Entrees</h2>
-              {entrees.map((entree) => (
+              {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
                 <Tooltip title={entree.entree_name}>
                 <Button
                   className="itemButton"
@@ -146,7 +146,8 @@ function Customer() {
           {showDrinks && (
             <div>
               <h2 class="heading">Drinks</h2>
-              {drinks.map((drink) => (
+              {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
+                <Tooltip title={drink.drink_name}>
                 <Button
                   className="itemButton"
                   key={drink.drink_name}
@@ -164,6 +165,7 @@ function Customer() {
                 >
                   {getName(drink.drink_name)}
                 </Button>
+                </Tooltip>
               ))}
 
             </div>
