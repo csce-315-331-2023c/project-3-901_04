@@ -1,4 +1,3 @@
-/* global window */
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/AccessibilityWidget.css';
 import TranslateWidget from '../components/TranslateWidget';
@@ -35,7 +34,6 @@ function AccessibilityWidget({ isDarkMode, setIsDarkMode }) {
                             {isDarkMode ? "Light Mode" : "Dark Mode"}
                         </button>
                         <TranslateWidget />
-                        {/* Add more buttons or switches as needed */}
                     </div>
                 </div>
             )}

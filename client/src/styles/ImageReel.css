@@ -1,0 +1,70 @@
+.imageReel {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  .weatherWidget {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #399f6f; /* Set the background color as needed */
+    padding: 5px; /* Set the padding as needed */
+    z-index: 4;
+    border-right: 8px solid #333;
+    border-bottom: 8px solid #333;
+    border-left: none;
+    border-top: 8px solid #333;
+    border-radius: 0 0 20px 0;
+    color: white;
+    transition: transform 0.3s ease-in-out;
+    transform-origin: top left;
+  }
+
+  .weatherWidget:hover {
+    transform: scale(1.5);
+  }
+  
+  .imageContainer {
+    display: flex;
+    transition: transform 2s ease-out;
+  }
+  
+  .imageContainer img {
+    width: 25%;
+    height: auto;
+  }
+
+  .welcomeOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white; /* Adjust text color as needed */
+    font-size: 44px; /* Adjust font size as needed */
+    font-family: arial black, sans-serif;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #333;
+    border-color: white;
+    border-width: 3px;
+  }
+
+  .imageContainer::before,
+  .imageContainer::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 500%;
+    height: 8px; /* Adjust the height of the black borders as needed */
+    background-color: #333;
+  }
+
+  .imageContainer::before {
+    top: 0;
+  }
+
+  .imageContainer::after {
+    bottom: 0;
+  }

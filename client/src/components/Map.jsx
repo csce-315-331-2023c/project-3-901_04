@@ -1,15 +1,21 @@
 // Map.jsx
 import React from 'react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import '../styles/Home.css';
+
 
 class GMap extends React.Component {
   render() {
       const mapStyles = {
-          width: 700,
-          height: 500,
+        width: "39.6vw",
+        height: "44.0vh",
+        position: "inline",
+        border: "3px solid #333",
+        display: "inline"
       };
 
       return (
+        <div class="theMap">
           <Map
               google={this.props.google}
               zoom={16}
@@ -21,6 +27,7 @@ class GMap extends React.Component {
                   title={"Mo's Irish Pub"}
               />
           </Map>
+        </div>
       );
   }
 }

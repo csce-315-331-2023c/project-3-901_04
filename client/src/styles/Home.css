@@ -2,13 +2,51 @@
 
 .home {
     width: 100vw;     
-    height: 100vh;     
+    height: 1000px;     
     display: flex;     
     justify-content: center;
     align-items: center;     
 }
 
-#map {
-    height: 500px;
-    width: 100%;
+.lowerGrid{
+    display: grid;
+    grid-template-columns: 40% 60%;
+    height: 100vh; /* 100% of the viewport height */
+}
+
+.leftPanel{
+    text-align: center;
+}
+
+.rightPanel{
+    background-color: #333;
+    background-image: url('../media/blackmarble.jpg'); /* Replace with the actual path to your image */
+    background-size: cover; /* Ensures the image covers the entire container */
+    background-position: center; /* Center the image within the container */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    color:whitesmoke;
+    display: grid;
+    grid-template-rows: 30% 40%;
+    place-items: center;
+}
+    .aboutMos{
+        margin-bottom: 100px;
+        font-family: "Open Sans" sans-serif;
+        font-size: 34px;
+        text-align: center;
+        margin-right: 30px;
+        margin-left: 30px;
+        color:lightgray;
+    }
+
+.theMap > div {
+   height: 400px;
+}
+
+.moslocationimg {
+    border: 8px solid #333;
+}
+
+.homeContentTitle {
+    font-family: arial black, sans-serif;
 }

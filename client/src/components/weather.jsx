@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/AccessibilityWidget.css';
+import '../styles/Weather.css';
 
 /**
  * This function takes the geological location of Mo's (or the user) and queries the weather for it.
@@ -60,16 +60,20 @@ const Weather = () => {
     }, [coords]);
 
     return (
-        <div>
+        <div class="weatherContainer">
             {(typeof (weather.name) != 'undefined' && weather.name != null) ? (
-                <div>
-                    <p>Location: {weather.name}</p>
-                    <p>Temperature: {Math.round(celToFah(weather.main.temp))}°F/{Math.round(weather.main.temp)}°C</p>
-                    <img src={image} />
-                    <p>Weather: {weather.weather[0].description}</p>
+                <div class="weatherBox">
+                    {/*<p>Location: {weather.name}</p>*/}
+                    <div class="rightPane">
+                        <p>{Math.round(celToFah(weather.main.temp))}°F/{Math.round(weather.main.temp)}°C</p>
+                        <p>{(weather.weather[0].description).charAt(0).toUpperCase() + (weather.weather[0].description).slice(1)}</p>
+                    </div>
+                    <div class="leftPane">
+                        <img src={image} />
+                    </div>
                 </div>
             ) : (
-                <h>loading...</h>
+                <h3>loading...</h3>
             )}
         </div>
     )
