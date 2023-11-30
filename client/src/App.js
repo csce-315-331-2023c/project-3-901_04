@@ -29,6 +29,8 @@ import './App.css';
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  document.title = 'Mo\'s Irish Pub';
+
   useEffect(() => {
     const savedMode = localStorage.getItem('dark-mode');
     if (savedMode) {
