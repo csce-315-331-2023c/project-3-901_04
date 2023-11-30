@@ -1,3 +1,5 @@
+@import url('//translate.google.com/translate_static/css/translateelement.css');
+
 .manager{
     width: 100vw;     
     height: 100vh;     
@@ -5,3 +7,91 @@
     justify-content: center;
     align-items: center;     
 }
+
+.leftGrid{
+    display: 'flex';
+    width: '95%';
+    margin-left: 5px;
+    border: 4px solid forestgreen;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.rightGrid{
+    display: 'flex';
+    width: '100%';
+    margin-right: 50px;
+    border: 4px solid forestgreen;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.scrollView{
+    flex: 1;
+    width: '33%';
+    text-align: center;
+    border: 1px solid black;
+}
+
+.managerMenuButton{
+    display: inline;
+    width: 26vw;
+    background-color: lightgrey;
+}
+
+.managerMenuSwapButton{
+    
+}
+
+.editPane{
+    display: inline;
+}
+
+.editPaneItem{
+    text-align: center;
+}
+
+.displayedValue{
+    color: forestgreen;
+}
+
+
+.managerForm {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    /* background: #f3f3f3; */
+    border-radius: 10px;
+  }
+  
+  .managerForm h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .formField {
+    margin-bottom: 15px;
+  }
+  
+  .formField input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #0056b3;
+  }
+
