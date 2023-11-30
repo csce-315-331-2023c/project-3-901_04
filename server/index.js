@@ -26,11 +26,67 @@ app.get('/', (req, res) => {
 app.get('/api/menu', async (req, res) => {
     try {
         const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
-        const drinkRes = await pool.query('SELECT drink_name, price FROM drinks');
+        const drinkRes = await pool.query('SELECT * FROM drinks');
+
+        let getDraft = [];
+        let getBottled = [];
+        let getWine = [];
+        let getCocktails = [];
+        let getNoAlch = [];
+        let getBrunchDrinks = [];
+
+        drinkRes.rows.forEach(function(drink) {
+            if(drink.alcoholic == true){
+              if(drink.brunch == true){
+                getBrunchDrinks.push([drink.drink_name, drink.price]);
+              }
+              else{
+                if(drink.cocktail == true){
+                  getCocktails.push([drink.drink_name, drink.price]);
+                }
+                else{
+                  if(drink.drink_name.includes('(Bottled)')){
+                    getBottled.push([drink.drink_name.slice(0, drink.drink_name.length - 9), drink.price]);
+                  }
+                  else{
+                    if(drink.drink_name.includes('(Glass)') || drink.drink_name.includes('(Bottle)')){
+                      if(drink.drink_name.includes('(Glass)')){
+                        if(drink.happyhourwine == true){
+                          getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), ("" + drink.price + "*")]);
+                        }
+                        else{
+                          getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), drink.price]);
+                        }
+                      }
+                      else{
+                        getWine.push([drink.drink_name, drink.price]);
+                      }
+                    }
+                    else{
+                      if(drink.happyhourbeer == true){
+                        getDraft.push([drink.drink_name, ("" + drink.price + "*")]);
+                      }
+                      else{
+                        getDraft.push([drink.drink_name, drink.price]);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            else{
+              getNoAlch.push([drink.drink_name, drink.price]);
+            }
+        });
 
         const menu = {
             entrees: entreeRes.rows,
-            drinks: drinkRes.rows
+            draft: getDraft,
+            bottled: getBottled,
+            wine: getWine,
+            cocktails: getCocktails,
+            noAlch: getNoAlch,
+            brunchDrinks: getBrunchDrinks
         };
 
         console.log("menu Query successful. Sending json.");
