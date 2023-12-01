@@ -117,26 +117,6 @@ app.get('/api/managerMenu', async (req, res) => {
     }
 });
 
-app.get('/api/menu', async (req, res) => {
-    try {
-        const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
-        const drinkRes = await pool.query('SELECT drink_name, price FROM drinks');
-
-        const menu = {
-            entrees: entreeRes.rows,
-            drinks: drinkRes.rows
-        };
-
-        console.log("Query successful. Sending json.");
-
-        res.json(menu);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Query Failure :(');
-    }
-});
-
-
 app.get('/api/recipe', async (req, res) => {
 
     const reqItem = req.query.requestedItem;
@@ -350,6 +330,184 @@ app.post('/postid', async (req, res) => {
     }
     res.send("Success!");
 });
+
+//REPORTS --------------------------------------------------------------------
+app.get('/api/productReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.startTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const productReportRes = await pool.query(`
+        SELECT day, SUM(sum) AS total_sum FROM (
+            SELECT
+                date_trunc('day', o_o.order_timestamp) AS day,
+                sum(quantity) AS sum
+            FROM drinkrecipes
+            JOIN drinks ON drinks.id = drinkrecipes.drink_id
+            JOIN inventory ON inventory.id = drinkrecipes.inventory_id
+            JOIN orderdrinkcontents ON orderdrinkcontents.drink_id = drinkrecipes.drink_id
+            JOIN orders AS o_o ON o_o.id = orderdrinkcontents.order_id
+            WHERE o_o.order_timestamp >= '` + startDate + `' AND o_o.order_timestamp < '` + endDate + `'
+            GROUP BY date_trunc('day', o_o.order_timestamp)
+
+            UNION ALL
+
+            SELECT
+                date_trunc('day', o_o.order_timestamp) AS day,
+                sum(quantity) AS sum
+            FROM entreerecipes
+            JOIN entrees AS ent ON ent.id = entreerecipes.entree_id
+            JOIN inventory ON inventory.id = entreerecipes.inventory_id
+            JOIN orderentreecontents ON orderentreecontents.entree_id = entreerecipes.entree_id
+            JOIN orders AS o_o ON o_o.id = orderentreecontents.order_id
+            WHERE o_o.order_timestamp >= '` + startDate + `' AND o_o.order_timestamp < '` + endDate + `'
+            GROUP BY date_trunc('day', o_o.order_timestamp)
+        ) AS combined_sums
+        GROUP BY day
+        ORDER BY day;`);
+        
+        const productReport = {
+            productReport: productReportRes.rows,
+        };
+
+        console.log("Product Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(productReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Product Report Failure :(');
+    }
+});
+
+app.get('/api/salesReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.startTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const salesReportRes = await pool.query(`
+            SELECT drink_name as item_name, COUNT(drink_id) as quantity
+            FROM orderdrinkcontents
+            JOIN drinks ON drinks.id = orderdrinkcontents.drink_id
+            WHERE order_id IN (SELECT id FROM orders WHERE order_timestamp >= '` + startDate + `' AND order_timestamp < '` + endDate + `')
+            GROUP BY drink_id, drink_name
+
+            UNION ALL
+
+            SELECT entree_name as item_name, COUNT(entree_id) as quantity
+            FROM orderentreecontents
+            JOIN entrees ON entrees.id = orderentreecontents.entree_id
+            WHERE order_id IN (SELECT id FROM orders WHERE order_timestamp >= '` + startDate + `' AND order_timestamp < '` + endDate + `')
+            GROUP BY entree_id, entree_name
+
+            ORDER BY
+                item_name ASC;`);
+        
+        const salesReport = {
+            productReport: salesReportRes.rows,
+        };
+
+        console.log("Sales Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(salesReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Sales Report Failure :(');
+    }
+});
+
+app.get('/api/excessReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T'); //Probably need to modify this guy
+        let endDateReq = req.query.startTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const excessReportRes = await pool.query(`
+        
+        `);
+        
+        const excessReport = {
+            productReport: excessReportRes.rows,
+        };
+
+        console.log("Excess Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(excessReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Excess Report Failure :(');
+    }
+});
+
+app.get('/api/restockReport', async (req, res) => {
+    try {
+
+        const restockReportRes = await pool.query(`
+            SELECT item_name, stock FROM inventory WHERE stock <= min_stock_warning
+        `);
+        
+        const restockReport = {
+            productReport: restockReportRes.rows,
+        };
+
+        console.log("Restock Report generated. Sending json.");
+        res.json(restockReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Restock Report Failure :(');
+    }
+});
+
+app.get('/api/WSTReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.startTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const WSTReportRes = await pool.query(`
+        SELECT entrees.entree_name AS entree_name, drinks.drink_name AS drink_name, COUNT(*) AS pair_freq
+        FROM orderentreecontents
+        JOIN orderdrinkcontents ON orderentreecontents.order_id = orderdrinkcontents.order_id
+        JOIN orders ON orderentreecontents.order_id = orders.id
+        JOIN entrees ON orderentreecontents.entree_id = entrees.id
+        JOIN drinks ON orderdrinkcontents.drink_id = drinks.id
+        WHERE orders.order_timestamp >= '` + startDate + `' AND orders.order_timestamp < '` + endDate + `'
+        GROUP BY entrees.entree_name, drinks.drink_name
+        ORDER BY pair_freq DESC
+        LIMIT 10;
+        `);
+        
+        const WSTReport = {
+            productReport: WSTReportRes.rows,
+        };
+
+        console.log("WST Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(WSTReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('WST Report Failure :(');
+    }
+});
+//END OF REPORTS -----------------------------------------------------------
 
 function getTimeDate() {
     const time = new Date();
