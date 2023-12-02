@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Manager.css';
 import Button from '@mui/material/Button';
 import { TextField, Grid } from '@mui/material';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Greeting from '../components/Greeting';
 
 function Manager() {
   
@@ -121,55 +121,65 @@ function Manager() {
 
   const inventoryDataDisplay = () => {
     return (
-      
-      <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <h3>Name: <div className="displayedValue">{displayedInvItemName}</div></h3>
-              <TextField
-              variant="outlined"
-              //value={text}
-              //onChange={handleInputChange}
-              placeholder="Input New Name"
-              >
-              </TextField>
+
+      <div>
+
+        <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
+        
+        <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <h3>Name: <div className="displayedValue">{displayedInvItemName}</div></h3>
+                <TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New Name"
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={6}>
+                <h3>Stock: <div className="displayedValue">{displayedInvItemStock}</div></h3>
+                <TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New Stock"
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={6}>
+                <h3>Cost: <div className="displayedValue">${displayedInvItemCost}</div></h3>
+                <TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New Cost"
+                >
+                </TextField>
+              </Grid>
+              <Grid item xs={6}>
+                <h3>Minimum Stock Warning: <div className="displayedValue">{displayedInvItemMinimum}</div></h3>
+                <TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New MSW"
+                >
+                </TextField>
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <h3>Stock: <div className="displayedValue">{displayedInvItemStock}</div></h3>
-              <TextField
-              variant="outlined"
-              //value={text}
-              //onChange={handleInputChange}
-              placeholder="Input New Stock"
-              >
-              </TextField>
-            </Grid>
-            <Grid item xs={6}>
-              <h3>Cost: <div className="displayedValue">${displayedInvItemCost}</div></h3>
-              <TextField
-              variant="outlined"
-              //value={text}
-              //onChange={handleInputChange}
-              placeholder="Input New Cost"
-              >
-              </TextField>
-            </Grid>
-            <Grid item xs={6}>
-              <h3>Minimum Stock Warning: <div className="displayedValue">{displayedInvItemMinimum}</div></h3>
-              <TextField
-              variant="outlined"
-              //value={text}
-              //onChange={handleInputChange}
-              placeholder="Input New MSW"
-              >
-              </TextField>
-            </Grid>
-          </Grid>
+      </div>
     );
   };
 
   const menuDataDisplay = () => {
     return (
-      <Grid container spacing={2}>
+
+      <div>
+
+        <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
+
+        <Grid container spacing={2}>
             <Grid item xs={6} className="editPaneItem">
               <h3>Name: <div className="displayedValue">{displayedMenuItemName}</div></h3>
               <TextField
@@ -201,6 +211,8 @@ function Manager() {
               </TextField>
             </Grid>
           </Grid>
+
+      </div>
     );
   };
 

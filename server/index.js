@@ -336,7 +336,7 @@ app.get('/api/productReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T');
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -388,7 +388,7 @@ app.get('/api/salesReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T');
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -413,7 +413,7 @@ app.get('/api/salesReport', async (req, res) => {
                 item_name ASC;`);
         
         const salesReport = {
-            productReport: salesReportRes.rows,
+            salesReport: salesReportRes.rows,
         };
 
         console.log("Sales Report generated from " + startDate + " to " + endDate + ". Sending json.");
@@ -427,23 +427,35 @@ app.get('/api/salesReport', async (req, res) => {
 
 app.get('/api/excessReport', async (req, res) => {
     try {
-
+        console.log(req.query.startTime);
         let startDateReq = req.query.startTime.split('T'); //Probably need to modify this guy
-        let endDateReq = req.query.startTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
-        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
-
 
         const excessReportRes = await pool.query(`
+        WITH TotalSales AS (
+            SELECT i.id AS inventory_id, COALESCE(SUM(CASE WHEN o_o.order_timestamp >= '` + startDate + `' THEN COALESCE(r.quantity, d.quantity, 0) ELSE 0 END), 0) AS total_sold
+            FROM inventory i
+            LEFT JOIN entreerecipes r ON i.id = r.inventory_id
+            LEFT JOIN drinkrecipes d ON i.id = d.inventory_id
+            LEFT JOIN orderentreecontents o_e ON r.entree_id = o_e.entree_id
+            LEFT JOIN orderdrinkcontents o_d ON d.drink_id = o_d.drink_id
+            LEFT JOIN orders o_o ON o_e.order_id = o_o.id OR o_d.order_id = o_o.id
+            GROUP BY i.id
+        )
         
+        SELECT
+            i.item_name AS inventory_name, i.stock AS current_stock, COALESCE(s.total_sold, 0) AS total_sold, (i.stock + COALESCE(s.total_sold, 0)) AS initial_stock, (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 AS percent_consumed
+        FROM inventory i
+        LEFT JOIN TotalSales s ON i.id = s.inventory_id
+        WHERE (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 < 10;
         `);
         
         const excessReport = {
-            productReport: excessReportRes.rows,
+            excessReport: excessReportRes.rows,
         };
 
-        console.log("Excess Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        console.log("Excess Report generated from " + startDate + " to today. Sending json.");
         res.json(excessReport);
 
     } catch (err) {
@@ -460,7 +472,7 @@ app.get('/api/restockReport', async (req, res) => {
         `);
         
         const restockReport = {
-            productReport: restockReportRes.rows,
+            restockReport: restockReportRes.rows,
         };
 
         console.log("Restock Report generated. Sending json.");
@@ -476,7 +488,7 @@ app.get('/api/WSTReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T');
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -496,7 +508,7 @@ app.get('/api/WSTReport', async (req, res) => {
         `);
         
         const WSTReport = {
-            productReport: WSTReportRes.rows,
+            WSTReport: WSTReportRes.rows,
         };
 
         console.log("WST Report generated from " + startDate + " to " + endDate + ". Sending json.");
