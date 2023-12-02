@@ -336,7 +336,7 @@ app.get('/api/productReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T');
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -388,7 +388,7 @@ app.get('/api/salesReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T');
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -413,7 +413,7 @@ app.get('/api/salesReport', async (req, res) => {
                 item_name ASC;`);
         
         const salesReport = {
-            productReport: salesReportRes.rows,
+            salesReport: salesReportRes.rows,
         };
 
         console.log("Sales Report generated from " + startDate + " to " + endDate + ". Sending json.");
@@ -429,7 +429,7 @@ app.get('/api/excessReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T'); //Probably need to modify this guy
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -440,7 +440,7 @@ app.get('/api/excessReport', async (req, res) => {
         `);
         
         const excessReport = {
-            productReport: excessReportRes.rows,
+            excessReport: excessReportRes.rows,
         };
 
         console.log("Excess Report generated from " + startDate + " to " + endDate + ". Sending json.");
@@ -460,7 +460,7 @@ app.get('/api/restockReport', async (req, res) => {
         `);
         
         const restockReport = {
-            productReport: restockReportRes.rows,
+            restockReport: restockReportRes.rows,
         };
 
         console.log("Restock Report generated. Sending json.");
@@ -476,7 +476,7 @@ app.get('/api/WSTReport', async (req, res) => {
     try {
 
         let startDateReq = req.query.startTime.split('T');
-        let endDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
         const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
@@ -496,7 +496,7 @@ app.get('/api/WSTReport', async (req, res) => {
         `);
         
         const WSTReport = {
-            productReport: WSTReportRes.rows,
+            WSTReport: WSTReportRes.rows,
         };
 
         console.log("WST Report generated from " + startDate + " to " + endDate + ". Sending json.");

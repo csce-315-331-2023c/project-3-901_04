@@ -15,7 +15,7 @@ function AccessibilityWidget({ isDarkMode, setIsDarkMode }) {
     };
 
     return (
-        <div className>
+        <div>
             <div className="accessibility-widget" onClick={handleWidgetClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ fill: 'white' }} viewBox="0 0 24 24" width="30px" height="30px">
                     <path d="M0 0h24v24H0V0z" fill="none"></path>

@@ -11,6 +11,7 @@ import Manager from './pages/Manager';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import AccessibilityWidget from './components/AccessibilityWidget';
+import ManagerReports from './pages/ManagerReports.jsx';
 
 // Import css for the app
 import './styles/navbar.css';
@@ -55,6 +56,7 @@ function App() {
             <Route path="customer" element={<Customer />} />
             <Route path="cashier" element={<Cashier />} />
             <Route path="manager" element={<Manager />} />
+            <Route path="managerReports" element={<ManagerReports />} />
           </Route>
         </Routes>
         <AccessibilityWidget isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
