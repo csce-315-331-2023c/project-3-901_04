@@ -427,23 +427,35 @@ app.get('/api/salesReport', async (req, res) => {
 
 app.get('/api/excessReport', async (req, res) => {
     try {
-
+        console.log(req.query.startTime);
         let startDateReq = req.query.startTime.split('T'); //Probably need to modify this guy
-        let endDateReq = req.query.endTime.split('T');
 
         const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
-        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
-
 
         const excessReportRes = await pool.query(`
+        WITH TotalSales AS (
+            SELECT i.id AS inventory_id, COALESCE(SUM(CASE WHEN o_o.order_timestamp >= '` + startDate + `' THEN COALESCE(r.quantity, d.quantity, 0) ELSE 0 END), 0) AS total_sold
+            FROM inventory i
+            LEFT JOIN entreerecipes r ON i.id = r.inventory_id
+            LEFT JOIN drinkrecipes d ON i.id = d.inventory_id
+            LEFT JOIN orderentreecontents o_e ON r.entree_id = o_e.entree_id
+            LEFT JOIN orderdrinkcontents o_d ON d.drink_id = o_d.drink_id
+            LEFT JOIN orders o_o ON o_e.order_id = o_o.id OR o_d.order_id = o_o.id
+            GROUP BY i.id
+        )
         
+        SELECT
+            i.item_name AS inventory_name, i.stock AS current_stock, COALESCE(s.total_sold, 0) AS total_sold, (i.stock + COALESCE(s.total_sold, 0)) AS initial_stock, (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 AS percent_consumed
+        FROM inventory i
+        LEFT JOIN TotalSales s ON i.id = s.inventory_id
+        WHERE (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 < 10;
         `);
         
         const excessReport = {
             excessReport: excessReportRes.rows,
         };
 
-        console.log("Excess Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        console.log("Excess Report generated from " + startDate + " to today. Sending json.");
         res.json(excessReport);
 
     } catch (err) {

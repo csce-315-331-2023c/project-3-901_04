@@ -110,13 +110,13 @@ function ManagerReports() {
           try {
             const reportQuery = await axios.get(backendURL, {
               params: {
-                endTime: endDate
+                startTime: startDate
               },
             });
 
             setExcessReport(reportQuery.data.excessReport);
             console.log(reportQuery.data.excessReport);
-            console.log("Excess Report from today to " + endDate + " successful.");
+            console.log("Excess Report from today to " + startDate + " successful.");
     
           } catch (error) {
             console.error('Report error', error);
@@ -242,7 +242,7 @@ function ManagerReports() {
                             <tbody>
                                 {productReport.map((row) => (
                                 <tr key={row.day}>
-                                    <td>{row.day}</td>
+                                    <td>{(row.day).split('T')[0]}</td>
                                     <td>{Math.round(row.total_sum * 100, 2) / 100}</td>
                                 </tr>
                                 ))}
@@ -268,25 +268,24 @@ function ManagerReports() {
                         </table>
                     }
                     {!displayProductReport && !displaySalesReport && displayExcessReport && !displayRestockReport && !displayWSTReport && //DISPLAY EXCESS REPORT
-                        /*
+                        
                         <table>
                             <thead>
                                 <tr>
-                                <th>Day</th>
-                                <th>Total Product</th>
+                                <th>Inventory Item</th>
+                                <th>Percentage Consumed</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {productReport.map((row) => (
+                                {excessReport.map((row) => (
                                 <tr key={row.day}>
-                                    <td>{row.day}</td>
-                                    <td>{Math.round(row.total_sum * 100, 2) / 100}</td>
+                                    <td>{row.inventory_name}</td>
+                                    <td>{Math.round(row.percent_consumed * 100, 2) / 100}</td>
                                 </tr>
                                 ))}
                             </tbody>
                         </table>
-                        */
-                       <p className='managerReportsPar'>Pardon our mess. This report is under construction.</p>
+
                     }
                     {!displayProductReport && !displaySalesReport && !displayExcessReport && displayRestockReport && !displayWSTReport && //DISPLAY RESTOCK REPORT
                         <table>
