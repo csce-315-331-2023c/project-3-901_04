@@ -48,6 +48,7 @@
     border: 4px solid #399f6f;
     overflow: auto;
     justify-content: center;
+    overflow-x: hidden;
 }
     .selectAReport{
         font-size: 26px;
@@ -59,6 +60,17 @@
 
     th, td {
 
+    }
+
+    tr td{
+        transition: 0.14s ease-in-out;
+        transform-origin: left;
+        overflow: hidden;
+    }
+
+    tr td:hover {
+        font-size: 32px;
+        overflow: hidden;
     }
 
     tr:nth-child(even) {
