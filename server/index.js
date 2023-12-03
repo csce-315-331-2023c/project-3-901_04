@@ -81,6 +81,7 @@ app.get('/api/menu', async (req, res) => {
 
         const menu = {
             entrees: entreeRes.rows,
+            drinks: drinkRes.rows,
             draft: getDraft,
             bottled: getBottled,
             wine: getWine,
