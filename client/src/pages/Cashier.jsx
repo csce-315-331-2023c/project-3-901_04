@@ -59,14 +59,19 @@ function Cashier() {
   };
 
   async function placeOrder(e) {
-    const backendURL2 = process.env.NODE_ENV === 'production'
-    ? 'https://mos-irish-server-901-04.vercel.app/postid'
-    : 'http://localhost:3001/postid';
-    try {
-        const response = await axios.post(backendURL2, {order, orderPrices, custName});
-        console.log(response.data);
-    } catch (error) {
-        console.error('Order error', error);
+    if(order.length){
+      const backendURL2 = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/postid'
+      : 'http://localhost:3001/postid';
+      try {
+          const response = await axios.post(backendURL2, {order, orderPrices, custName});
+          console.log(response.data);
+      } catch (error) {
+          console.error('Order error', error);
+      }
+    }
+    else{
+      console.log("Order is empty. No order placed.");
     }
   }
 

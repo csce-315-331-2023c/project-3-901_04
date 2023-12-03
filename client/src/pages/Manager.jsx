@@ -125,6 +125,7 @@ function Manager() {
       <div>
 
         <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
+        <div class='ordersLink'><Link to="/managerOrders"><b>Order History</b></Link></div>
         
         <Grid container spacing={2}>
               <Grid item xs={6}>

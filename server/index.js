@@ -234,7 +234,6 @@ app.post('/postid', async (req, res) => {
     catch (err) {
         console.error(err);
     }
-
     //Sort the array of all ids into positive and negative ids (for entrees and drinks)
     entreearr = []
     drinkarr = []
@@ -245,91 +244,115 @@ app.post('/postid', async (req, res) => {
         else {
             drinkarr.push(id);
         }
-    })
-
+    });
     //Make the new order TODO employee id
     try {
         var highestOrderId = await pool.query("SELECT id FROM orders ORDER BY id DESC LIMIT 1;");
-        pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');");
-    }
-    catch (er) {
-        console.log(er);
-    }
+        console.log("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
+        pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
+            .then( async result => {//Prevent race condition
+                //Insert into orderentreecontents
+                if(entreearr.length){
+                    var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
+                    try {
+                        for (var i = 0; i < entreearr.length; i ++) {
+                            if (i != 0) {
+                                orderEntreeString = orderEntreeString + ",";
+                            }
+                            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
+                        }
+                        orderEntreeString = orderEntreeString + ";";
+                        //console.log(orderEntreeString);
+                        pool.query(orderEntreeString);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+                //Insert into orderdrinkcontents
+                if(drinkarr.length){
+                    var orderDrinkString = "INSERT INTO orderdrinkcontents (order_id, drink_id) VALUES";
+                    try {
+                        for (var i = 0; i < drinkarr.length; i ++) {
+                            if (i != 0) {
+                                orderDrinkString = orderDrinkString + ",";
+                            }
+                            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] +")";
+                        }
+                        orderDrinkString = orderDrinkString + ";";
+                        console.log(orderDrinkString);
+                        pool.query(orderDrinkString);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+                //Get recipe of each drink/entree
+                var getEntreeInventory = "SELECT DISTINCT entree_name, item_name, quantity FROM entreerecipes JOIN entrees ON entrees.id = entreerecipes.entree_id JOIN inventory ON inventory.id = entreerecipes.inventory_id WHERE entree_id in (";
+                var getDrinkInventory = "SELECT DISTINCT drink_name, item_name, quantity FROM drinkrecipes JOIN drinks ON drinks.id = drinkrecipes.drink_id JOIN inventory ON inventory.id = drinkrecipes.inventory_id WHERE drink_id in (";
+                var allInventory;
+                console.log("A");
+                try {
+                    let entreeInventoryQuantities = [];
+                    let drinkInventoryQuantities = [];
+                    if(entreearr.length != 0){
+                        for (var i = 0; i < entreearr.length; i ++) {
+                            if (i != 0) {
+                                getEntreeInventory = getEntreeInventory + ",";
+                            }
+                            getEntreeInventory = getEntreeInventory + parseInt(entreearr[i]);
+                        }
+                        getEntreeInventory = getEntreeInventory + ");";
+                        //console.log(getEntreeInventory);
+                        entreeInventoryQuantities = await pool.query(getEntreeInventory);
+                    }
+                    //res.send(JSON.stringify((entreeInventoryQuantities).rows[0].quantity));
 
-    //Insert into orderentreecontents
-    var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
-    try {
-        for (var i = 0; i < entreearr.length; i ++) {
-            if (i != 0) {
-                orderEntreeString = orderEntreeString + ",";
-            }
-            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
-        }
-        orderEntreeString = orderEntreeString + ";";
-        pool.query(orderEntreeString);
-    }
-    catch (e) {
-        console.log(e);
-    }
-
-    //Insert into orderdrinkcontents
-    var orderDrinkString = "INSERT INTO orderdrinkcontents (order_id, drink_id) VALUES";
-    try {
-        for (var i = 0; i < drinkarr.length; i ++) {
-            if (i != 0) {
-                orderDrinkString = orderDrinkString + ",";
-            }
-            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] +")";
-        }
-        orderDrinkString = orderDrinkString + ";";
-        pool.query(orderDrinkString);
-    }
-    catch (e) {
-        console.log(e);
-    }
-
-    //Get recipe of each drink/entree
-    var getEntreeInventory = "SELECT DISTINCT entree_name, item_name, quantity FROM entreerecipes JOIN entrees ON entrees.id = entreerecipes.entree_id JOIN inventory ON inventory.id = entreerecipes.inventory_id WHERE entree_id in (";
-    var getDrinkInventory = "SELECT DISTINCT drink_name, item_name, quantity FROM drinkrecipes JOIN drinks ON drinks.id = drinkrecipes.drink_id JOIN inventory ON inventory.id = drinkrecipes.inventory_id WHERE drink_id in (";
-    var allInventory;
-    try {
-        for (var i = 0; i < entreearr.length; i ++) {
-            if (i != 0) {
-                getEntreeInventory = getEntreeInventory + ",";
-            }
-            getEntreeInventory = getEntreeInventory + parseInt(entreearr[i]);
-        }
-        getEntreeInventory = getEntreeInventory + ");"
-        const entreeInventoryQuantities = await pool.query(getEntreeInventory);
-        //res.send(JSON.stringify((entreeInventoryQuantities).rows[0].quantity));
-
-        for (var i = 0; i < drinkarr.length; i ++) {
-            if (i != 0) {
-                getDrinkInventory = getDrinkInventory + ",";
-            }
-            getDrinkInventory = getDrinkInventory + parseInt(drinkarr[i]);
-        }
-        getDrinkInventory = getDrinkInventory + ");"
-        const drinkInventoryQuantities = await pool.query(getDrinkInventory);
-        allInventory = Object.assign({}, entreeInventoryQuantities.rows, drinkInventoryQuantities.rows);
-    }
-    catch (errr) {
-        console.log(errr);
-    }
-
-    //Subtract inventory based on recipes
-    var updateInventory;
-    var allInventoryLen = parseInt(JSON.stringify(Object.keys(allInventory).length));
-    try {
-        for (var i = 0; i < allInventoryLen; i++) {
-            updateInventory = "UPDATE inventory SET stock = CASE item_name WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity) + " ELSE 0 END WHERE inventory.item_name in (" + "'" + allInventory[i].item_name + "'" + ");";
-            pool.query(updateInventory);
-        }
-    }
-    catch (erm) {
-        console.log(erm);
-    }
-    res.send("Success!");
+                    if(drinkarr.length != 0){
+                        for (var i = 0; i < drinkarr.length; i ++) {
+                            if (i != 0) {
+                                getDrinkInventory = getDrinkInventory + ",";
+                            }
+                            getDrinkInventory = getDrinkInventory + parseInt(drinkarr[i]);
+                        }
+                        getDrinkInventory = getDrinkInventory + ");";
+                        //console.log(getDrinkInventory);
+                        drinkInventoryQuantities = await pool.query(getDrinkInventory);
+                    }
+                    if(entreearr.length == 0){
+                        allInventory = Object.assign({}, drinkInventoryQuantities.rows);
+                    }
+                    else if(drinkarr.length == 0){
+                        allInventory = Object.assign({}, entreeInventoryQuantities.rows);
+                    }
+                    else{
+                        allInventory = Object.assign({}, entreeInventoryQuantities.rows, drinkInventoryQuantities.rows);
+                    }
+                }
+                catch (errr) {
+                    console.log(errr);
+                }
+                console.log("B");
+                //Subtract inventory based on recipes
+                var updateInventory;
+                var allInventoryLen = parseInt(JSON.stringify(Object.keys(allInventory).length));
+                try {
+                    for (var i = 0; i < allInventoryLen; i++) {
+                        updateInventory = "UPDATE inventory SET stock = CASE item_name WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity) + " ELSE 0 END WHERE inventory.item_name in (" + "'" + allInventory[i].item_name + "'" + ");";
+                        console.log(updateInventory);
+                        pool.query(updateInventory);
+                    }
+                }
+                catch (erm) {
+                    console.log(erm);
+                }
+                console.log("Order was taken successfully. All tables updated.");
+                res.send("Success!");
+                        });
+                }
+                catch (er) {
+                    console.log(er);
+                }
 });
 
 //REPORTS --------------------------------------------------------------------
@@ -521,6 +544,76 @@ app.get('/api/WSTReport', async (req, res) => {
     }
 });
 //END OF REPORTS -----------------------------------------------------------
+
+//MANAGER ORDER VIEWER -----------------------------------------------------
+app.get('/api/managerOrders', async (req, res) => {
+    try{
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+        const ordersRes = await pool.query(`
+            SELECT * FROM ORDERS WHERE order_timestamp >= '` + startDate + `' AND order_timestamp < '` + endDate + `';
+            `);
+
+        const orders = {
+            orders: ordersRes.rows,
+        };
+
+        console.log("Orders from " + startDate + " to " + endDate + " fetched for manager. Sending json.");
+        res.json(orders);
+    }
+    catch{
+        console.error(err);
+        res.status(500).send('Manager Orders Failure :(');
+    }
+});
+
+app.get('/api/orderContents', async (req, res) => {
+    try{
+        let id = req.query.id;
+
+        const orderMetaData = await pool.query(`
+            SELECT orders.*, employees.name AS employee_name
+            FROM orders
+            JOIN employees ON orders.employee_id = employees.id
+            WHERE orders.id = ` + id + `;
+        `);
+        const orderContents = await pool.query(`
+            SELECT order_id, entree_name AS item_name, COUNT(*) AS item_count
+            FROM orderentreecontents 
+            JOIN entrees ON entrees.id = orderentreecontents.entree_id
+            JOIN orders ON orders.id = orderentreecontents.order_id
+            WHERE order_id = ` + id + `
+            GROUP BY order_id, entree_name
+            
+            UNION ALL
+            
+            SELECT order_id, drink_name AS item_name, COUNT(*) AS item_count
+            FROM orderdrinkcontents 
+            JOIN drinks ON drinks.id = orderdrinkcontents.drink_id
+            JOIN orders ON orders.id = orderdrinkcontents.order_id
+            WHERE order_id = ` + id + `
+            GROUP BY order_id, drink_name;
+        `);
+
+        const orderData = {
+            orderMetaData: orderMetaData.rows,
+            orderContents: orderContents.rows
+        };
+
+        console.log("Order Data retrieved for order #" + id + ". Sending json.");
+        res.json(orderData);
+
+    }
+    catch{
+        console.error(err);
+        res.status(500).send('Orders Contents Failure :(');
+    }
+});
+//END OF MANAGER ORDER VIEWER ----------------------------------------------
 
 function getTimeDate() {
     const time = new Date();

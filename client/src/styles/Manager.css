@@ -24,9 +24,33 @@
     
 }
 
+.ordersLink a {
+    color: #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 200px;
+    position: absolute;
+    top: 10%;
+    right: 20%;
+    padding: 10px;
+    background-color: #399f6f;
+    transition: background-color 0.3s ease;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.ordersLink a:hover {
+    background-color: #69c99c;
+    
+}
+
 .manager{
     width: auto;     
-    height: 100vh;     
+    height: 100vh; 
     display: flex;     
     justify-content: center;
     align-items: center;     

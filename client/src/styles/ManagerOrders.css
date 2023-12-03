@@ -1,14 +1,15 @@
 @import url('//translate.google.com/translate_static/css/translateelement.css');
 
-.managerReports{
+.managerOrders{
     width: auto;
     height: 90vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 0px;
 }
 
-.MRleftPanel {
+.MOleftPanel {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -39,13 +40,52 @@
     width: 16vw;
 }
 
-.MRrightPanel {
+.MOcenterPanel {
     display: flex;
-    width: 80%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center top;
+    width: 30%;
     height: 70%;
-    margin-right: 40px;
-    background-color: '#f0f0f0';
     border: 4px solid #399f6f;
+    overflow: auto;
+    border-right: 0px;
+}
+
+.MOrightPanel-Container{
+    display: grid;
+    grid-template-rows: 15% 85%; /* Two rows, first is 100px, second is 200px */
+    grid-template-columns: 1fr;
+    margin-right: 40px;
+    width: 50%;
+    height: 70%;
+    
+    border: 4px solid #399f6f;
+    /*
+    overflow: auto;
+    justify-content: center;
+    overflow-x: hidden;
+    */
+}
+
+.MOrightPanel-top{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    justify-content: center;
+    border: 4px solid #399f6f;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    overflow-x: hidden;
+}
+
+.MOrightPanel-bottom{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    
     overflow: auto;
     justify-content: center;
     overflow-x: hidden;
@@ -77,6 +117,23 @@
         background-color: #f2f2f2; /* Light gray background for even rows */
     }
 
+    .metaDataItem{
+        text-align: center;
+    }
+
+.MObottomPanel{
+    width: auto;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    border: 4px solid #399f6f;
+    border-top: 0px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
 .reportsLink a {
     color: #ddd;
     border-radius: 6px;
@@ -99,3 +156,4 @@
 .reportsLink a:hover {
     background-color: #69c99c;
 }
+
