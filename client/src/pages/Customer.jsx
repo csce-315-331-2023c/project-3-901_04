@@ -61,7 +61,12 @@ function Customer() {
         setEntrees((res.entrees));
         setDrinks((res.drinks));
 
-        const response2 = await axios.post(backendURL3, {custName});
+        const response2 = await axios.get(backendURL3, {
+          params: {
+            custName: custName
+          }
+        });
+        
         const res2 = await response2.data;
         setHist(res2.main.rows);
         setInst(res2.details);
