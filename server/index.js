@@ -118,6 +118,31 @@ app.get('/api/managerMenu', async (req, res) => {
     }
 });
 
+app.get('/orderHistory', async (req, res) => {
+    try {
+        const custName = req.query.custName;
+        /*var drinkQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, drinks.drink_name, drinks.price,  order_timestamp FROM orders JOIN orderdrinkcontents ON orderdrinkcontents.order_id=orders.id JOIN drinks ON drinks.id = orderdrinkcontents.drink_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        const drinkHist = (await pool.query(drinkQuery));
+        var entreeQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, entrees.entree_name, entrees.price,  order_timestamp FROM orders JOIN orderentreecontents ON orderentreecontents.order_id=orders.id JOIN entrees ON entrees.id = orderentreecontents.entree_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;"
+        const entreeHist = (await pool.query(entreeQuery));
+        const orderHist = drinkHist.rows.concat(entreeHist.rows);*/
+
+        var orderQuery = "SELECT DISTINCT orders.id, orders.price_total, order_timestamp FROM orders WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        var orderDrinkQuery = "SELECT DISTINCT orders.id, drinks.drink_name, drinks.price FROM orders JOIN orderdrinkcontents ON orderdrinkcontents.order_id=orders.id JOIN drinks ON drinks.id = orderdrinkcontents.drink_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        var orderEntreeQuery = "SELECT DISTINCT orders.id, entrees.entree_name, entrees.price FROM orders JOIN orderentreecontents ON orderentreecontents.order_id=orders.id JOIN entrees ON entrees.id = orderentreecontents.entree_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        const mainHist = await pool.query(orderQuery);
+
+        const drinkHist = await pool.query(orderDrinkQuery);
+        const entreeHist = await pool.query(orderEntreeQuery);
+        const orderHist = drinkHist.rows.concat(entreeHist.rows);
+
+        res.json({main: mainHist, details: orderHist});
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Query Failure :(');
+    }
+});
+
 app.delete('/api/deleteMenuItem', async (req, res) => {
     const deleteMe = req.query.itemToDelete;
     try{
@@ -190,6 +215,7 @@ app.delete('/api/deleteInvItem', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete inventory item ' + deleteMe });
     }
 });
+
 
 app.get('/api/recipe', async (req, res) => {
 
@@ -290,6 +316,8 @@ app.post('/postid', async (req, res) => {
     const orders = req.body['order'];
     const orderPrices = req.body['orderPrices'];
     const custName = req.body['custName'];
+    const employeeName = req.body['namePass'];
+    const employeeId = await pool.query("SELECT id FROM employees WHERE name = '" + employeeName + "';");
     var count = 0;
     var idarr = [];
     //Gets the ids of items
@@ -321,8 +349,8 @@ app.post('/postid', async (req, res) => {
     //Make the new order TODO employee id
     try {
         var highestOrderId = await pool.query("SELECT id FROM orders ORDER BY id DESC LIMIT 1;");
-        console.log("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
-        pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
+        console.log("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + parseInt(employeeId.rows[0].id) + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
+        pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + parseInt(employeeId.rows[0].id) + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
             .then( async result => {//Prevent race condition
                 //Insert into orderentreecontents
                 if(entreearr.length){

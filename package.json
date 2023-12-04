@@ -1,6 +1,11 @@
 {
   "dependencies": {
+    "@mui/icons-material": "^5.14.19",
     "axios": "^1.6.0",
-    "mongoose": "^8.0.0"
+    "google-maps-react": "^2.0.6",
+    "lodash.clonedeep": "^4.5.0",
+    "mongoose": "^8.0.0",
+    "react-cookie-consent": "^9.0.0",
+    "react-helmet": "^6.1.0"
   }
 }
