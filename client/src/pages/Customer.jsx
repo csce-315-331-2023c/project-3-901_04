@@ -40,8 +40,8 @@ function Customer() {
   //const orderInst = new FormData();
   //var orderInst = [];
   const [popup, setPop] = useState(false);
-//const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
-  const custName = "Name1";
+  const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
+  //const custName = "Name1";
   console.log(JSON.stringify(JSON.parse(localStorage.getItem('user'))));
 
   useEffect(() => {
@@ -334,6 +334,8 @@ function Customer() {
                     border: '1px solid #c8e6c9',
                     backgroundColor: '#a5d6a7',
                     color: '#0a3a0a',
+                    borderRadius: 2,
+                    padding: '30px 0px',
                     '&:hover': {
                       backgroundColor: '#81c784',
                     },
