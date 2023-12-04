@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Manager.css';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import { TextField, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -14,6 +18,7 @@ function Manager() {
   const [displayedRecipe, setDisplayedRecipe] = useState([]);
 
   const [activeGrid, setActiveGrid] = useState(2);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [menuItemName, setMenuItemName] = useState('Select a Menu Item');
   const [displayedMenuItemName, setDisplayedMenuItemName] = useState();
@@ -41,6 +46,11 @@ function Manager() {
   const [showingMenu, setShowingMenu] = useState(true);
 
   useEffect(() => {
+    fetchMenu();
+    handleViewToggle()
+  }, []);
+
+  function fetchMenu(){
     const backendURL = process.env.NODE_ENV === 'production'
       ? 'https://mos-irish-server-901-04.vercel.app/api/managerMenu'
       : 'http://localhost:3001/api/managerMenu';
@@ -49,13 +59,12 @@ function Manager() {
       .then(data => {
         setDBItems(data);
         setActiveView(DBItems.menuItems);
-        console.log(data);
+        //console.log(data);
       });
-      handleViewToggle();
-  }, []);
+  }
 
   useEffect(() => {
-    console.log('Updated menuItemRecipe:', menuItemRecipe);
+    //console.log('Updated menuItemRecipe:', menuItemRecipe);
 
     const updatedDisplay = menuItemRecipe.map((item) => ({
       name: item.item_name,
@@ -67,6 +76,7 @@ function Manager() {
   }, [menuItemRecipe]);
 
   useEffect(() => {
+    /*
     console.log("Updated menuItemName: ", menuItemName);
     console.log("Updated menuItemPrice: ", menuItemPrice);
     console.log("Updated menuItemTogo: ", menuItemTogo);
@@ -74,6 +84,7 @@ function Manager() {
     console.log("Updated invItemStock: ", invItemStock);
     console.log("Updated invItemCost: ", invItemCost);
     console.log("Updated invItemMinimum: ", invItemMinimum);
+    */
 
     setDisplayedMenuItemName(menuItemName);
     setDisplayedMenuItemPrice(menuItemPrice);
@@ -91,7 +102,6 @@ function Manager() {
   }, [menuItemName, menuItemPrice, menuItemTogo, invItemName, invItemStock, invItemCost, invItemMinimum]);
 
   function handleItemButtonClick(buttonText) {
-    console.log('Button clicked: ', buttonText);
     const backendURL2 = process.env.NODE_ENV === 'production'
     ? 'https://mos-irish-server-901-04.vercel.app/api/recipe'
     : 'http://localhost:3001/api/recipe';
@@ -118,6 +128,57 @@ function Manager() {
     };
     fetchRecipeData();
   }  
+
+  function handleDeleteInvItem(itemToDelete) {
+    const deleteInvItem = async (itemToDelete) => {
+      const backendURL2 = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/deleteInvItem'
+        : 'http://localhost:3001/api/deleteInvItem';
+
+      try {
+        const deleteRes = await axios.delete(backendURL2, {
+          params: {
+            itemToDelete: itemToDelete,
+          },
+        });
+
+        console.log(deleteRes.data);
+
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
+
+    };
+    deleteInvItem(itemToDelete);
+    setDeleteDialogOpen(false);
+    window.location.reload();
+  }
+    
+  function handleDeleteMenuItem(itemToDelete) {
+    const deleteMenuItem = async (itemToDelete) => {
+      const backendURL2 = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/deleteMenuItem'
+      : 'http://localhost:3001/api/deleteMenuItem';
+
+      try {
+        const deleteRes = await axios.delete(backendURL2, {
+          params: {
+            itemToDelete: itemToDelete,
+          },
+        });
+
+        console.log(deleteRes.data);
+        
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
+
+    };
+    deleteMenuItem(itemToDelete);
+    setDeleteDialogOpen(false);
+    window.location.reload();
+  }
+    
 
   const inventoryDataDisplay = () => {
     return (
@@ -179,6 +240,7 @@ function Manager() {
       <div>
 
         <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
+        <div class='ordersLink'><Link to="/managerOrders"><b>Order History</b></Link></div>
 
         <Grid container spacing={2}>
             <Grid item xs={6} className="editPaneItem">
@@ -254,8 +316,6 @@ function Manager() {
       
     );
   };
-
-  console.log("showingMenu: ", showingMenu);
   if(showingMenu){
     return (
       <div className='manager'>
@@ -272,6 +332,29 @@ function Manager() {
                 <ManagerNavButtons items={activeView}/>
               </div>
             </div>
+            <div className='managerDeleteButton-Container'>
+              <Button onClick={() => {
+                if(displayedMenuItemName !== "Select a Menu Item"){
+                  setDeleteDialogOpen(true)} 
+                }}
+                style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className="managerDeleteButton">
+                {displayedMenuItemName === 'Select a Menu Item' ? 'Select an Item' : 'Delete'}
+              </Button>
+                <Dialog open={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                  <DialogTitle>Confirmation</DialogTitle>
+                  <DialogContent>
+                    Are you sure you want to delete {displayedMenuItemName}?
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+                      Cancel
+                    </Button>
+                    <Button onClick={() => handleDeleteMenuItem(displayedMenuItemName)} style={{"color": "red"}}>
+                      Confirm Delete
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+            </div>
           </Grid>
           
           <Grid item xs={5.4}>
@@ -282,7 +365,7 @@ function Manager() {
             <div className='rightGrid'>
               <div>
                 <div>
-                  <h1>Recipe</h1>
+                  <h1 className='recipeTitle'>Recipe</h1>
                 </div>
                 <div className="scrollView" style={{ height: '600px', overflowY: 'scroll' }}>
                   <div>
@@ -297,9 +380,7 @@ function Manager() {
               </div>
             </div>
           </Grid>
-
         </Grid>
-
       </div>
     )
   }
@@ -318,6 +399,29 @@ function Manager() {
                 </div>
                 <ManagerNavButtons  items={activeView}/>
               </div>
+            </div>
+            <div className='managerDeleteButton-Container'>
+              <Button onClick={() => {
+                  if(displayedInvItemName !== "Select an Inventory Item"){
+                    setDeleteDialogOpen(true)} 
+                  }}
+                  style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className="managerDeleteButton">
+                  {displayedInvItemName === "Select an Inventory Item" ? 'Select an Item' : 'Delete'}
+                </Button>
+                  <Dialog open={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                    <DialogTitle>Confirmation</DialogTitle>
+                    <DialogContent>
+                      Are you sure you want to delete {displayedInvItemName}?
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+                        Cancel
+                      </Button>
+                      <Button onClick={() => handleDeleteInvItem(displayedInvItemName)} style={{"color": "red"}}>
+                        Confirm Delete
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
             </div>
           </Grid>
           
