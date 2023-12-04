@@ -42,7 +42,6 @@ function Customer() {
   const [popup, setPop] = useState(false);
   const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
   //const custName = "Name1";
-  console.log(JSON.stringify(JSON.parse(localStorage.getItem('user'))));
 
   useEffect(() => {
     setLoad(true);
@@ -95,12 +94,12 @@ function Customer() {
     setOrderPrices([]);
   };
 
-  const handleReorder = (orderId) => {
-    //console.log(orderInst[0].id);
-    /*orderInst && orderInst.filter(val => val.id == orderId).map((item) => (
-      handleAddItem(item.entree_name || item.drink_name, item.price)
-    ))*/
-  };
+  function reorder(id) {
+    handleClearOrder();
+    orderInst && orderInst.filter(val => val.id == id).map((item) => (
+      handleAddItem(item.drink_name || item.entree_name, item.price)
+    ))
+  }
 
   const handleOpen = () => setPop(true);
   const handleClose = () => setPop(false); 
@@ -193,18 +192,16 @@ function Customer() {
       <React.Fragment>
         <TableRow sx={{ '& > *': { borderBottom: 'unset', borderTop: 'unset' } }}>
           <TableCell>
-            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+            <IconButton size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon/>}
             </IconButton>
           </TableCell>
 
           <TableCell>
-            {<Button onClick={handleReorder(props.od.id)}>Order</Button>}
+            <Button variant='text' onClick={() => reorder(props.od.id)}>Order</Button>
           </TableCell>
           
-          <TableCell>
-            {props.od.id}
-          </TableCell>
+          <TableCell>{props.od.id}</TableCell>
           <TableCell>{getDateFromTimestamp(props.od.order_timestamp)}</TableCell>
           <TableCell>{props.od.price_total}</TableCell>
         </TableRow>
@@ -213,7 +210,7 @@ function Customer() {
           <TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{margin:1}}>
-                <Typography variant="h6" gutterBottom component="div">
+                <Typography variant="h6" gutterBottom>
                   Order Details
                 </Typography>
                 <Table size="small">
