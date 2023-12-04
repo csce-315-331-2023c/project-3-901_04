@@ -9,6 +9,19 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {styled} from '@mui/material/styles';
 import { tooltipClasses } from '@mui/material/Tooltip';
+import Collapse from '@mui/material/Collapse';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+//import downarrow from '../media/down-arrow-svgrepo-com.svg';
+//import uparrow from '../media/up-arrow-svgrepo-com.svg';
 //import 'java.util.Dictionary';
 
 function Customer() {
@@ -25,18 +38,17 @@ function Customer() {
   const [orderHist, setHist] = useState([]);
   //for each order's items
   const [orderInst, setInst] = useState([]);
+  //const orderInst = new FormData();
+  //var orderInst = [];
   const [popup, setPop] = useState(false);
 //const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
   const custName = "Name1";
+  console.log(JSON.stringify(JSON.parse(localStorage.getItem('user'))));
 
 
   var uniqueId = [];
   //filtered array with all details of a single order ID
   var tempArr = [];
-  //filtered array with only ID, timestamp, price_total
-  var IdDetailsArr = [];
-  //filtered array with only menu item, price
-  var IndvDetailsArr = [];
 
   useEffect(() => {
     setLoad(true);
@@ -63,6 +75,10 @@ function Customer() {
         //takes data and combines multiple items of a single order into one order.
         res2.map((current) => {
           //if this is a new order
+          //filtered array with only ID, timestamp, price_total
+          var IdDetailsArr = [];
+          //filtered array with only menu item, price
+          var IndvDetailsArr = [];
           if(!uniqueId.includes(current.id)) {
             //gets all items ordered with same id
             tempArr = cloneDeep(res2.filter((val) => val.id == current.id));
@@ -80,23 +96,20 @@ function Customer() {
 
             IndvDetailsArr.map((currentIndvDetail) => {
               delete currentIndvDetail['customer_name'];
-              delete currentIndvDetail['id'];
+              //delete currentIndvDetail['id'];
               delete currentIndvDetail['order_timestamp'];
               delete currentIndvDetail['price_total'];
             })
 
             console.log(IndvDetailsArr);
             console.log(IdDetailsArr);
-
             uniqueId.push(current.id);
             setHist(orderHist => [...orderHist, cloneDeep(IdDetailsArr)]);
-            setInst([...orderInst, cloneDeep(IndvDetailsArr)]);
-            console.log(orderHist);
+            //setInst({orderInst: [...orderInst, cloneDeep(IndvDetailsArr)]});
+            setInst(orderInst => ([...orderInst, IndvDetailsArr]));
           }
         });
         console.log(res2);
-        console.log(orderHist);
-        console.log(orderInst);
       } catch (e) {
         console.log(e);
       }
@@ -180,12 +193,22 @@ function Customer() {
   }
 
   function getDateFromTimestamp(tstamp) {
-    return JSON.parse(JSON.stringify(tstamp)).split('T')[0];
+    return (JSON.parse(JSON.stringify(tstamp)).split('T')[0] + " " + JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0]);
   }
 
-  //TODO
-  function checkHappyHour() {
-    return true;
+  function getTimeFromTimestamp(tstamp) {
+    var timeStr = JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0];
+    //console.log(timeStr);
+    return parseInt(timeStr.split(':')[0]);
+  }
+
+  
+  function checkHappyHour(time) {
+    var timeInt = getTimeFromTimestamp(time);
+    if (timeInt >= 15 && timeInt < 18) {
+      return true;
+    }
+    return false;
   }
 
   const style = {
@@ -226,6 +249,65 @@ function Customer() {
     },
   }));
 
+  function Row(props) {
+    const [open, setOpen] = useState(false);
+    console.log(orderHist);
+    console.log(orderInst);
+    console.log(props.index);
+    console.log(getTimeFromTimestamp(orderHist[0].order_timestamp));
+    return (
+      <React.Fragment>
+        <TableRow sx={{ '& > *': { borderBottom: 'unset', borderTop: 'unset' } }}>
+          <TableCell>
+            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon/>}
+            </IconButton>
+          </TableCell>
+          
+          <TableCell>
+            {props.od.id}
+          </TableCell>
+          <TableCell>{getDateFromTimestamp(props.od.order_timestamp)}</TableCell>
+          <TableCell>{props.od.price_total}</TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{margin:1}}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Order Details
+                </Typography>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Item Name</TableCell>
+                      <TableCell>Item Cost</TableCell>
+                    </TableRow>
+                  </TableHead>
+
+                  <TableBody>
+                    {orderInst[0].map((item) => (
+                      <TableRow key={item.drink_name || item.entree_name}>
+                        <TableCell>
+                          {item.drink_name || item.entree_name}
+                        </TableCell>
+                        <TableCell>{item.price}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
+
+
+
   return (
     <div className="Customer">
       <Grid container spacing={2}>
@@ -249,16 +331,23 @@ function Customer() {
             onClose={handleClose}
             xs={1}
           >
-            <Box sx={{...style}}>
-              <Typography id="modal-header" variant='h6' component='h5'>
-                ID      Date      Total($)
-              </Typography>
-              <Typography id="modal-body" sx={{mt:0}}>
-                {orderHist.map((current) => 
-                <Button>{current.id + getSpace(current.id, 0) + getDateFromTimestamp(current.order_timestamp) + getSpace(current.order_timestamp, 1) + current.price_total}</Button>
-                )}
-              </Typography>
-            </Box>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell/>
+                    <TableCell>Order ID</TableCell>
+                    <TableCell>Date and Time</TableCell>
+                    <TableCell>Total($)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {orderHist.map((od, index) => (
+                    <Row key={od.id} od={od} index={index}/>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Modal>
 
           {/* Display Entrees or Drinks based on state */}
