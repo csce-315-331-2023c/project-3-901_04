@@ -1,7 +1,7 @@
 import '../styles/Customer.css';
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { TextField, Grid, Tooltip } from '@mui/material';
+import { TextField, Grid, Tooltip, TablePagination } from '@mui/material';
 import axios from 'axios';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -185,13 +185,13 @@ function Customer() {
 
   function Row(props) {
     const [open, setOpen] = useState(false);
-    console.log(orderHist);
+    /*console.log(orderHist);
     console.log(orderInst);
     console.log(props.index);
-    console.log(getTimeFromTimestamp(orderHist[0].order_timestamp));
+    console.log(getTimeFromTimestamp(orderHist[0].order_timestamp));*/
     return (
       <React.Fragment>
-        <TableRow sx={{ '& > *': { borderBottom: 'unset', borderTop: 'unset' } }}>
+        <TableRow >
           <TableCell>
             <IconButton size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon/>}
@@ -201,7 +201,6 @@ function Customer() {
           <TableCell>
             <Button variant='text' onClick={() => reorder(props.od.id)}>Order</Button>
           </TableCell>
-          
           <TableCell>{props.od.id}</TableCell>
           <TableCell>{getDateFromTimestamp(props.od.order_timestamp)}</TableCell>
           <TableCell>{props.od.price_total}</TableCell>
@@ -211,14 +210,12 @@ function Customer() {
           <TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{margin:1}}>
-                <Typography variant="h6" gutterBottom>
-                  Order Details
-                </Typography>
+                <Typography variant="h6">Order Details</Typography>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
                       <TableCell>Item Name</TableCell>
-                      <TableCell>Item Cost</TableCell>
+                      <TableCell>Item Price($)</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -266,7 +263,7 @@ function Customer() {
             onClose={handleClose}
             xs={1}
           >
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{maxHeight:500, overflowY:'auto'}}>
               <Table>
                 <TableHead>
                   <TableRow>
