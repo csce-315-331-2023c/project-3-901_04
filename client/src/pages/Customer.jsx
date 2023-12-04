@@ -19,6 +19,9 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 //import downarrow from '../media/down-arrow-svgrepo-com.svg';
 //import uparrow from '../media/up-arrow-svgrepo-com.svg';
 //import 'java.util.Dictionary';
@@ -40,9 +43,12 @@ function Customer() {
   //const orderInst = new FormData();
   //var orderInst = [];
   const [popup, setPop] = useState(false);
+  const [check, setCheck] = useState(false);
   const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
   //const custName = "Name1";
   const namePass = 'customer';
+
+  //console.log(getHour());
 
   useEffect(() => {
     setLoad(true);
@@ -81,8 +87,21 @@ function Customer() {
   }, []);
 
   const handleAddItem = (itemName, itemPrice) => {
-    setOrder((prevOrder) => [...prevOrder, itemName]);
-    setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);
+    var whichHappy = checkHappyHour(itemName);
+    var addon = "";
+    if (whichHappy == 2) {
+      setOrderPrices((prevPrices) => [...prevPrices, 5]); 
+    } 
+    else if (whichHappy == 1) {
+      setOrderPrices((prevPrices) => [...prevPrices, 2.92]); 
+    }
+    else {
+      setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);   
+    }
+    if (check == true) {
+      addon = " (TOGO)";
+    }
+    setOrder((prevOrder) => [...prevOrder, itemName + addon]);
   };
 
   const handleRemoveLastItem = () => {
@@ -98,6 +117,10 @@ function Customer() {
   const handleClearOrder = () => {
     setOrder([]);
     setOrderPrices([]);
+  };
+
+  const handleCheck = (event) => {
+    setCheck(event.target.checked);
   };
 
   function reorder(id) {
@@ -117,6 +140,7 @@ function Customer() {
     try {
         const response = await axios.post(backendURL2, {order, orderPrices, custName, namePass});
         console.log(response.data);
+        window.location.reload();
     } catch (error) {
         console.error('Order error', error);
     }
@@ -136,7 +160,12 @@ function Customer() {
   }
 
   function getName(original) {
-    original = JSON.stringify(original).replace(/['"]+/g, '')
+    //var addon = '';
+    const happyCheck = checkHappyHour(original);
+    if (happyCheck > 0) {
+      //console.log('test');
+    }
+    original = JSON.stringify(original).replace(/['"]+/g, '');
     if (original.length > 18) {
       original = original.slice(0, 16) + "...";
       return (original);
@@ -150,17 +179,39 @@ function Customer() {
 
   function getTimeFromTimestamp(tstamp) {
     var timeStr = JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0];
-    //console.log(timeStr);
     return parseInt(timeStr.split(':')[0]);
   }
 
   //z = not happy, b = happy hour beer, w = happy hour wine
-  function checkHappyHour(time, drinkName) {
-    var timeInt = getTimeFromTimestamp(time);
-    if (timeInt >= 15 && timeInt < 18) {
-      return true;
+  function checkHappyHour(item) {
+    const timeInt = getHour();
+    //15, 18
+    if (timeInt >= 12 && timeInt < 18) {
+      drinks && drinks.filter(current => current.drink_name == item).map(drink => {
+        //console.log('item: ' + item + ' drink_name: ' + drink.drink_name);
+        if (drink.happyhourbeer == true) {
+          //console.log('1');
+          return 1;
+        }
+        else if (drink.happyhourwine == true) {
+          //console.log('2');
+          return 2;
+        }
+        else {
+          //console.log('-1')
+          return -1;
+        }
+      })
     }
-    return false;
+    else {
+      //console.log('-1');
+      return -1;
+    }
+  }
+
+  function getHour() {
+    const time = new Date();
+    return time.getHours();
   }
 
   const style = {
@@ -356,8 +407,17 @@ function Customer() {
         <Grid item xs={3.6}> {/* 30% of 12*/}
 
         <Grid container spacing={1}>
-            <Grid item xs={2} className='Ordersign'>
+            <Grid item xs={8.1} className='Ordersign'>
               <h2 class="heading">{custName}</h2>
+            </Grid>
+            <Grid item xs={3.9} className='Ordersign'>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox
+                checked={check}
+                onChange={handleCheck}
+              />} label="To-go"/>
+
+              </FormGroup>
             </Grid>
           </Grid>
 
