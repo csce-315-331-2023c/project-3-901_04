@@ -140,6 +140,7 @@ function Customer() {
     try {
         const response = await axios.post(backendURL2, {order, orderPrices, custName, namePass});
         console.log(response.data);
+        window.location.reload();
     } catch (error) {
         console.error('Order error', error);
     }
