@@ -64,12 +64,22 @@ app.get('/api/managerMenu', async (req, res) => {
 app.post('/orderHistory', async (req, res) => {
     try {
         const custName = req.body.custName;
-        var drinkQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, drinks.drink_name, drinks.price,  order_timestamp FROM orders JOIN orderdrinkcontents ON orderdrinkcontents.order_id=orders.id JOIN drinks ON drinks.id = orderdrinkcontents.drink_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        /*var drinkQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, drinks.drink_name, drinks.price,  order_timestamp FROM orders JOIN orderdrinkcontents ON orderdrinkcontents.order_id=orders.id JOIN drinks ON drinks.id = orderdrinkcontents.drink_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
         const drinkHist = (await pool.query(drinkQuery));
         var entreeQuery = "SELECT DISTINCT orders.id, orders.customer_name, orders.price_total, entrees.entree_name, entrees.price,  order_timestamp FROM orders JOIN orderentreecontents ON orderentreecontents.order_id=orders.id JOIN entrees ON entrees.id = orderentreecontents.entree_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;"
         const entreeHist = (await pool.query(entreeQuery));
+        const orderHist = drinkHist.rows.concat(entreeHist.rows);*/
+
+        var orderQuery = "SELECT DISTINCT orders.id, orders.price_total, order_timestamp FROM orders WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        var orderDrinkQuery = "SELECT DISTINCT orders.id, drinks.drink_name, drinks.price FROM orders JOIN orderdrinkcontents ON orderdrinkcontents.order_id=orders.id JOIN drinks ON drinks.id = orderdrinkcontents.drink_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        var orderEntreeQuery = "SELECT DISTINCT orders.id, entrees.entree_name, entrees.price FROM orders JOIN orderentreecontents ON orderentreecontents.order_id=orders.id JOIN entrees ON entrees.id = orderentreecontents.entree_id WHERE orders.customer_name = '" + custName + "' ORDER BY orders.id DESC;";
+        const mainHist = await pool.query(orderQuery);
+
+        const drinkHist = await pool.query(orderDrinkQuery);
+        const entreeHist = await pool.query(orderEntreeQuery);
         const orderHist = drinkHist.rows.concat(entreeHist.rows);
-        res.json(orderHist);
+
+        res.json({main: mainHist, details: orderHist});
     } catch (err) {
         console.error(err);
         res.status(500).send('Query Failure :(');

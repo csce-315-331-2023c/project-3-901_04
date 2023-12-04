@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { TextField, Grid, Tooltip } from '@mui/material';
 import axios from 'axios';
-import cloneDeep from 'lodash.clonedeep';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -45,11 +44,6 @@ function Customer() {
   const custName = "Name1";
   console.log(JSON.stringify(JSON.parse(localStorage.getItem('user'))));
 
-
-  var uniqueId = [];
-  //filtered array with all details of a single order ID
-  var tempArr = [];
-
   useEffect(() => {
     setLoad(true);
     const backendURL = process.env.NODE_ENV === 'production'
@@ -65,51 +59,13 @@ function Customer() {
         const response = await fetch(backendURL);
         const res = await response.json();
 
-        setEntrees(cloneDeep(res.entrees));
-        setDrinks(cloneDeep(res.drinks));
+        setEntrees((res.entrees));
+        setDrinks((res.drinks));
 
         const response2 = await axios.post(backendURL3, {custName});
         const res2 = await response2.data;
-        //setHist(cloneDeep((res2)));
-
-        //takes data and combines multiple items of a single order into one order.
-        res2.map((current) => {
-          //if this is a new order
-          //filtered array with only ID, timestamp, price_total
-          var IdDetailsArr = [];
-          //filtered array with only menu item, price
-          var IndvDetailsArr = [];
-          if(!uniqueId.includes(current.id)) {
-            //gets all items ordered with same id
-            tempArr = cloneDeep(res2.filter((val) => val.id == current.id));
-            IdDetailsArr = cloneDeep(tempArr);
-            IndvDetailsArr = cloneDeep(tempArr);
-
-            IdDetailsArr.map((currentIdDetail) => {
-              delete currentIdDetail['drink_name'];
-              delete currentIdDetail['entree_name'];
-              delete currentIdDetail['price'];
-              delete currentIdDetail['customer_name'];
-            })
-
-            IdDetailsArr = IdDetailsArr[0];
-
-            IndvDetailsArr.map((currentIndvDetail) => {
-              delete currentIndvDetail['customer_name'];
-              //delete currentIndvDetail['id'];
-              delete currentIndvDetail['order_timestamp'];
-              delete currentIndvDetail['price_total'];
-            })
-
-            console.log(IndvDetailsArr);
-            console.log(IdDetailsArr);
-            uniqueId.push(current.id);
-            setHist(orderHist => [...orderHist, cloneDeep(IdDetailsArr)]);
-            //setInst({orderInst: [...orderInst, cloneDeep(IndvDetailsArr)]});
-            setInst(orderInst => ([...orderInst, IndvDetailsArr]));
-          }
-        });
-        console.log(res2);
+        setHist(res2.main.rows);
+        setInst(res2.details);
       } catch (e) {
         console.log(e);
       }
@@ -134,10 +90,16 @@ function Customer() {
     setOrderPrices((prevPrices) => prevPrices.filter((_, priceIndex) => priceIndex !== index));
   };
 
-
   const handleClearOrder = () => {
     setOrder([]);
     setOrderPrices([]);
+  };
+
+  const handleReorder = (orderId) => {
+    //console.log(orderInst[0].id);
+    /*orderInst && orderInst.filter(val => val.id == orderId).map((item) => (
+      handleAddItem(item.entree_name || item.drink_name, item.price)
+    ))*/
   };
 
   const handleOpen = () => setPop(true);
@@ -177,21 +139,6 @@ function Customer() {
     return original;
   }
 
-  //formatting order history
-  function getSpace(name, position) {
-    var len = JSON.stringify(name).length;
-    var returnstr = " ";
-    if (position == 0) {
-      return returnstr.repeat(10 - len);
-    }
-    else if (position == 1) {
-      return returnstr.repeat(28 - len);
-    }
-    else if (position == 2) {
-      return returnstr.repeat(5 - len);
-    }
-  }
-
   function getDateFromTimestamp(tstamp) {
     return (JSON.parse(JSON.stringify(tstamp)).split('T')[0] + " " + JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0]);
   }
@@ -202,7 +149,6 @@ function Customer() {
     return parseInt(timeStr.split(':')[0]);
   }
 
-  
   function checkHappyHour(time) {
     var timeInt = getTimeFromTimestamp(time);
     if (timeInt >= 15 && timeInt < 18) {
@@ -223,18 +169,6 @@ function Customer() {
     alignItems: 'center',
     transform: 'translate(-50%, -50%)',
     maxWidth: '50%',
-  };
-
-  const style2 = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow:24,
-    overflowY: "scroll",
-    justifyContent: 'center',
-    alignItems: 'center',
   };
 
   const itemToolTip = styled(({className, ...props}) => (
@@ -263,6 +197,10 @@ function Customer() {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon/>}
             </IconButton>
           </TableCell>
+
+          <TableCell>
+            {<Button onClick={handleReorder(props.od.id)}>Order</Button>}
+          </TableCell>
           
           <TableCell>
             {props.od.id}
@@ -287,7 +225,7 @@ function Customer() {
                   </TableHead>
 
                   <TableBody>
-                    {orderInst[0].map((item) => (
+                    {orderInst && orderInst.filter(val => val.id == props.od.id).map((item) => (
                       <TableRow key={item.drink_name || item.entree_name}>
                         <TableCell>
                           {item.drink_name || item.entree_name}
@@ -305,7 +243,6 @@ function Customer() {
       </React.Fragment>
     );
   }
-
 
 
   return (
@@ -335,10 +272,11 @@ function Customer() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell/>
-                    <TableCell>Order ID</TableCell>
-                    <TableCell>Date and Time</TableCell>
-                    <TableCell>Total($)</TableCell>
+                    <TableCell align="inherit">See Details</TableCell>
+                    <TableCell align="inherit">Reorder</TableCell>
+                    <TableCell align="inherit">Order ID</TableCell>
+                    <TableCell align="inherit">Date and Time</TableCell>
+                    <TableCell align="inherit">Total($)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
