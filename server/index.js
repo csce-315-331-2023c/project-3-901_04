@@ -118,6 +118,79 @@ app.get('/api/managerMenu', async (req, res) => {
     }
 });
 
+app.delete('/api/deleteMenuItem', async (req, res) => {
+    const deleteMe = req.query.itemToDelete;
+    try{
+        //For an entree
+        pool.query(`DELETE FROM entreerecipes
+                    WHERE entree_id IN (
+                        SELECT id
+                        FROM entrees
+                        WHERE entree_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM orderentreecontents
+                    WHERE entree_id IN (
+                        SELECT id
+                        FROM entrees
+                        WHERE entree_name = '` + deleteMe + `'
+                    );`
+                    
+        ).then(
+        pool.query(`DELETE FROM entrees WHERE entree_name = '` + deleteMe + `';`)
+        ));
+        //For a drink
+        pool.query(`DELETE FROM drinkrecipes
+                    WHERE drink_id IN (
+                        SELECT id
+                        FROM drinks
+                        WHERE drink_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM orderdrinkcontents
+                    WHERE drink_id IN (
+                        SELECT id
+                        FROM drinks
+                        WHERE drink_name = '` + deleteMe + `'
+                    );`
+                    
+        ).then(
+        pool.query(`DELETE FROM drinks WHERE drink_name = '` + deleteMe + `';`)
+        ));
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to delete menu item ' + deleteMe });
+    }
+    console.log('Deleted ' + deleteMe);
+});
+
+app.delete('/api/deleteInvItem', async (req, res) => {
+    const deleteMe = req.query.itemToDelete;
+    try{
+        pool.query(`DELETE FROM entreerecipes
+                    WHERE inventory_id IN (
+                        SELECT id
+                        FROM inventory
+                        WHERE item_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM drinkrecipes
+                    WHERE inventory_id IN (
+                        SELECT id
+                        FROM inventory
+                        WHERE item_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM inventory WHERE item_name = '` + deleteMe + `'`)
+        ));
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to delete inventory item ' + deleteMe });
+    }
+});
+
 app.get('/api/recipe', async (req, res) => {
 
     const reqItem = req.query.requestedItem;
@@ -349,10 +422,10 @@ app.post('/postid', async (req, res) => {
                 console.log("Order was taken successfully. All tables updated.");
                 res.send("Success!");
                         });
-                }
-                catch (er) {
-                    console.log(er);
-                }
+            }
+            catch (er) {
+                console.log(er);
+            }
 });
 
 //REPORTS --------------------------------------------------------------------
