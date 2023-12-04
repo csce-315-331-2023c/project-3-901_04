@@ -1,0 +1,161 @@
+@import url('//translate.google.com/translate_static/css/translateelement.css');
+
+.managerOrders{
+    width: auto;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0px;
+}
+
+.MOleftPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center top;
+    width: 20%;
+    height: 70%;
+    margin-left: 40px;
+    background-color: #c8e6c9;
+    border: 4px solid #399f6f;
+    border-right: 0px;
+}
+
+.managerReportsPar {
+    font-size: 18px;
+    margin-bottom: 0px;
+    font-family: arial black, sans-serif;
+}
+
+.dateInputContainer {
+    margin: 10px;
+}
+
+.reportButtonContainer{
+    margin: 10px;
+}
+
+.reportButton {
+    width: 16vw;
+}
+
+.MOcenterPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center top;
+    width: 30%;
+    height: 70%;
+    border: 4px solid #399f6f;
+    overflow: auto;
+    border-right: 0px;
+}
+
+.MOrightPanel-Container{
+    display: grid;
+    grid-template-rows: 15% 85%; /* Two rows, first is 100px, second is 200px */
+    grid-template-columns: 1fr;
+    margin-right: 40px;
+    width: 50%;
+    height: 70%;
+    
+    border: 4px solid #399f6f;
+    /*
+    overflow: auto;
+    justify-content: center;
+    overflow-x: hidden;
+    */
+}
+
+.MOrightPanel-top{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    justify-content: center;
+    border: 4px solid #399f6f;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    overflow-x: hidden;
+}
+
+.MOrightPanel-bottom{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    
+    overflow: auto;
+    justify-content: center;
+    overflow-x: hidden;
+}
+    .selectAReport{
+        font-size: 26px;
+        margin-top: 20vh;
+    }
+    table {
+        width: 100%
+    }
+
+    th, td {
+
+    }
+
+    tr td{
+        transition: 0.14s ease-in-out;
+        transform-origin: left;
+        overflow: hidden;
+    }
+
+    tr td:hover {
+        font-size: 32px;
+        overflow: hidden;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2; /* Light gray background for even rows */
+    }
+
+    .metaDataItem{
+        text-align: center;
+    }
+
+.MObottomPanel{
+    width: auto;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    border: 4px solid #399f6f;
+    border-top: 0px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.reportsLink a {
+    color: #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 5%;
+    width: 13%;
+    position: absolute;
+    top: 10%;
+    right: 6%;
+    padding: 10px;
+    background-color: #399f6f;
+    transition: 0.3s ease;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.reportsLink a:hover {
+    background-color: #69c99c;
+    font-size: larger;
+}
+

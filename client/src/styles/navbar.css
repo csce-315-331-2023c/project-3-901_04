@@ -40,7 +40,7 @@
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,6 +50,7 @@
 
 .navbar a:hover {
     background-color: #555;
+    font-size: x-large;
 }
 
 /* Additional styles for the logo/home link if needed */

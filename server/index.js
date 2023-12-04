@@ -26,11 +26,68 @@ app.get('/', (req, res) => {
 app.get('/api/menu', async (req, res) => {
     try {
         const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
-        const drinkRes = await pool.query('SELECT drink_name, price FROM drinks');
+        const drinkRes = await pool.query('SELECT * FROM drinks');
+
+        let getDraft = [];
+        let getBottled = [];
+        let getWine = [];
+        let getCocktails = [];
+        let getNoAlch = [];
+        let getBrunchDrinks = [];
+
+        drinkRes.rows.forEach(function(drink) {
+            if(drink.alcoholic == true){
+              if(drink.brunch == true){
+                getBrunchDrinks.push([drink.drink_name, drink.price]);
+              }
+              else{
+                if(drink.cocktail == true){
+                  getCocktails.push([drink.drink_name, drink.price]);
+                }
+                else{
+                  if(drink.drink_name.includes('(Bottled)')){
+                    getBottled.push([drink.drink_name.slice(0, drink.drink_name.length - 9), drink.price]);
+                  }
+                  else{
+                    if(drink.drink_name.includes('(Glass)') || drink.drink_name.includes('(Bottle)')){
+                      if(drink.drink_name.includes('(Glass)')){
+                        if(drink.happyhourwine == true){
+                          getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), ("" + drink.price + "*")]);
+                        }
+                        else{
+                          getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), drink.price]);
+                        }
+                      }
+                      else{
+                        getWine.push([drink.drink_name, drink.price]);
+                      }
+                    }
+                    else{
+                      if(drink.happyhourbeer == true){
+                        getDraft.push([drink.drink_name, ("" + drink.price + "*")]);
+                      }
+                      else{
+                        getDraft.push([drink.drink_name, drink.price]);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            else{
+              getNoAlch.push([drink.drink_name, drink.price]);
+            }
+        });
 
         const menu = {
             entrees: entreeRes.rows,
-            drinks: drinkRes.rows
+            drinks: drinkRes.rows,
+            draft: getDraft,
+            bottled: getBottled,
+            wine: getWine,
+            cocktails: getCocktails,
+            noAlch: getNoAlch,
+            brunchDrinks: getBrunchDrinks
         };
 
         console.log("menu Query successful. Sending json.");
@@ -85,6 +142,80 @@ app.post('/orderHistory', async (req, res) => {
         res.status(500).send('Query Failure :(');
     }
 });
+
+app.delete('/api/deleteMenuItem', async (req, res) => {
+    const deleteMe = req.query.itemToDelete;
+    try{
+        //For an entree
+        pool.query(`DELETE FROM entreerecipes
+                    WHERE entree_id IN (
+                        SELECT id
+                        FROM entrees
+                        WHERE entree_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM orderentreecontents
+                    WHERE entree_id IN (
+                        SELECT id
+                        FROM entrees
+                        WHERE entree_name = '` + deleteMe + `'
+                    );`
+                    
+        ).then(
+        pool.query(`DELETE FROM entrees WHERE entree_name = '` + deleteMe + `';`)
+        ));
+        //For a drink
+        pool.query(`DELETE FROM drinkrecipes
+                    WHERE drink_id IN (
+                        SELECT id
+                        FROM drinks
+                        WHERE drink_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM orderdrinkcontents
+                    WHERE drink_id IN (
+                        SELECT id
+                        FROM drinks
+                        WHERE drink_name = '` + deleteMe + `'
+                    );`
+                    
+        ).then(
+        pool.query(`DELETE FROM drinks WHERE drink_name = '` + deleteMe + `';`)
+        ));
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to delete menu item ' + deleteMe });
+    }
+    console.log('Deleted ' + deleteMe);
+});
+
+app.delete('/api/deleteInvItem', async (req, res) => {
+    const deleteMe = req.query.itemToDelete;
+    try{
+        pool.query(`DELETE FROM entreerecipes
+                    WHERE inventory_id IN (
+                        SELECT id
+                        FROM inventory
+                        WHERE item_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM drinkrecipes
+                    WHERE inventory_id IN (
+                        SELECT id
+                        FROM inventory
+                        WHERE item_name = '` + deleteMe + `'
+                    );`
+        ).then(
+        pool.query(`DELETE FROM inventory WHERE item_name = '` + deleteMe + `'`)
+        ));
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to delete inventory item ' + deleteMe });
+    }
+});
+
 
 app.get('/api/recipe', async (req, res) => {
 
@@ -202,7 +333,6 @@ app.post('/postid', async (req, res) => {
     catch (err) {
         console.error(err);
     }
-
     //Sort the array of all ids into positive and negative ids (for entrees and drinks)
     entreearr = []
     drinkarr = []
@@ -213,92 +343,376 @@ app.post('/postid', async (req, res) => {
         else {
             drinkarr.push(id);
         }
-    })
-
+    });
     //Make the new order TODO employee id
     try {
         var highestOrderId = await pool.query("SELECT id FROM orders ORDER BY id DESC LIMIT 1;");
-        pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');");
-    }
-    catch (er) {
-        console.log(er);
-    }
+        console.log("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
+        pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + 0 + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
+            .then( async result => {//Prevent race condition
+                //Insert into orderentreecontents
+                if(entreearr.length){
+                    var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
+                    try {
+                        for (var i = 0; i < entreearr.length; i ++) {
+                            if (i != 0) {
+                                orderEntreeString = orderEntreeString + ",";
+                            }
+                            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
+                        }
+                        orderEntreeString = orderEntreeString + ";";
+                        //console.log(orderEntreeString);
+                        pool.query(orderEntreeString);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+                //Insert into orderdrinkcontents
+                if(drinkarr.length){
+                    var orderDrinkString = "INSERT INTO orderdrinkcontents (order_id, drink_id) VALUES";
+                    try {
+                        for (var i = 0; i < drinkarr.length; i ++) {
+                            if (i != 0) {
+                                orderDrinkString = orderDrinkString + ",";
+                            }
+                            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] +")";
+                        }
+                        orderDrinkString = orderDrinkString + ";";
+                        console.log(orderDrinkString);
+                        pool.query(orderDrinkString);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+                //Get recipe of each drink/entree
+                var getEntreeInventory = "SELECT DISTINCT entree_name, item_name, quantity FROM entreerecipes JOIN entrees ON entrees.id = entreerecipes.entree_id JOIN inventory ON inventory.id = entreerecipes.inventory_id WHERE entree_id in (";
+                var getDrinkInventory = "SELECT DISTINCT drink_name, item_name, quantity FROM drinkrecipes JOIN drinks ON drinks.id = drinkrecipes.drink_id JOIN inventory ON inventory.id = drinkrecipes.inventory_id WHERE drink_id in (";
+                var allInventory;
+                console.log("A");
+                try {
+                    let entreeInventoryQuantities = [];
+                    let drinkInventoryQuantities = [];
+                    if(entreearr.length != 0){
+                        for (var i = 0; i < entreearr.length; i ++) {
+                            if (i != 0) {
+                                getEntreeInventory = getEntreeInventory + ",";
+                            }
+                            getEntreeInventory = getEntreeInventory + parseInt(entreearr[i]);
+                        }
+                        getEntreeInventory = getEntreeInventory + ");";
+                        //console.log(getEntreeInventory);
+                        entreeInventoryQuantities = await pool.query(getEntreeInventory);
+                    }
+                    //res.send(JSON.stringify((entreeInventoryQuantities).rows[0].quantity));
 
-    //Insert into orderentreecontents
-    var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
-    try {
-        for (var i = 0; i < entreearr.length; i ++) {
-            if (i != 0) {
-                orderEntreeString = orderEntreeString + ",";
+                    if(drinkarr.length != 0){
+                        for (var i = 0; i < drinkarr.length; i ++) {
+                            if (i != 0) {
+                                getDrinkInventory = getDrinkInventory + ",";
+                            }
+                            getDrinkInventory = getDrinkInventory + parseInt(drinkarr[i]);
+                        }
+                        getDrinkInventory = getDrinkInventory + ");";
+                        //console.log(getDrinkInventory);
+                        drinkInventoryQuantities = await pool.query(getDrinkInventory);
+                    }
+                    if(entreearr.length == 0){
+                        allInventory = Object.assign({}, drinkInventoryQuantities.rows);
+                    }
+                    else if(drinkarr.length == 0){
+                        allInventory = Object.assign({}, entreeInventoryQuantities.rows);
+                    }
+                    else{
+                        allInventory = Object.assign({}, entreeInventoryQuantities.rows, drinkInventoryQuantities.rows);
+                    }
+                }
+                catch (errr) {
+                    console.log(errr);
+                }
+                console.log("B");
+                //Subtract inventory based on recipes
+                var updateInventory;
+                var allInventoryLen = parseInt(JSON.stringify(Object.keys(allInventory).length));
+                try {
+                    for (var i = 0; i < allInventoryLen; i++) {
+                        updateInventory = "UPDATE inventory SET stock = CASE item_name WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity) + " ELSE 0 END WHERE inventory.item_name in (" + "'" + allInventory[i].item_name + "'" + ");";
+                        console.log(updateInventory);
+                        pool.query(updateInventory);
+                    }
+                }
+                catch (erm) {
+                    console.log(erm);
+                }
+                console.log("Order was taken successfully. All tables updated.");
+                res.send("Success!");
+                        });
             }
-            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
-        }
-        orderEntreeString = orderEntreeString + ";";
-        pool.query(orderEntreeString);
-    }
-    catch (e) {
-        console.log(e);
-    }
-
-    //Insert into orderdrinkcontents
-    var orderDrinkString = "INSERT INTO orderdrinkcontents (order_id, drink_id) VALUES";
-    try {
-        for (var i = 0; i < drinkarr.length; i ++) {
-            if (i != 0) {
-                orderDrinkString = orderDrinkString + ",";
+            catch (er) {
+                console.log(er);
             }
-            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] +")";
-        }
-        orderDrinkString = orderDrinkString + ";";
-        pool.query(orderDrinkString);
-    }
-    catch (e) {
-        console.log(e);
-    }
-
-    //Get recipe of each drink/entree
-    var getEntreeInventory = "SELECT DISTINCT entree_name, item_name, quantity FROM entreerecipes JOIN entrees ON entrees.id = entreerecipes.entree_id JOIN inventory ON inventory.id = entreerecipes.inventory_id WHERE entree_id in (";
-    var getDrinkInventory = "SELECT DISTINCT drink_name, item_name, quantity FROM drinkrecipes JOIN drinks ON drinks.id = drinkrecipes.drink_id JOIN inventory ON inventory.id = drinkrecipes.inventory_id WHERE drink_id in (";
-    var allInventory;
-    try {
-        for (var i = 0; i < entreearr.length; i ++) {
-            if (i != 0) {
-                getEntreeInventory = getEntreeInventory + ",";
-            }
-            getEntreeInventory = getEntreeInventory + parseInt(entreearr[i]);
-        }
-        getEntreeInventory = getEntreeInventory + ");"
-        const entreeInventoryQuantities = await pool.query(getEntreeInventory);
-        //res.send(JSON.stringify((entreeInventoryQuantities).rows[0].quantity));
-
-        for (var i = 0; i < drinkarr.length; i ++) {
-            if (i != 0) {
-                getDrinkInventory = getDrinkInventory + ",";
-            }
-            getDrinkInventory = getDrinkInventory + parseInt(drinkarr[i]);
-        }
-        getDrinkInventory = getDrinkInventory + ");"
-        const drinkInventoryQuantities = await pool.query(getDrinkInventory);
-        allInventory = Object.assign({}, entreeInventoryQuantities.rows, drinkInventoryQuantities.rows);
-    }
-    catch (errr) {
-        console.log(errr);
-    }
-
-    //Subtract inventory based on recipes
-    var updateInventory;
-    var allInventoryLen = parseInt(JSON.stringify(Object.keys(allInventory).length));
-    try {
-        for (var i = 0; i < allInventoryLen; i++) {
-            updateInventory = "UPDATE inventory SET stock = CASE item_name WHEN '" + allInventory[i].item_name + "' THEN stock - " + parseFloat(allInventory[i].quantity) + " ELSE 0 END WHERE inventory.item_name in (" + "'" + allInventory[i].item_name + "'" + ");";
-            pool.query(updateInventory);
-        }
-    }
-    catch (erm) {
-        console.log(erm);
-    }
-    res.send("Success!");
 });
+
+//REPORTS --------------------------------------------------------------------
+app.get('/api/productReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const productReportRes = await pool.query(`
+        SELECT day, SUM(sum) AS total_sum FROM (
+            SELECT
+                date_trunc('day', o_o.order_timestamp) AS day,
+                sum(quantity) AS sum
+            FROM drinkrecipes
+            JOIN drinks ON drinks.id = drinkrecipes.drink_id
+            JOIN inventory ON inventory.id = drinkrecipes.inventory_id
+            JOIN orderdrinkcontents ON orderdrinkcontents.drink_id = drinkrecipes.drink_id
+            JOIN orders AS o_o ON o_o.id = orderdrinkcontents.order_id
+            WHERE o_o.order_timestamp >= '` + startDate + `' AND o_o.order_timestamp < '` + endDate + `'
+            GROUP BY date_trunc('day', o_o.order_timestamp)
+
+            UNION ALL
+
+            SELECT
+                date_trunc('day', o_o.order_timestamp) AS day,
+                sum(quantity) AS sum
+            FROM entreerecipes
+            JOIN entrees AS ent ON ent.id = entreerecipes.entree_id
+            JOIN inventory ON inventory.id = entreerecipes.inventory_id
+            JOIN orderentreecontents ON orderentreecontents.entree_id = entreerecipes.entree_id
+            JOIN orders AS o_o ON o_o.id = orderentreecontents.order_id
+            WHERE o_o.order_timestamp >= '` + startDate + `' AND o_o.order_timestamp < '` + endDate + `'
+            GROUP BY date_trunc('day', o_o.order_timestamp)
+        ) AS combined_sums
+        GROUP BY day
+        ORDER BY day;`);
+        
+        const productReport = {
+            productReport: productReportRes.rows,
+        };
+
+        console.log("Product Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(productReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Product Report Failure :(');
+    }
+});
+
+app.get('/api/salesReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const salesReportRes = await pool.query(`
+            SELECT drink_name as item_name, COUNT(drink_id) as quantity
+            FROM orderdrinkcontents
+            JOIN drinks ON drinks.id = orderdrinkcontents.drink_id
+            WHERE order_id IN (SELECT id FROM orders WHERE order_timestamp >= '` + startDate + `' AND order_timestamp < '` + endDate + `')
+            GROUP BY drink_id, drink_name
+
+            UNION ALL
+
+            SELECT entree_name as item_name, COUNT(entree_id) as quantity
+            FROM orderentreecontents
+            JOIN entrees ON entrees.id = orderentreecontents.entree_id
+            WHERE order_id IN (SELECT id FROM orders WHERE order_timestamp >= '` + startDate + `' AND order_timestamp < '` + endDate + `')
+            GROUP BY entree_id, entree_name
+
+            ORDER BY
+                item_name ASC;`);
+        
+        const salesReport = {
+            salesReport: salesReportRes.rows,
+        };
+
+        console.log("Sales Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(salesReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Sales Report Failure :(');
+    }
+});
+
+app.get('/api/excessReport', async (req, res) => {
+    try {
+        console.log(req.query.startTime);
+        let startDateReq = req.query.startTime.split('T'); //Probably need to modify this guy
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+
+        const excessReportRes = await pool.query(`
+        WITH TotalSales AS (
+            SELECT i.id AS inventory_id, COALESCE(SUM(CASE WHEN o_o.order_timestamp >= '` + startDate + `' THEN COALESCE(r.quantity, d.quantity, 0) ELSE 0 END), 0) AS total_sold
+            FROM inventory i
+            LEFT JOIN entreerecipes r ON i.id = r.inventory_id
+            LEFT JOIN drinkrecipes d ON i.id = d.inventory_id
+            LEFT JOIN orderentreecontents o_e ON r.entree_id = o_e.entree_id
+            LEFT JOIN orderdrinkcontents o_d ON d.drink_id = o_d.drink_id
+            LEFT JOIN orders o_o ON o_e.order_id = o_o.id OR o_d.order_id = o_o.id
+            GROUP BY i.id
+        )
+        
+        SELECT
+            i.item_name AS inventory_name, i.stock AS current_stock, COALESCE(s.total_sold, 0) AS total_sold, (i.stock + COALESCE(s.total_sold, 0)) AS initial_stock, (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 AS percent_consumed
+        FROM inventory i
+        LEFT JOIN TotalSales s ON i.id = s.inventory_id
+        WHERE (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 < 10;
+        `);
+        
+        const excessReport = {
+            excessReport: excessReportRes.rows,
+        };
+
+        console.log("Excess Report generated from " + startDate + " to today. Sending json.");
+        res.json(excessReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Excess Report Failure :(');
+    }
+});
+
+app.get('/api/restockReport', async (req, res) => {
+    try {
+
+        const restockReportRes = await pool.query(`
+            SELECT item_name, stock FROM inventory WHERE stock <= min_stock_warning
+        `);
+        
+        const restockReport = {
+            restockReport: restockReportRes.rows,
+        };
+
+        console.log("Restock Report generated. Sending json.");
+        res.json(restockReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Restock Report Failure :(');
+    }
+});
+
+app.get('/api/WSTReport', async (req, res) => {
+    try {
+
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+
+        const WSTReportRes = await pool.query(`
+        SELECT entrees.entree_name AS entree_name, drinks.drink_name AS drink_name, COUNT(*) AS pair_freq
+        FROM orderentreecontents
+        JOIN orderdrinkcontents ON orderentreecontents.order_id = orderdrinkcontents.order_id
+        JOIN orders ON orderentreecontents.order_id = orders.id
+        JOIN entrees ON orderentreecontents.entree_id = entrees.id
+        JOIN drinks ON orderdrinkcontents.drink_id = drinks.id
+        WHERE orders.order_timestamp >= '` + startDate + `' AND orders.order_timestamp < '` + endDate + `'
+        GROUP BY entrees.entree_name, drinks.drink_name
+        ORDER BY pair_freq DESC
+        LIMIT 10;
+        `);
+        
+        const WSTReport = {
+            WSTReport: WSTReportRes.rows,
+        };
+
+        console.log("WST Report generated from " + startDate + " to " + endDate + ". Sending json.");
+        res.json(WSTReport);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('WST Report Failure :(');
+    }
+});
+//END OF REPORTS -----------------------------------------------------------
+
+//MANAGER ORDER VIEWER -----------------------------------------------------
+app.get('/api/managerOrders', async (req, res) => {
+    try{
+        let startDateReq = req.query.startTime.split('T');
+        let endDateReq = req.query.endTime.split('T');
+
+        const startDate = startDateReq[0] + " " + startDateReq[1] + ":00";
+        const endDate = endDateReq[0] + " " + endDateReq[1] + ":00";
+
+        const ordersRes = await pool.query(`
+            SELECT * FROM ORDERS WHERE order_timestamp >= '` + startDate + `' AND order_timestamp < '` + endDate + `';
+            `);
+
+        const orders = {
+            orders: ordersRes.rows,
+        };
+
+        console.log("Orders from " + startDate + " to " + endDate + " fetched for manager. Sending json.");
+        res.json(orders);
+    }
+    catch{
+        console.error(err);
+        res.status(500).send('Manager Orders Failure :(');
+    }
+});
+
+app.get('/api/orderContents', async (req, res) => {
+    try{
+        let id = req.query.id;
+
+        const orderMetaData = await pool.query(`
+            SELECT orders.*, employees.name AS employee_name
+            FROM orders
+            JOIN employees ON orders.employee_id = employees.id
+            WHERE orders.id = ` + id + `;
+        `);
+        const orderContents = await pool.query(`
+            SELECT order_id, entree_name AS item_name, COUNT(*) AS item_count
+            FROM orderentreecontents 
+            JOIN entrees ON entrees.id = orderentreecontents.entree_id
+            JOIN orders ON orders.id = orderentreecontents.order_id
+            WHERE order_id = ` + id + `
+            GROUP BY order_id, entree_name
+            
+            UNION ALL
+            
+            SELECT order_id, drink_name AS item_name, COUNT(*) AS item_count
+            FROM orderdrinkcontents 
+            JOIN drinks ON drinks.id = orderdrinkcontents.drink_id
+            JOIN orders ON orders.id = orderdrinkcontents.order_id
+            WHERE order_id = ` + id + `
+            GROUP BY order_id, drink_name;
+        `);
+
+        const orderData = {
+            orderMetaData: orderMetaData.rows,
+            orderContents: orderContents.rows
+        };
+
+        console.log("Order Data retrieved for order #" + id + ". Sending json.");
+        res.json(orderData);
+
+    }
+    catch{
+        console.error(err);
+        res.status(500).send('Orders Contents Failure :(');
+    }
+});
+//END OF MANAGER ORDER VIEWER ----------------------------------------------
 
 function getTimeDate() {
     const time = new Date();

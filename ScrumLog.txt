@@ -36,3 +36,12 @@ Plan is as follows:
   what went right and wrong during the previous sprint: Planning went exceptionally well. Everybody knew exactly what they needed to get done by the sprint's completion.
   what changes (if any) need to be made regarding procedure: Risk assessment needs improvement
   what adjustments might need to be made to the product backlog: Stretch goals are seasonal items and collapsing identical items in the cashier/customer menu, high contrast mode is a stretch goal. Change text enlarging functionality with a magnifier
+
+### Sprint 3 ###
+
+11/17 (Planning Meeting):
+
+11/27:
+
+11/29:
+  Status update from everyone. Willem has made the main page look appealing and has begun work on making the menu look good too. He expects to be finished by tonight with the menu. William has a lot of front-end work done for the Customer page, and has some backend working for fetching orders and order contents for a specific customer. Dylan has some UI work done for adding a new item. His attempts at getting a magnifier to work did not pan out, so we are sticking with a hovering-over-text-increases-font-size. Jack has some UI work done on editing menu items, too.
