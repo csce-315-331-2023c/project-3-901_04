@@ -141,19 +141,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 50px;
-    width: 200px;
+    text-align: center;
+    height: 5%;
+    width: 13%;
     position: absolute;
     top: 10%;
-    right: 6.6%;
+    right: 6%;
     padding: 10px;
     background-color: #399f6f;
-    transition: background-color 0.3s ease;
+    transition: 0.3s ease;
     color: #fff;
     letter-spacing: 1px;
 }
 
 .reportsLink a:hover {
     background-color: #69c99c;
+    font-size: larger;
 }
 

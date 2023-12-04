@@ -2,28 +2,28 @@ import React from 'react'
 import '../styles/Home.css';
 import GMap from '../components/Map';
 import ImageReel from '../components/ImageReel';
-import bakedpasta from '../media/foodPhotos/bakedpasta.png';
-import biscuits from '../media/foodPhotos/biscuits.png';
-import burger from '../media/foodPhotos/burger.png';
-import cheesecake from '../media/foodPhotos/cheesecake.png';
-import chipsandsalsa from '../media/foodPhotos/chipsandsalsa.png';
-import dessert from '../media/foodPhotos/dessert.png';
-import friedjalapeno from '../media/foodPhotos/friedjalapeno.png';
-import grilledchicken from '../media/foodPhotos/grilledchicken.png';
-import loadedfries from '../media/foodPhotos/loadedfries.jpg';
-import mozzerellasticks from '../media/foodPhotos/mozzerellasticks.png';
-import multipleburgers from '../media/foodPhotos/multipleburgers.jpg';
-import nachos from '../media/foodPhotos/nachos.png';
-import pancake from '../media/foodPhotos/pancake.png';
-import pasta from '../media/foodPhotos/pasta.png';
-import potatoesandavocado from '../media/foodPhotos/potatoesandavocado.png';
-import quesadias from '../media/foodPhotos/quesadias.png';
-import sandwich from '../media/foodPhotos/sandwich.png';
-import sandwich2 from '../media/foodPhotos/sandwich2.png';
-import steak from '../media/foodPhotos/steak.png';
-import tenders from '../media/foodPhotos/tenders.png';
-import logoimg from '../media/mos.svg';
-import buildingimg from '../media/moslocation.jpg';
+  import bakedpasta from '../media/foodPhotos/bakedpasta.png';
+  import biscuits from '../media/foodPhotos/biscuits.png';
+  import burger from '../media/foodPhotos/burger.png';
+  import cheesecake from '../media/foodPhotos/cheesecake.png';
+  import chipsandsalsa from '../media/foodPhotos/chipsandsalsa.png';
+  import dessert from '../media/foodPhotos/dessert.png';
+  import friedjalapeno from '../media/foodPhotos/friedjalapeno.png';
+  import grilledchicken from '../media/foodPhotos/grilledchicken.png';
+  import loadedfries from '../media/foodPhotos/loadedfries.jpg';
+  import mozzerellasticks from '../media/foodPhotos/mozzerellasticks.png';
+  import multipleburgers from '../media/foodPhotos/multipleburgers.jpg';
+  import nachos from '../media/foodPhotos/nachos.png';
+  import pancake from '../media/foodPhotos/pancake.png';
+  import pasta from '../media/foodPhotos/pasta.png';
+  import potatoesandavocado from '../media/foodPhotos/potatoesandavocado.png';
+  import quesadias from '../media/foodPhotos/quesadias.png';
+  import sandwich from '../media/foodPhotos/sandwich.png';
+  import sandwich2 from '../media/foodPhotos/sandwich2.png';
+  import steak from '../media/foodPhotos/steak.png';
+  import tenders from '../media/foodPhotos/tenders.png';
+  import logoimg from '../media/mos.svg';
+  import buildingimg from '../media/moslocation.jpg';
 
 function Home() {
   const user = JSON.parse(localStorage.getItem('user')); // Retrieve the user data
@@ -60,17 +60,17 @@ function Home() {
         <div class="lowerGrid">
           <div class="leftPanel">
             <h2 class="homeContentTitle">Hours of Operation</h2>
-            <h3>Mon-Wed: 3pm-11pm*</h3>
-            <h3>Thur: 10am-11pm*</h3>
-            <h3>Fri-Sat: 10am-12am*</h3>
-            <h3>Sun: 10am-11pm*</h3>
-            <h3>*Limited Menu After 10pm</h3>
+            <h3 class="homeContentHours">Mon-Wed: 3pm-11pm*</h3>
+            <h3 class="homeContentHours">Thur: 10am-11pm*</h3>
+            <h3 class="homeContentHours">Fri-Sat: 10am-12am*</h3>
+            <h3 class="homeContentHours">Sun: 10am-11pm*</h3>
+            <h3 class="homeContentHours">*Limited Menu After 10pm</h3>
             <h2 class="homeContentTitle">Happy Hours</h2>
-            <h3>Mon-Fri: 3pm-6pm</h3>
+            <h3 class="homeContentHours">Mon-Fri: 3pm-6pm</h3>
             <hr/>
-            <h3>Where to Find Us</h3>
-            <p>1025 University Dr, Suite 101 College Station, TX 77840</p>
-            <p>Phone: (979) 704-3275</p>
+            <h3 class="homeContentLocationTitle">Where to Find Us</h3>
+            <p class="homeContentLocationContent">1025 University Dr, Suite 101 College Station, TX 77840</p>
+            <p class="homeContentLocationContent">Phone: (979) 704-3275</p>
             <GMap/>
           </div>
           <div class="rightPanel">
