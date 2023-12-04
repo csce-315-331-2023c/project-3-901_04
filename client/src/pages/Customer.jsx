@@ -149,7 +149,8 @@ function Customer() {
     return parseInt(timeStr.split(':')[0]);
   }
 
-  function checkHappyHour(time) {
+  //z = not happy, b = happy hour beer, w = happy hour wine
+  function checkHappyHour(time, drinkName) {
     var timeInt = getTimeFromTimestamp(time);
     if (timeInt >= 15 && timeInt < 18) {
       return true;
