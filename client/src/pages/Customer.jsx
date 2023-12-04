@@ -42,6 +42,7 @@ function Customer() {
   const [popup, setPop] = useState(false);
   const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
   //const custName = "Name1";
+  const namePass = 'customer';
 
   useEffect(() => {
     setLoad(true);
@@ -109,7 +110,7 @@ function Customer() {
     ? 'https://mos-irish-server-901-04.vercel.app/postid'
     : 'http://localhost:3001/postid';
     try {
-        const response = await axios.post(backendURL2, {order, orderPrices, custName});
+        const response = await axios.post(backendURL2, {order, orderPrices, custName, namePass});
         console.log(response.data);
     } catch (error) {
         console.error('Order error', error);

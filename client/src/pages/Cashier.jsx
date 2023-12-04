@@ -16,6 +16,7 @@ function Cashier() {
 
   //customer name
   const [custName, setCust] = useState("");
+  const namePass = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
 
   useEffect(() => {
     const backendURL = process.env.NODE_ENV === 'production'
@@ -64,7 +65,7 @@ function Cashier() {
       ? 'https://mos-irish-server-901-04.vercel.app/postid'
       : 'http://localhost:3001/postid';
       try {
-          const response = await axios.post(backendURL2, {order, orderPrices, custName});
+          const response = await axios.post(backendURL2, {order, orderPrices, custName, namePass});
           console.log(response.data);
       } catch (error) {
           console.error('Order error', error);
