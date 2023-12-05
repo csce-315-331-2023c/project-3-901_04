@@ -22,6 +22,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Scale } from '@mui/icons-material';
 //import downarrow from '../media/down-arrow-svgrepo-com.svg';
 //import uparrow from '../media/up-arrow-svgrepo-com.svg';
 //import 'java.util.Dictionary';
@@ -180,22 +181,22 @@ function Customer() {
   const theme = createTheme({
     typography: {
       subtitle1: {
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'none'
       },
       subtitle2: {
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'none'
       },
       h6: {
         fontSize: 22
       },
       h5: {
-        fontSize: 20,
+        fontSize: 22,
         textTransform: 'none'
       },
       h4: {
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'none'
       },
       body1: {
@@ -204,7 +205,13 @@ function Customer() {
       },
       body2: {
         fontsize: 20
-      }
+      },
+    }
+  })
+
+  const styles = theme => ({
+    tablecell: {
+      fontSize: '40pt',
     }
   })
 
@@ -227,16 +234,15 @@ function Customer() {
           <TableCell>
             <Button variant='text' onClick={() => reorder(props.od.id)}><Typography variant='subtitle1'>Order</Typography></Button>
           </TableCell>
-          <TableCell>{<Typography variant='subtitle1'>{props.od.id}</Typography>}</TableCell>
-          <TableCell>{<Typography variant='subtitle1'>{getDateFromTimestamp(props.od.order_timestamp)}</Typography>}</TableCell>
-          <TableCell>{<Typography variant='subtitle1'>{props.od.price_total}</Typography>}</TableCell>
+          <TableCell className={'body'}>{props.od.id}</TableCell>
+          <TableCell className={'body'}>{getDateFromTimestamp(props.od.order_timestamp)}</TableCell>
+          <TableCell className={'body'}>{props.od.price_total}</TableCell>
         </TableRow>
 
         <TableRow>
           <TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{margin:1}}>
-
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -248,10 +254,10 @@ function Customer() {
                   <TableBody>
                     {orderInst && orderInst.filter(val => val.id == props.od.id).map((item) => (
                       <TableRow key={item.drink_name || item.entree_name}>
-                        <TableCell>
-                          <Typography variant='body1'>{item.drink_name || item.entree_name}</Typography>
+                        <TableCell className={'body'} >
+                          {item.drink_name || item.entree_name}
                         </TableCell>
-                        <TableCell><Typography variant='body1'>{item.price}</Typography></TableCell>
+                        <TableCell className={'body'}>{item.price}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -471,9 +477,13 @@ function Customer() {
               '&:hover': {
                 backgroundColor: '#ffa726',
               },
+              textTransform: 'inherit',
+              fontSize: '20px'
             }}
-            onClick={handleRemoveLastItem}>
-            Remove Last Item
+            onClick={handleRemoveLastItem}
+            className='body'
+            >
+            Remove Last
           </Button>
           <Button
             sx={{
@@ -482,8 +492,12 @@ function Customer() {
               '&:hover': {
                 backgroundColor: '#ffa726',
               },
+              textTransform: 'inherit',
+              fontSize: '20px'
             }}
-            onClick={handleClearOrder}>
+            onClick={handleClearOrder}
+            className='body'
+            >
             Clear Order
           </Button>
           <Button
@@ -493,8 +507,12 @@ function Customer() {
               '&:hover': {
                 backgroundColor: '#ff9800',
               },
+              textTransform: 'inherit',
+              fontSize: '20px'
             }}
-            onClick={handlePlaceOrder}>
+            onClick={handlePlaceOrder}
+            className='body'
+            >
             Place Order
           </Button>
 

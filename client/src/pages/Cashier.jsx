@@ -145,12 +145,12 @@ function Cashier() {
         <Grid container spacing={2}>
           {/* Left side */}
           <Grid item xs={8.6}> {/* 70% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
-            <Button variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
-              {showEntrees ? <Typography variant='subtitle2'>Hide Entrees</Typography> : <Typography variant='subtitle2'>Show Entrees</Typography>}
+            <Button sx={{fontSize: '20px', textTransform: 'inherit', }} variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
+              {showEntrees ? 'Hide Entrees' : 'Show Entrees'}
             </Button>
             &nbsp;{/* This adds a space between buttons */}
-            <Button variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
-              {showDrinks ? <Typography variant='subtitle2'>Hide Drinks</Typography> : <Typography variant='subtitle2'>Show Drinks</Typography>}
+            <Button sx={{fontSize: '20px', textTransform: 'inherit',}}variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
+              {showDrinks ? 'Hide Drinks' : 'Show Drinks'}
             </Button>
 
             {/* Display Entrees or Drinks based on state */}
@@ -333,9 +333,11 @@ function Cashier() {
                 '&:hover': {
                   backgroundColor: '#ffa726',
                 },
+                textTransform: 'inherit',
+                fontSize: '20px'
               }}
               onClick={handleRemoveLastItem}>
-              {<Typography variant='body2'>Remove Last Item</Typography>}
+              Remove Last
             </Button>
             <Button
               sx={{
@@ -344,9 +346,11 @@ function Cashier() {
                 '&:hover': {
                   backgroundColor: '#ffa726',
                 },
+                textTransform: 'inherit',
+                fontSize: '20px'
               }}
               onClick={handleClearOrder}>
-              {<Typography variant='body2'>Clear Order</Typography>}
+              Clear Order
             </Button>
             <Button
               sx={{
@@ -355,9 +359,11 @@ function Cashier() {
                 '&:hover': {
                   backgroundColor: '#ff9800',
                 },
+                textTransform: 'inherit',
+                fontSize: '20px'
               }}
               onClick={handlePlaceOrder}>
-              {<Typography variant='body2'>Place Order</Typography>}
+              Place Order
             </Button>
 
 
