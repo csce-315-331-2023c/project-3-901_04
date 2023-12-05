@@ -359,6 +359,91 @@ app.post('/api/addInventoryItem', async (req, res) => {
 });
 
 
+// Endpoint to add a new entree item
+app.post('/api/addEntreeItem', async (req, res) => {
+    const { name, price, togo, seasonal, ingredients } = req.body;
+
+    try {
+        await pool.query('BEGIN');
+
+        // Fetch the current maximum id from the entrees table
+        const maxEntreeIdResult = await pool.query('SELECT MAX(id) FROM entrees');
+        const newEntreeId = (maxEntreeIdResult.rows[0].max || 0) + 1;
+
+        // Insert the new entree with the new ID
+        const entreeName = seasonal ? `(S) ${name}` : name;
+        await pool.query(
+            'INSERT INTO entrees (id, entree_name, price, togo, seasonal) VALUES ($1, $2, $3, $4, $5);',
+            [newEntreeId, entreeName, price, togo, seasonal]
+        );
+
+        // Insert the ingredients for the new entree
+        for (const { id: inventoryId, quantity } of ingredients) {
+            const maxRecipeIdResult = await pool.query('SELECT MAX(id) FROM entreerecipes');
+            const newRecipeId = (maxRecipeIdResult.rows[0].max || 0) + 1;
+
+            await pool.query(
+                'INSERT INTO entreerecipes (id, entree_id, inventory_id, quantity) VALUES ($1, $2, $3, $4);',
+                [newRecipeId, newEntreeId, inventoryId, quantity]
+            );
+        }
+
+        await pool.query('COMMIT');
+        res.status(201).json({ message: 'Entree item added successfully', entreeId: newEntreeId });
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error('Error adding entree item:', error);
+        res.status(500).json({ error: 'Error adding entree item', message: error.message });
+    }
+});
+
+// Endpoint to add a new drink item
+app.post('/api/addDrinkItem', async (req, res) => {
+    const { name, price, togo, alcoholic, happyhourbeer, happyhourwine, cocktail, brunch, ingredients } = req.body;
+    console.log(req.body); 
+    try {
+        await pool.query('BEGIN');
+
+        const maxDrinkIdResult = await pool.query('SELECT MIN(id) FROM drinks');
+        const newDrinkId = (maxDrinkIdResult.rows[0].min || 0) - 1; // Assuming negative ids for drinks
+
+        // Insert the new drink
+        await pool.query(
+            'INSERT INTO drinks (id, drink_name, price, togo, alcoholic, happyhourbeer, happyhourwine, cocktail, brunch) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);',
+            [newDrinkId, name, price, togo, alcoholic, happyhourbeer, happyhourwine, cocktail, brunch]
+        );
+
+        // Insert the ingredients for the new drink
+        for (const { id: inventoryId, quantity } of ingredients) {
+            const maxDrinkRecipeIdResult = await pool.query('SELECT MAX(id) FROM drinkrecipes');
+            const newDrinkRecipeId = (maxDrinkRecipeIdResult.rows[0].max || 0) + 1;
+
+            await pool.query(
+                'INSERT INTO drinkrecipes (id, drink_id, inventory_id, quantity) VALUES ($1, $2, $3, $4);',
+                [newDrinkRecipeId, newDrinkId, inventoryId, quantity]
+            );
+        }
+
+        await pool.query('COMMIT');
+        res.json({ message: 'Drink item added successfully', drinkId: newDrinkId });
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        console.error('Error adding drink item:', error);
+        res.status(500).json({ error: 'Error adding drink item', message: error.message });
+    }
+});
+
+app.get('/api/inventoryItems', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT id, item_name FROM inventory ORDER BY item_name;');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching inventory items:', error);
+        res.status(500).send('Error fetching inventory items');
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

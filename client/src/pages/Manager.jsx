@@ -3,10 +3,13 @@ import '../styles/Manager.css';
 import Button from '@mui/material/Button';
 import { TextField, Grid } from '@mui/material';
 import axios from 'axios';
-import Greeting from '../components/Greeting';
+// import Greeting from '../components/Greeting';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+
 
 function Manager() {
+  const navigate = useNavigate();
 
   const [DBItems, setDBItems] = useState({ menuItems: [], inventoryItems: [] });
   const [activeView, setActiveView] = useState(DBItems.menuItems);
@@ -308,6 +311,9 @@ function Manager() {
     }
   };
 
+  const handleAddItem = () => {
+    navigate('/add-menu-item'); // Use the route you set up for adding a menu item
+  };
 
 
   console.log("showingMenu: ", showingMenu);
@@ -318,11 +324,14 @@ function Manager() {
           <div className='leftGrid'>
             <div className='scrollView'>
               <div>
-                <Button className="managerMenuSwapButton" variant="contained" disableElevation onClick={handleViewToggle}>
+                <Button sx={{ mb: 1, mt:7 }} className="managerMenuSwapButton managerActionButton" variant="contained" disableElevation onClick={handleViewToggle}>
                   Swap Menu/Inventory
                 </Button>
-                <Button className="toggleAddItemFormButton" variant="contained" disableElevation onClick={handleToggleAddItemForm}>
+                <Button sx={{ mb: 1 }}className="toggleAddItemFormButton managerActionButton" variant="contained" disableElevation onClick={handleToggleAddItemForm}>
                   {showAddItemForm ? 'Hide Add Item Form' : 'Show Add Item Form'}
+                </Button>
+                <Button className="managerActionButton" variant="contained" disableElevation onClick={handleAddItem}>
+                  Add Menu Item
                 </Button>
               </div>
               {/* Only show the navigation buttons if the addItemForm is not shown */}
