@@ -1,13 +1,12 @@
 import '../styles/Customer.css';
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { TextField, Grid, Tooltip, TablePagination } from '@mui/material';
+import { TextField, Grid, Tooltip, TablePagination, TooltipProps, tooltipClasses } from '@mui/material';
 import axios from 'axios';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {styled} from '@mui/material/styles';
-import { tooltipClasses } from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -22,6 +21,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 //import downarrow from '../media/down-arrow-svgrepo-com.svg';
 //import uparrow from '../media/up-arrow-svgrepo-com.svg';
 //import 'java.util.Dictionary';
@@ -89,7 +89,11 @@ function Customer() {
   const handleAddItem = (itemName, itemPrice) => {
     var addon = "";
     if (check == true) {
-      addon = " (TOGO)";
+      entrees.map(current => {
+        if (current.entree_name == itemName) {
+          addon = " (TOGO)";
+        }
+      })
     }
     setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);  
     setOrder((prevOrder) => [...prevOrder, itemName + addon]);
@@ -173,31 +177,36 @@ function Customer() {
     return time.getHours();
   }
 
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow:24,
-    overflowY: "scroll",
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: 'translate(-50%, -50%)',
-    maxWidth: '50%',
-  };
-
-  const itemToolTip = styled(({className, ...props}) => (
-    <Tooltip {...props} classes={{popper: className}}/>
-  ))(({theme}) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: '#f5f5f9',
-      color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: 220,
-      fontSize: theme.typography.pxToRem(12),
-      border: '1px solid #dadde9',
-    },
-  }));
+  const theme = createTheme({
+    typography: {
+      subtitle1: {
+        fontSize: 18,
+        textTransform: 'none'
+      },
+      subtitle2: {
+        fontSize: 18,
+        textTransform: 'none'
+      },
+      h6: {
+        fontSize: 22
+      },
+      h5: {
+        fontSize: 20,
+        textTransform: 'none'
+      },
+      h4: {
+        fontSize: 18,
+        textTransform: 'none'
+      },
+      body1: {
+        fontSize: 16,
+        textTransform: 'none'
+      },
+      body2: {
+        fontsize: 20
+      }
+    }
+  })
 
   function Row(props) {
     const [open, setOpen] = useState(false);
@@ -207,6 +216,7 @@ function Customer() {
     console.log(getTimeFromTimestamp(orderHist[0].order_timestamp));*/
     return (
       <React.Fragment>
+        <ThemeProvider theme={theme}>
         <TableRow >
           <TableCell>
             <IconButton size="small" onClick={() => setOpen(!open)}>
@@ -215,23 +225,23 @@ function Customer() {
           </TableCell>
 
           <TableCell>
-            <Button variant='text' onClick={() => reorder(props.od.id)}>Order</Button>
+            <Button variant='text' onClick={() => reorder(props.od.id)}><Typography variant='subtitle1'>Order</Typography></Button>
           </TableCell>
-          <TableCell>{props.od.id}</TableCell>
-          <TableCell>{getDateFromTimestamp(props.od.order_timestamp)}</TableCell>
-          <TableCell>{props.od.price_total}</TableCell>
+          <TableCell>{<Typography variant='subtitle1'>{props.od.id}</Typography>}</TableCell>
+          <TableCell>{<Typography variant='subtitle1'>{getDateFromTimestamp(props.od.order_timestamp)}</Typography>}</TableCell>
+          <TableCell>{<Typography variant='subtitle1'>{props.od.price_total}</Typography>}</TableCell>
         </TableRow>
 
         <TableRow>
           <TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{margin:1}}>
-                <Typography variant="h6">Order Details</Typography>
+
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Item Name</TableCell>
-                      <TableCell>Item Price($)</TableCell>
+                      <TableCell><Typography variant='h4'>Item Name</Typography></TableCell>
+                      <TableCell><Typography variant='h4'>Item Price($)</Typography></TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -239,9 +249,9 @@ function Customer() {
                     {orderInst && orderInst.filter(val => val.id == props.od.id).map((item) => (
                       <TableRow key={item.drink_name || item.entree_name}>
                         <TableCell>
-                          {item.drink_name || item.entree_name}
+                          <Typography variant='body1'>{item.drink_name || item.entree_name}</Typography>
                         </TableCell>
-                        <TableCell>{item.price}</TableCell>
+                        <TableCell><Typography variant='body1'>{item.price}</Typography></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -251,6 +261,7 @@ function Customer() {
             </Collapse>
           </TableCell>
         </TableRow>
+        </ThemeProvider>
       </React.Fragment>
     );
   }
@@ -258,19 +269,20 @@ function Customer() {
 
   return (
     <div className="Customer">
+      <ThemeProvider theme={theme}>
       <Grid container spacing={2}>
         {/* Left side */}
         <Grid item xs={8}> {/* 75% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
           <Button variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
-            {showEntrees ? 'Hide Entrees' : 'Show Entrees'}
+            {showEntrees ? <Typography variant='subtitle2'>Hide Entrees</Typography> : <Typography variant='subtitle2'>Show Entrees</Typography>}
           </Button>
           &nbsp;{/* This adds a space between buttons */}
           <Button variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
-            {showDrinks ? 'Hide Drinks' : 'Show Drinks'}
+            {showDrinks ? <Typography variant='subtitle2'>Hide Drinks</Typography> : <Typography variant='subtitle2'>Show Drinks</Typography>}
           </Button>
           &nbsp;{/* This adds a space between buttons */}
           <Button variant="contained" onClick={handleOpen}>
-            Order History
+          <Typography variant='subtitle2'>Order History</Typography>
           </Button>
           <Modal
             hidebackDrop
@@ -283,11 +295,11 @@ function Customer() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell align="inherit">See Details</TableCell>
-                    <TableCell align="inherit">Reorder</TableCell>
-                    <TableCell align="inherit">Order ID</TableCell>
-                    <TableCell align="inherit">Date and Time</TableCell>
-                    <TableCell align="inherit">Total($)</TableCell>
+                    <TableCell align="inherit"><Typography variant='h5'> See Details</Typography></TableCell>
+                    <TableCell align="inherit"><Typography variant='h5'> Reorder</Typography></TableCell>
+                    <TableCell align="inherit"><Typography variant='h5'> Order ID</Typography></TableCell>
+                    <TableCell align="inherit"><Typography variant='h5'> Date and Time</Typography></TableCell>
+                    <TableCell align="inherit"><Typography variant='h5'> Total($)</Typography></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -299,71 +311,22 @@ function Customer() {
             </TableContainer>
           </Modal>
 
-          {/* Display Entrees or Drinks based on state */}
-          {showEntrees && (
-            <div>
-              <h2 class="heading">Entrees</h2>
-              {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
-                <itemToolTip title={entree.entree_name} placement='top' size="sm">
-                {entree.seasonal ? (
-                <Button
-                  className="itemButton"
-                  key={(entree.entree_name)}
-                  onClick={() => handleAddItem(entree.entree_name, entree.price)}
-                  variant="outlined"
-                  sx={{
-                    margin: '5px',
-                    border: '1px solid #c8e6c9',
-                    backgroundColor: '#f5bf42',
-                    color: '#0a3a0a',
-                    borderRadius: 2,
-                    padding: '30px 0px',
-                    '&:hover': {
-                      backgroundColor: '#f5aa42',
-                    },
-                    // Add other styles as needed
-                  }}
-              >
-                {getName(entree.entree_name)}
-              </Button>
-                ) : (
+            {/* Display Entrees or Drinks based on state */}
+            {showEntrees && (
+              <div>
+                <h2 class="heading">Entrees</h2>
+                {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
+                  <Tooltip 
+                    title={<React.Fragment><Typography variant='subtitle1'>{entree.entree_name + ' (' + entree.price + ')'}</Typography></React.Fragment>}
+                    placement='top' 
+                    size="sm"
+                  >
+                  {entree.seasonal ? (
                   <Button
                     className="itemButton"
                     key={(entree.entree_name)}
                     onClick={() => handleAddItem(entree.entree_name, entree.price)}
                     variant="outlined"
-                    sx={{
-                      margin: '5px',
-                      border: '1px solid #c8e6c9',
-                      backgroundColor: '#a5d6a7',
-                      color: '#0a3a0a',
-                      borderRadius: 2,
-                      padding: '30px 0px',
-                      '&:hover': {
-                        backgroundColor: '#81c784',
-                      },
-                      // Add other styles as needed
-                    }}
-                >
-                  {getName(entree.entree_name)}
-                </Button>
-                )}
-                </itemToolTip>
-              ))}
-
-            </div>
-          )}
-
-          {showDrinks && (
-            <div>
-              <h2 class="heading">Drinks</h2>
-              {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
-                <Tooltip title={drink.drink_name}>
-                {drink.seasonal ? (
-                  <Button
-                    className="itemButton"
-                    key={drink.drink_name}
-                    onClick={() => handleAddItem(drink.drink_name, drink.price)}
                     sx={{
                       margin: '5px',
                       border: '1px solid #c8e6c9',
@@ -377,34 +340,91 @@ function Customer() {
                       // Add other styles as needed
                     }}
                 >
-                  {getName(drink.drink_name)}
+                  {<Typography variety='body1'>{getName(entree.entree_name)}</Typography>}
                 </Button>
-                ) : (
-                  <Button
-                    className="itemButton"
-                    key={drink.drink_name}
-                    onClick={() => handleAddItem(drink.drink_name, drink.price)}
-                    sx={{
-                      margin: '5px',
-                      border: '1px solid #c8e6c9',
-                      backgroundColor: '#a5d6a7',
-                      color: '#0a3a0a',
-                      borderRadius: 2,
-                      padding: '30px 0px',
-                      '&:hover': {
-                        backgroundColor: '#81c784',
-                      },
-                      // Add other styles as needed
-                    }}
-                >
-                  {getName(drink.drink_name)}
-                </Button>
-                )}
-                </Tooltip>
-              ))}
+                  ) : (
+                    <Button
+                      className="itemButton"
+                      key={(entree.entree_name)}
+                      onClick={() => handleAddItem(entree.entree_name, entree.price)}
+                      variant="outlined"
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: '#a5d6a7',
+                        color: '#0a3a0a',
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&:hover': {
+                          backgroundColor: '#81c784',
+                        },
+                        // Add other styles as needed
+                      }}
+                  >
+                    {<Typography variety='body1'>{getName(entree.entree_name)}</Typography>}
+                  </Button>
+                  )}
+                  </Tooltip>
+                ))}
 
-            </div>
-          )}
+              </div>
+            )}
+
+            {showDrinks && (
+              <div>
+                <h2 class="heading">Drinks</h2>
+                {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
+                  <Tooltip 
+                  title={<Typography variant='subtitle1'>{drink.drink_name + ' (' + drink.price + ')'}</Typography>}
+                  placement='top' 
+                  size="sm"
+                >
+                  {drink.seasonal ? (
+                    <Button
+                      className="itemButton"
+                      key={drink.drink_name}
+                      onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: '#f5bf42',
+                        color: '#0a3a0a',
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&:hover': {
+                          backgroundColor: '#f5aa42',
+                        },
+                        // Add other styles as needed
+                      }}
+                  >
+                    {<Typography variant='body1'>{getName(drink.drink_name)}</Typography>}
+                  </Button>
+                  ) : (
+                    <Button
+                      className="itemButton"
+                      key={drink.drink_name}
+                      onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: '#a5d6a7',
+                        color: '#0a3a0a',
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&:hover': {
+                          backgroundColor: '#81c784',
+                        },
+                        // Add other styles as needed
+                      }}
+                  >
+                    {<Typography variant='body1'>{getName(drink.drink_name)}</Typography>}
+                  </Button>
+                  )}
+                  </Tooltip>
+                ))}
+
+              </div>
+            )}
         </Grid>
 
         {/* Right side */}
@@ -419,7 +439,7 @@ function Customer() {
                 <FormControlLabel control={<Checkbox
                 checked={check}
                 onChange={handleCheck}
-              />} label="To-go"/>
+              />} label={<Typography variant='subtitle1'>To-go</Typography>}/>
 
               </FormGroup>
             </Grid>
@@ -439,7 +459,7 @@ function Customer() {
           ))}
 
           <div className="OrderTotal">
-            <strong>Total:</strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}
+          <Typography variant='subtitle1'><strong>Total:</strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}</Typography>
           </div>
           <div style={{ height: '10px' }}></div>
 
@@ -481,6 +501,7 @@ function Customer() {
 
         </Grid>
       </Grid>
+      </ThemeProvider>
     </div>
   );
 }
