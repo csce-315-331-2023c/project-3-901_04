@@ -80,4 +80,9 @@
   .Button + span {
     margin-left: 8px;
   }
-  
+
+  .itemButton {
+    min-height: 50%;
+    max-height: 50%;
+    width: 19%;
+  }
