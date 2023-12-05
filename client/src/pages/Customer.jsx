@@ -87,20 +87,11 @@ function Customer() {
   }, []);
 
   const handleAddItem = (itemName, itemPrice) => {
-    var whichHappy = checkHappyHour(itemName);
     var addon = "";
-    if (whichHappy == 2) {
-      setOrderPrices((prevPrices) => [...prevPrices, 5]); 
-    } 
-    else if (whichHappy == 1) {
-      setOrderPrices((prevPrices) => [...prevPrices, 2.92]); 
-    }
-    else {
-      setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);   
-    }
     if (check == true) {
       addon = " (TOGO)";
     }
+    setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);  
     setOrder((prevOrder) => [...prevOrder, itemName + addon]);
   };
 
@@ -160,11 +151,6 @@ function Customer() {
   }
 
   function getName(original) {
-    //var addon = '';
-    const happyCheck = checkHappyHour(original);
-    if (happyCheck > 0) {
-      //console.log('test');
-    }
     original = JSON.stringify(original).replace(/['"]+/g, '');
     if (original.length > 18) {
       original = original.slice(0, 16) + "...";
@@ -180,33 +166,6 @@ function Customer() {
   function getTimeFromTimestamp(tstamp) {
     var timeStr = JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0];
     return parseInt(timeStr.split(':')[0]);
-  }
-
-  //z = not happy, b = happy hour beer, w = happy hour wine
-  function checkHappyHour(item) {
-    const timeInt = getHour();
-    //15, 18
-    if (timeInt >= 12 && timeInt < 18) {
-      drinks && drinks.filter(current => current.drink_name == item).map(drink => {
-        //console.log('item: ' + item + ' drink_name: ' + drink.drink_name);
-        if (drink.happyhourbeer == true) {
-          //console.log('1');
-          return 1;
-        }
-        else if (drink.happyhourwine == true) {
-          //console.log('2');
-          return 2;
-        }
-        else {
-          //console.log('-1')
-          return -1;
-        }
-      })
-    }
-    else {
-      //console.log('-1');
-      return -1;
-    }
   }
 
   function getHour() {
@@ -346,6 +305,7 @@ function Customer() {
               <h2 class="heading">Entrees</h2>
               {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
                 <itemToolTip title={entree.entree_name} placement='top' size="sm">
+                {entree.seasonal ? (
                 <Button
                   className="itemButton"
                   key={(entree.entree_name)}
@@ -354,18 +314,40 @@ function Customer() {
                   sx={{
                     margin: '5px',
                     border: '1px solid #c8e6c9',
-                    backgroundColor: '#a5d6a7',
+                    backgroundColor: '#f5bf42',
                     color: '#0a3a0a',
                     borderRadius: 2,
                     padding: '30px 0px',
                     '&:hover': {
-                      backgroundColor: '#81c784',
+                      backgroundColor: '#f5aa42',
                     },
                     // Add other styles as needed
                   }}
+              >
+                {getName(entree.entree_name)}
+              </Button>
+                ) : (
+                  <Button
+                    className="itemButton"
+                    key={(entree.entree_name)}
+                    onClick={() => handleAddItem(entree.entree_name, entree.price)}
+                    variant="outlined"
+                    sx={{
+                      margin: '5px',
+                      border: '1px solid #c8e6c9',
+                      backgroundColor: '#a5d6a7',
+                      color: '#0a3a0a',
+                      borderRadius: 2,
+                      padding: '30px 0px',
+                      '&:hover': {
+                        backgroundColor: '#81c784',
+                      },
+                      // Add other styles as needed
+                    }}
                 >
                   {getName(entree.entree_name)}
                 </Button>
+                )}
                 </itemToolTip>
               ))}
 
@@ -377,25 +359,47 @@ function Customer() {
               <h2 class="heading">Drinks</h2>
               {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
                 <Tooltip title={drink.drink_name}>
-                <Button
-                  className="itemButton"
-                  key={drink.drink_name}
-                  onClick={() => handleAddItem(drink.drink_name, drink.price)}
-                  sx={{
-                    margin: '5px',
-                    border: '1px solid #c8e6c9',
-                    backgroundColor: '#a5d6a7',
-                    color: '#0a3a0a',
-                    borderRadius: 2,
-                    padding: '30px 0px',
-                    '&:hover': {
-                      backgroundColor: '#81c784',
-                    },
-                    // Add other styles as needed
-                  }}
+                {drink.seasonal ? (
+                  <Button
+                    className="itemButton"
+                    key={drink.drink_name}
+                    onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                    sx={{
+                      margin: '5px',
+                      border: '1px solid #c8e6c9',
+                      backgroundColor: '#f5bf42',
+                      color: '#0a3a0a',
+                      borderRadius: 2,
+                      padding: '30px 0px',
+                      '&:hover': {
+                        backgroundColor: '#f5aa42',
+                      },
+                      // Add other styles as needed
+                    }}
                 >
                   {getName(drink.drink_name)}
                 </Button>
+                ) : (
+                  <Button
+                    className="itemButton"
+                    key={drink.drink_name}
+                    onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                    sx={{
+                      margin: '5px',
+                      border: '1px solid #c8e6c9',
+                      backgroundColor: '#a5d6a7',
+                      color: '#0a3a0a',
+                      borderRadius: 2,
+                      padding: '30px 0px',
+                      '&:hover': {
+                        backgroundColor: '#81c784',
+                      },
+                      // Add other styles as needed
+                    }}
+                >
+                  {getName(drink.drink_name)}
+                </Button>
+                )}
                 </Tooltip>
               ))}
 
@@ -473,7 +477,6 @@ function Customer() {
             onClick={handlePlaceOrder}>
             Place Order
           </Button>
-          <h2>* Happy hour item</h2>
 
 
         </Grid>
