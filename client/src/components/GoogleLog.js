@@ -23,6 +23,10 @@ function GoogleLog({ navigate }) { // Accept navigate as a prop
             const response = await axios.get(`${backendURL}/api/isEmployee?name=${name}`);
             localStorage.setItem('isEmployee', response.data.isEmployee);
 
+                            //check if the user is a manager
+                            const managerCheckResponse = await axios.get(`${backendURL}/api/isManager?name=${name}`);
+                            localStorage.setItem('isManager', managerCheckResponse.data.isManager);
+
             navigate('/home');
         } catch (error) {
             console.error('Error in employee check', error);

@@ -36,6 +36,10 @@ function Login() {
                 const employeeCheckResponse = await axios.get(`${backendURL}/api/isEmployee?name=${user.name}`);
                 localStorage.setItem('isEmployee', employeeCheckResponse.data.isEmployee);
 
+                //check if the user is a manager
+                const managerCheckResponse = await axios.get(`${backendURL}/api/isManager?name=${user.name}`);
+                localStorage.setItem('isManager', managerCheckResponse.data.isManager);
+                
                 navigate('/home');
             } else {
                 // Handle login failure
@@ -70,7 +74,7 @@ function Login() {
                 expires={150}
                 debug={false}
             >
-                
+
                 <span style={{ fontSize: "14px", display: "block" }}>This website requires cookies to enhance the user experience.{" "}</span>
             </CookieConsent>
             <h1>Login</h1>

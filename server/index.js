@@ -1,7 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
-const { all } = require('axios');
+const {
+    Pool
+} = require('pg');
+const {
+    all
+} = require('axios');
 const dotenv = require('dotenv').config();
 const User = require('./mongo');
 const app = express();
@@ -35,47 +39,39 @@ app.get('/api/menu', async (req, res) => {
         let getNoAlch = [];
         let getBrunchDrinks = [];
 
-        drinkRes.rows.forEach(function(drink) {
-            if(drink.alcoholic == true){
-              if(drink.brunch == true){
-                getBrunchDrinks.push([drink.drink_name, drink.price]);
-              }
-              else{
-                if(drink.cocktail == true){
-                  getCocktails.push([drink.drink_name, drink.price]);
-                }
-                else{
-                  if(drink.drink_name.includes('(Bottled)')){
-                    getBottled.push([drink.drink_name.slice(0, drink.drink_name.length - 9), drink.price]);
-                  }
-                  else{
-                    if(drink.drink_name.includes('(Glass)') || drink.drink_name.includes('(Bottle)')){
-                      if(drink.drink_name.includes('(Glass)')){
-                        if(drink.happyhourwine == true){
-                          getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), ("" + drink.price + "*")]);
+        drinkRes.rows.forEach(function (drink) {
+            if (drink.alcoholic == true) {
+                if (drink.brunch == true) {
+                    getBrunchDrinks.push([drink.drink_name, drink.price]);
+                } else {
+                    if (drink.cocktail == true) {
+                        getCocktails.push([drink.drink_name, drink.price]);
+                    } else {
+                        if (drink.drink_name.includes('(Bottled)')) {
+                            getBottled.push([drink.drink_name.slice(0, drink.drink_name.length - 9), drink.price]);
+                        } else {
+                            if (drink.drink_name.includes('(Glass)') || drink.drink_name.includes('(Bottle)')) {
+                                if (drink.drink_name.includes('(Glass)')) {
+                                    if (drink.happyhourwine == true) {
+                                        getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), ("" + drink.price + "*")]);
+                                    } else {
+                                        getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), drink.price]);
+                                    }
+                                } else {
+                                    getWine.push([drink.drink_name, drink.price]);
+                                }
+                            } else {
+                                if (drink.happyhourbeer == true) {
+                                    getDraft.push([drink.drink_name, ("" + drink.price + "*")]);
+                                } else {
+                                    getDraft.push([drink.drink_name, drink.price]);
+                                }
+                            }
                         }
-                        else{
-                          getWine.push([drink.drink_name.slice(0, drink.drink_name.length - 7), drink.price]);
-                        }
-                      }
-                      else{
-                        getWine.push([drink.drink_name, drink.price]);
-                      }
                     }
-                    else{
-                      if(drink.happyhourbeer == true){
-                        getDraft.push([drink.drink_name, ("" + drink.price + "*")]);
-                      }
-                      else{
-                        getDraft.push([drink.drink_name, drink.price]);
-                      }
-                    }
-                  }
                 }
-              }
-            }
-            else{
-              getNoAlch.push([drink.drink_name, drink.price]);
+            } else {
+                getNoAlch.push([drink.drink_name, drink.price]);
             }
         });
 
@@ -103,7 +99,7 @@ app.get('/api/managerMenu', async (req, res) => {
     try {
         const menuRes = await pool.query('(SELECT entree_name AS "item_name" FROM entrees UNION SELECT drink_name FROM drinks) ORDER BY item_name;');
         const inventoryRes = await pool.query('SELECT item_name FROM inventory ORDER BY item_name;');
-        
+
         const managerMenu = {
             menuItems: menuRes.rows,
             inventoryItems: inventoryRes.rows
@@ -136,7 +132,10 @@ app.get('/orderHistory', async (req, res) => {
         const entreeHist = await pool.query(orderEntreeQuery);
         const orderHist = drinkHist.rows.concat(entreeHist.rows);
 
-        res.json({main: mainHist, details: orderHist});
+        res.json({
+            main: mainHist,
+            details: orderHist
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send('Query Failure :(');
@@ -145,74 +144,72 @@ app.get('/orderHistory', async (req, res) => {
 
 app.delete('/api/deleteMenuItem', async (req, res) => {
     const deleteMe = req.query.itemToDelete;
-    try{
+    try {
         //For an entree
         pool.query(`DELETE FROM entreerecipes
                     WHERE entree_id IN (
                         SELECT id
                         FROM entrees
                         WHERE entree_name = '` + deleteMe + `'
-                    );`
-        ).then(
-        pool.query(`DELETE FROM orderentreecontents
+                    );`).then(
+            pool.query(`DELETE FROM orderentreecontents
                     WHERE entree_id IN (
                         SELECT id
                         FROM entrees
                         WHERE entree_name = '` + deleteMe + `'
                     );`
-                    
-        ).then(
-        pool.query(`DELETE FROM entrees WHERE entree_name = '` + deleteMe + `';`)
-        ));
+
+            ).then(
+                pool.query(`DELETE FROM entrees WHERE entree_name = '` + deleteMe + `';`)
+            ));
         //For a drink
         pool.query(`DELETE FROM drinkrecipes
                     WHERE drink_id IN (
                         SELECT id
                         FROM drinks
                         WHERE drink_name = '` + deleteMe + `'
-                    );`
-        ).then(
-        pool.query(`DELETE FROM orderdrinkcontents
+                    );`).then(
+            pool.query(`DELETE FROM orderdrinkcontents
                     WHERE drink_id IN (
                         SELECT id
                         FROM drinks
                         WHERE drink_name = '` + deleteMe + `'
                     );`
-                    
-        ).then(
-        pool.query(`DELETE FROM drinks WHERE drink_name = '` + deleteMe + `';`)
-        ));
-    }
-    catch (error) {
+
+            ).then(
+                pool.query(`DELETE FROM drinks WHERE drink_name = '` + deleteMe + `';`)
+            ));
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Failed to delete menu item ' + deleteMe });
+        res.status(500).json({
+            error: 'Failed to delete menu item ' + deleteMe
+        });
     }
     console.log('Deleted ' + deleteMe);
 });
 
 app.delete('/api/deleteInvItem', async (req, res) => {
     const deleteMe = req.query.itemToDelete;
-    try{
+    try {
         pool.query(`DELETE FROM entreerecipes
                     WHERE inventory_id IN (
                         SELECT id
                         FROM inventory
                         WHERE item_name = '` + deleteMe + `'
-                    );`
-        ).then(
-        pool.query(`DELETE FROM drinkrecipes
+                    );`).then(
+            pool.query(`DELETE FROM drinkrecipes
                     WHERE inventory_id IN (
                         SELECT id
                         FROM inventory
                         WHERE item_name = '` + deleteMe + `'
-                    );`
-        ).then(
-        pool.query(`DELETE FROM inventory WHERE item_name = '` + deleteMe + `'`)
-        ));
-    }
-    catch (error) {
+                    );`).then(
+                pool.query(`DELETE FROM inventory WHERE item_name = '` + deleteMe + `'`)
+            ));
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Failed to delete inventory item ' + deleteMe });
+        res.status(500).json({
+            error: 'Failed to delete inventory item ' + deleteMe
+        });
     }
 });
 
@@ -227,47 +224,67 @@ app.get('/api/recipe', async (req, res) => {
         const menuResult = await pool.query("SELECT entree_name AS item_name, price, togo FROM entrees WHERE entree_name = '" + reqItem + "' UNION SELECT drink_name AS item_name, price, togo FROM drinks WHERE drink_name = '" + reqItem + "';");
         const invResult = await pool.query("SELECT item_name, stock, cost, min_stock_warning FROM inventory WHERE item_name = '" + reqItem + "';");
         console.log('/api/recipe queries success');
-        if(menuResult.rows.length != 0 && invResult.rows.length == 0){//If reqItem is a menu item
-            res.json({ 
+        if (menuResult.rows.length != 0 && invResult.rows.length == 0) { //If reqItem is a menu item
+            res.json({
                 recipe: recipeResult.rows,
                 menuItemInfo: menuResult.rows,
-                invItemInfo: [ {item_name: '', stock: -1, cost: -1, min_stock_warning: -1} ]
+                invItemInfo: [{
+                    item_name: '',
+                    stock: -1,
+                    cost: -1,
+                    min_stock_warning: -1
+                }]
             });
-        }
-        else if(menuResult.rows.length == 0 && invResult.rows.length != 0){ //If reqItem is an inventory item
+        } else if (menuResult.rows.length == 0 && invResult.rows.length != 0) { //If reqItem is an inventory item
             res.json({
                 recipe: recipeResult.rows,
-                menuItemInfo: [ {item_name: '', price: -1, togo: false} ],
+                menuItemInfo: [{
+                    item_name: '',
+                    price: -1,
+                    togo: false
+                }],
                 invItemInfo: invResult.rows
             })
-        }
-        else{
+        } else {
             res.json({
                 recipe: recipeResult.rows,
                 menuItemInfo: menuResult.rows,
                 invItemInfo: invResult.rows
             })
         }
-        
+
         console.log("Recipe:", recipeResult.rows);
         console.log("menuResult:", menuResult.rows);
         console.log("invResult: ", invResult.rows);
         return;
-      } catch (error) {
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error executing the query' });
+        res.status(500).json({
+            error: 'Error executing the query'
+        });
         return;
-      }
+    }
 });
 
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const {
+        email,
+        password
+    } = req.body;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({
+            email
+        });
         if (user && user.password === password) { // In production, use a hashed password comparison
-            res.json({ status: 'ok', user: user });
+            res.json({
+                status: 'ok',
+                user: user
+            });
         } else {
-            res.json({ status: 'error', user: false });
+            res.json({
+                status: 'error',
+                user: false
+            });
         }
     } catch (err) {
         console.error(err);
@@ -276,15 +293,31 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+    const {
+        name,
+        email,
+        password
+    } = req.body;
     try {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({
+            email
+        });
         if (user) {
-            res.json({ status: 'error', error: 'User already exists' });
+            res.json({
+                status: 'error',
+                error: 'User already exists'
+            });
         } else {
-            user = new User({ name, email, password });
+            user = new User({
+                name,
+                email,
+                password
+            });
             await user.save();
-            res.json({ status: 'ok', user: user });
+            res.json({
+                status: 'ok',
+                user: user
+            });
         }
     } catch (err) {
         console.error(err);
@@ -293,7 +326,9 @@ app.post('/signup', async (req, res) => {
 });
 
 app.get('/api/isEmployee', async (req, res) => {
-    const { name } = req.query; // Get the name from query parameter
+    const {
+        name
+    } = req.query; // Get the name from query parameter
 
     try {
         // Query to check if an employee with the given name exists
@@ -302,7 +337,9 @@ app.get('/api/isEmployee', async (req, res) => {
         // Check if any rows are returned
         const isEmployee = result.rows.length > 0;
 
-        res.json({ isEmployee });
+        res.json({
+            isEmployee
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -323,7 +360,7 @@ app.post('/postid', async (req, res) => {
     //Gets the ids of items
     try {
         //Arbitrary amount; surely no one orders 100 items in a single sitting right?
-        while (count < 100){
+        while (count < 100) {
             if (orders[count] == null) {
                 break;
             }
@@ -331,8 +368,7 @@ app.post('/postid', async (req, res) => {
             count += 1;
             idarr.push(parseInt(element.rows[0].id));
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
     }
     //Sort the array of all ids into positive and negative ids (for entrees and drinks)
@@ -341,8 +377,7 @@ app.post('/postid', async (req, res) => {
     idarr.map((id) => {
         if (id > -1) {
             entreearr.push(id);
-        }
-        else {
+        } else {
             drinkarr.push(id);
         }
     });
@@ -351,40 +386,38 @@ app.post('/postid', async (req, res) => {
         var highestOrderId = await pool.query("SELECT id FROM orders ORDER BY id DESC LIMIT 1;");
         console.log("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + parseInt(employeeId.rows[0].id) + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
         pool.query("INSERT INTO orders (id, price_total, table_num, customer_name, employee_id, year, month, week, day, hour, minute, order_timestamp) VALUES (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + "," + parseFloat(orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)) + "," + parseInt(30 * Math.random() + 1) + ",'" + custName + "'," + parseInt(employeeId.rows[0].id) + "," + parseInt(getYear()) + "," + parseInt(getMonth()) + "," + parseInt((new Date()).getWeek()) + "," + parseInt(getDay()) + "," + parseInt(getHour()) + "," + parseInt(getMinute()) + ",'" + JSON.stringify(getTimeDate()) + "');")
-            .then( async result => {//Prevent race condition
+            .then(async result => { //Prevent race condition
                 //Insert into orderentreecontents
-                if(entreearr.length){
+                if (entreearr.length) {
                     var orderEntreeString = "INSERT INTO orderentreecontents (order_id, entree_id) VALUES";
                     try {
-                        for (var i = 0; i < entreearr.length; i ++) {
+                        for (var i = 0; i < entreearr.length; i++) {
                             if (i != 0) {
                                 orderEntreeString = orderEntreeString + ",";
                             }
-                            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] +")";
+                            orderEntreeString = orderEntreeString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + entreearr[i] + ")";
                         }
                         orderEntreeString = orderEntreeString + ";";
                         //console.log(orderEntreeString);
                         pool.query(orderEntreeString);
-                    }
-                    catch (e) {
+                    } catch (e) {
                         console.log(e);
                     }
                 }
                 //Insert into orderdrinkcontents
-                if(drinkarr.length){
+                if (drinkarr.length) {
                     var orderDrinkString = "INSERT INTO orderdrinkcontents (order_id, drink_id) VALUES";
                     try {
-                        for (var i = 0; i < drinkarr.length; i ++) {
+                        for (var i = 0; i < drinkarr.length; i++) {
                             if (i != 0) {
                                 orderDrinkString = orderDrinkString + ",";
                             }
-                            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] +")";
+                            orderDrinkString = orderDrinkString + " (" + parseInt(parseInt(highestOrderId.rows[0].id) + 1) + ", " + drinkarr[i] + ")";
                         }
                         orderDrinkString = orderDrinkString + ";";
                         console.log(orderDrinkString);
                         pool.query(orderDrinkString);
-                    }
-                    catch (e) {
+                    } catch (e) {
                         console.log(e);
                     }
                 }
@@ -396,8 +429,8 @@ app.post('/postid', async (req, res) => {
                 try {
                     let entreeInventoryQuantities = [];
                     let drinkInventoryQuantities = [];
-                    if(entreearr.length != 0){
-                        for (var i = 0; i < entreearr.length; i ++) {
+                    if (entreearr.length != 0) {
+                        for (var i = 0; i < entreearr.length; i++) {
                             if (i != 0) {
                                 getEntreeInventory = getEntreeInventory + ",";
                             }
@@ -409,8 +442,8 @@ app.post('/postid', async (req, res) => {
                     }
                     //res.send(JSON.stringify((entreeInventoryQuantities).rows[0].quantity));
 
-                    if(drinkarr.length != 0){
-                        for (var i = 0; i < drinkarr.length; i ++) {
+                    if (drinkarr.length != 0) {
+                        for (var i = 0; i < drinkarr.length; i++) {
                             if (i != 0) {
                                 getDrinkInventory = getDrinkInventory + ",";
                             }
@@ -420,17 +453,14 @@ app.post('/postid', async (req, res) => {
                         //console.log(getDrinkInventory);
                         drinkInventoryQuantities = await pool.query(getDrinkInventory);
                     }
-                    if(entreearr.length == 0){
+                    if (entreearr.length == 0) {
                         allInventory = Object.assign({}, drinkInventoryQuantities.rows);
-                    }
-                    else if(drinkarr.length == 0){
+                    } else if (drinkarr.length == 0) {
                         allInventory = Object.assign({}, entreeInventoryQuantities.rows);
-                    }
-                    else{
+                    } else {
                         allInventory = Object.assign({}, entreeInventoryQuantities.rows, drinkInventoryQuantities.rows);
                     }
-                }
-                catch (errr) {
+                } catch (errr) {
                     console.log(errr);
                 }
                 console.log("B");
@@ -443,17 +473,15 @@ app.post('/postid', async (req, res) => {
                         console.log(updateInventory);
                         pool.query(updateInventory);
                     }
-                }
-                catch (erm) {
+                } catch (erm) {
                     console.log(erm);
                 }
                 console.log("Order was taken successfully. All tables updated.");
                 res.send("Success!");
-                        });
-            }
-            catch (er) {
-                console.log(er);
-            }
+            });
+    } catch (er) {
+        console.log(er);
+    }
 });
 
 //REPORTS --------------------------------------------------------------------
@@ -495,7 +523,7 @@ app.get('/api/productReport', async (req, res) => {
         ) AS combined_sums
         GROUP BY day
         ORDER BY day;`);
-        
+
         const productReport = {
             productReport: productReportRes.rows,
         };
@@ -536,7 +564,7 @@ app.get('/api/salesReport', async (req, res) => {
 
             ORDER BY
                 item_name ASC;`);
-        
+
         const salesReport = {
             salesReport: salesReportRes.rows,
         };
@@ -575,7 +603,7 @@ app.get('/api/excessReport', async (req, res) => {
         LEFT JOIN TotalSales s ON i.id = s.inventory_id
         WHERE (COALESCE(s.total_sold, 0) / (i.stock + COALESCE(s.total_sold, 0))::FLOAT) * 100 < 10;
         `);
-        
+
         const excessReport = {
             excessReport: excessReportRes.rows,
         };
@@ -595,7 +623,7 @@ app.get('/api/restockReport', async (req, res) => {
         const restockReportRes = await pool.query(`
             SELECT item_name, stock FROM inventory WHERE stock <= min_stock_warning
         `);
-        
+
         const restockReport = {
             restockReport: restockReportRes.rows,
         };
@@ -631,7 +659,7 @@ app.get('/api/WSTReport', async (req, res) => {
         ORDER BY pair_freq DESC
         LIMIT 10;
         `);
-        
+
         const WSTReport = {
             WSTReport: WSTReportRes.rows,
         };
@@ -648,7 +676,7 @@ app.get('/api/WSTReport', async (req, res) => {
 
 //MANAGER ORDER VIEWER -----------------------------------------------------
 app.get('/api/managerOrders', async (req, res) => {
-    try{
+    try {
         let startDateReq = req.query.startTime.split('T');
         let endDateReq = req.query.endTime.split('T');
 
@@ -665,15 +693,14 @@ app.get('/api/managerOrders', async (req, res) => {
 
         console.log("Orders from " + startDate + " to " + endDate + " fetched for manager. Sending json.");
         res.json(orders);
-    }
-    catch{
+    } catch {
         console.error(err);
         res.status(500).send('Manager Orders Failure :(');
     }
 });
 
 app.get('/api/orderContents', async (req, res) => {
-    try{
+    try {
         let id = req.query.id;
 
         const orderMetaData = await pool.query(`
@@ -708,8 +735,7 @@ app.get('/api/orderContents', async (req, res) => {
         console.log("Order Data retrieved for order #" + id + ". Sending json.");
         res.json(orderData);
 
-    }
-    catch{
+    } catch {
         console.error(err);
         res.status(500).send('Orders Contents Failure :(');
     }
@@ -724,7 +750,7 @@ function getTimeDate() {
     const hour = getHour();
     const minute = getMinute();
     const second = getSecond();
-    return(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+    return (year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
 }
 
 function getYear() {
@@ -737,14 +763,16 @@ function getMonth() {
     return time.getMonth() + 1;
 }
 
-Date.prototype.getWeek = function() {
+Date.prototype.getWeek = function () {
     var start = new Date(this.getFullYear(), 0, 1);
     return Math.ceil((((this - start) / 86400000) + start.getDay() + 1) / 7);
 }
 
 function getDay() {
     const time = new Date();
-    return time.toLocaleString("en-US", { day : '2-digit'})
+    return time.toLocaleString("en-US", {
+        day: '2-digit'
+    })
 }
 
 function getHour() {
@@ -763,7 +791,12 @@ function getSecond() {
 }
 
 app.post('/api/addInventoryItem', async (req, res) => {
-    const { itemName, stock, cost, minStockWarning } = req.body;
+    const {
+        itemName,
+        stock,
+        cost,
+        minStockWarning
+    } = req.body;
 
     try {
         const maxIdResult = await pool.query('SELECT MAX(id) FROM inventory');
@@ -773,17 +806,29 @@ app.post('/api/addInventoryItem', async (req, res) => {
         const values = [idMax, itemName, stock, cost, minStockWarning];
         await pool.query(queryText, values);
 
-        res.json({ message: 'Item added successfully', itemId: idMax });
+        res.json({
+            message: 'Item added successfully',
+            itemId: idMax
+        });
     } catch (error) {
         console.error('Error adding item to inventory', error);
-        res.status(500).json({ error: 'Error adding item to inventory', message: error.message });
+        res.status(500).json({
+            error: 'Error adding item to inventory',
+            message: error.message
+        });
     }
 });
 
 
 // Endpoint to add a new entree item
 app.post('/api/addEntreeItem', async (req, res) => {
-    const { name, price, togo, seasonal, ingredients } = req.body;
+    const {
+        name,
+        price,
+        togo,
+        seasonal,
+        ingredients
+    } = req.body;
 
     try {
         await pool.query('BEGIN');
@@ -800,7 +845,10 @@ app.post('/api/addEntreeItem', async (req, res) => {
         );
 
         // Insert the ingredients for the new entree
-        for (const { id: inventoryId, quantity } of ingredients) {
+        for (const {
+                id: inventoryId,
+                quantity
+            } of ingredients) {
             const maxRecipeIdResult = await pool.query('SELECT MAX(id) FROM entreerecipes');
             const newRecipeId = (maxRecipeIdResult.rows[0].max || 0) + 1;
 
@@ -811,18 +859,34 @@ app.post('/api/addEntreeItem', async (req, res) => {
         }
 
         await pool.query('COMMIT');
-        res.status(201).json({ message: 'Entree item added successfully', entreeId: newEntreeId });
+        res.status(201).json({
+            message: 'Entree item added successfully',
+            entreeId: newEntreeId
+        });
     } catch (error) {
         await pool.query('ROLLBACK');
         console.error('Error adding entree item:', error);
-        res.status(500).json({ error: 'Error adding entree item', message: error.message });
+        res.status(500).json({
+            error: 'Error adding entree item',
+            message: error.message
+        });
     }
 });
 
 // Endpoint to add a new drink item
 app.post('/api/addDrinkItem', async (req, res) => {
-    const { name, price, togo, alcoholic, happyhourbeer, happyhourwine, cocktail, brunch, ingredients } = req.body;
-    console.log(req.body); 
+    const {
+        name,
+        price,
+        togo,
+        alcoholic,
+        happyhourbeer,
+        happyhourwine,
+        cocktail,
+        brunch,
+        ingredients
+    } = req.body;
+    console.log(req.body);
     try {
         await pool.query('BEGIN');
 
@@ -836,7 +900,10 @@ app.post('/api/addDrinkItem', async (req, res) => {
         );
 
         // Insert the ingredients for the new drink
-        for (const { id: inventoryId, quantity } of ingredients) {
+        for (const {
+                id: inventoryId,
+                quantity
+            } of ingredients) {
             const maxDrinkRecipeIdResult = await pool.query('SELECT MAX(id) FROM drinkrecipes');
             const newDrinkRecipeId = (maxDrinkRecipeIdResult.rows[0].max || 0) + 1;
 
@@ -847,11 +914,17 @@ app.post('/api/addDrinkItem', async (req, res) => {
         }
 
         await pool.query('COMMIT');
-        res.json({ message: 'Drink item added successfully', drinkId: newDrinkId });
+        res.json({
+            message: 'Drink item added successfully',
+            drinkId: newDrinkId
+        });
     } catch (error) {
         await pool.query('ROLLBACK');
         console.error('Error adding drink item:', error);
-        res.status(500).json({ error: 'Error adding drink item', message: error.message });
+        res.status(500).json({
+            error: 'Error adding drink item',
+            message: error.message
+        });
     }
 });
 
@@ -864,6 +937,144 @@ app.get('/api/inventoryItems', async (req, res) => {
         res.status(500).send('Error fetching inventory items');
     }
 });
+
+// Endpoint to get all users
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.find({}); // Fetch all documents from the users collection
+        res.json(users); // Send the result back in the response
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).send('Error fetching users');
+    }
+});
+
+app.delete('/api/users/:userId', async (req, res) => {
+    const {
+        userId
+    } = req.params; // Get the userId from the URL parameters
+
+    try {
+        // Assuming you have a User model set up with mongoose
+        const result = await User.findByIdAndDelete(userId);
+
+        if (result) {
+            res.json({
+                success: true,
+                message: 'User deleted successfully'
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting user',
+            error: error.message
+        });
+    }
+});
+
+// New endpoint to get employee status
+app.get('/api/employeeStatus/:name', async (req, res) => {
+    const {
+        name
+    } = req.params;
+
+    try {
+        const employeeStatus = await pool.query('SELECT * FROM employees WHERE name = $1', [name]);
+        if (employeeStatus.rows.length > 0) {
+            const {
+                ismanager,
+                clockedin
+            } = employeeStatus.rows[0];
+            res.json({
+                isEmployee: true,
+                isManager: ismanager,
+                isClockedIn: clockedin
+            });
+        } else {
+            res.json({
+                isEmployee: false,
+                isManager: false,
+                isClockedIn: false
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching employee status:', error);
+        res.status(500).send('Error fetching employee status');
+    }
+});
+
+app.post('/api/updateEmployeeStatus', async (req, res) => {
+    const {
+        name,
+        isEmployee,
+        isManager,
+        isClockedIn
+    } = req.body;
+
+    // If isManager is true, we ensure isEmployee is also set to true
+    const effectiveIsEmployee = isEmployee || isManager;
+
+    try {
+        if (!effectiveIsEmployee) {
+            // If not an employee, delete the user if they exist in the employees table
+            await pool.query('DELETE FROM employees WHERE name = $1', [name]);
+            console.log('deleted user');
+        } else {
+            // Check if the user is already an employee
+            const employee = await pool.query('SELECT * FROM employees WHERE name = $1', [name]);
+
+            if (employee.rowCount > 0) {
+                // User exists, update their status
+                await pool.query('UPDATE employees SET ismanager = $1, clockedin = $2 WHERE name = $3', [isManager, isClockedIn, name]);
+                console.log('updated');
+            } else {
+                // User does not exist and is marked as an employee, add them to the table
+                const maxIdResult = await pool.query('SELECT MAX(id) FROM employees');
+                const newId = maxIdResult.rows[0].max != null ? maxIdResult.rows[0].max + 1 : 0;
+                await pool.query('INSERT INTO employees (id, name, ismanager, clockedin) VALUES ($1, $2, $3, $4)', [newId, name, isManager, isClockedIn]);
+                console.log('added user');
+            }
+        }
+        res.json({
+            success: true
+        });
+    } catch (error) {
+        console.error('Error updating employee status:', error);
+        res.status(500).json({
+            error: 'Error updating employee status',
+            message: error.message
+        });
+    }
+});
+
+
+app.get('/api/isManager', async (req, res) => {
+    const { name } = req.query;
+
+    try {
+        console.log(name);
+        const result = await pool.query('SELECT ismanager FROM employees WHERE name = $1', [name]);
+        
+        if (result.rows.length > 0) {
+            const isManager = result.rows[0].ismanager;
+            res.json({ isManager: isManager === 't' || isManager === true });
+        } else {
+            res.json({ isManager: false });
+        }
+    } catch (error) {
+        console.error('Error checking manager status:', error);
+        res.status(500).send('Error checking manager status');
+    }
+});
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

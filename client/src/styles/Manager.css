@@ -50,6 +50,30 @@
     font-size: larger;
 }
 
+.adminToolsLink a {
+    color: #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5%;
+    width: 13%;
+    position: absolute;
+    top: 10%;
+    right: 34%; /* Adjust this value based on your layout */
+    padding: 10px;
+    background-color: #399f6f;
+    transition: 0.3s ease;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.adminToolsLink a:hover {
+    background-color: #69c99c;
+    font-size: larger;
+}
+
 .manager{
     width: auto;     
     height: 100vh; 
@@ -94,9 +118,9 @@
     background-color: lightgrey;
 }
 
-.managerMenuSwapButton{
+/* .managerMenuSwapButton{
     
-}
+} */
 
 .editPane{
     display: inline;

@@ -187,10 +187,10 @@ function Manager() {
     return (
 
       <div>
-
         <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
         <div class='ordersLink'><Link to="/managerOrders"><b>Order History</b></Link></div>
-        
+        <div class='adminToolsLink'><Link to="/admin-tools"><b>Admin Tools</b></Link></div>
+
         <Grid container spacing={2}>
               <Grid item xs={6}>
                 <h3>Name: <div className="displayedValue">{displayedInvItemName}</div></h3>
@@ -244,6 +244,7 @@ function Manager() {
 
         <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
         <div class='ordersLink'><Link to="/managerOrders"><b>Order History</b></Link></div>
+        <div class='adminToolsLink'><Link to="/admin-tools"><b>Admin Tools</b></Link></div>
 
         <Grid container spacing={2}>
             <Grid item xs={6} className="editPaneItem">
