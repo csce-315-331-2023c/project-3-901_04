@@ -179,10 +179,12 @@ function Cashier() {
                       '&:hover': {
                         backgroundColor: '#f5aa42',
                       },
+                      fontSize: '17px',
+                      textTransform: 'inherit'                      
                       // Add other styles as needed
                     }}
                 >
-                  {<Typography variety='body1'>{getName(entree.entree_name)}</Typography>}
+                  {getName(entree.entree_name)}
                 </Button>
                   ) : (
                     <Button
@@ -200,10 +202,12 @@ function Cashier() {
                         '&:hover': {
                           backgroundColor: '#81c784',
                         },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
                         // Add other styles as needed
                       }}
                   >
-                    {<Typography variety='body1'>{getName(entree.entree_name)}</Typography>}
+                    {getName(entree.entree_name)}
                   </Button>
                   )}
                   </Tooltip>
@@ -236,10 +240,12 @@ function Cashier() {
                         '&:hover': {
                           backgroundColor: '#f5aa42',
                         },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
                         // Add other styles as needed
                       }}
                   >
-                    {<Typography variant='body1'>{getName(drink.drink_name)}</Typography>}
+                    {getName(drink.drink_name)}
                   </Button>
                   ) : (
                     <Button
@@ -256,10 +262,12 @@ function Cashier() {
                         '&:hover': {
                           backgroundColor: '#81c784',
                         },
+                        textTransform: 'inherit',
+                        fontSize: '17px'
                         // Add other styles as needed
                       }}
                   >
-                    {<Typography variant='body1'>{getName(drink.drink_name)}</Typography>}
+                    {getName(drink.drink_name)}
                   </Button>
                   )}
                   </Tooltip>

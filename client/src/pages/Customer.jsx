@@ -278,7 +278,7 @@ function Customer() {
       <ThemeProvider theme={theme}>
       <Grid container spacing={2}>
         {/* Left side */}
-        <Grid item xs={8}> {/* 75% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
+        <Grid item xs={8.6}> {/* 75% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
           <Button variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
             {showEntrees ? <Typography variant='subtitle2'>Hide Entrees</Typography> : <Typography variant='subtitle2'>Show Entrees</Typography>}
           </Button>
@@ -442,7 +442,7 @@ function Customer() {
         </Grid>
 
         {/* Right side */}
-        <Grid item xs={3.6}> {/* 30% of 12*/}
+        <Grid item xs={3.4}> {/* 30% of 12*/}
 
         <Grid container spacing={1}>
             <Grid item xs={8.1} className='Ordersign'>
