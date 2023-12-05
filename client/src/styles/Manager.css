@@ -55,7 +55,8 @@
     height: 100vh; 
     display: flex;     
     justify-content: center;
-    align-items: center;     
+    align-items: center;
+    margin-top: 100px;     
 }
 
 .leftGrid{
@@ -123,3 +124,66 @@
     height: 100%;
     text-align: center;
 }
+
+
+/* merging */
+.managerForm {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    /* background: #f3f3f3; */
+    border-radius: 10px;
+  }
+  
+  .managerForm h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .formField {
+    margin-bottom: 15px;
+  }
+  
+  .formField input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #0056b3;
+  }
+
+  .managerActionButton {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 0px; 
+  }
+  
+  .managerActionButton:last-child {
+    margin-bottom: 0; /* This ensures that there is no extra space after the last button */
+  }
+  
+  .managerActionButton:hover {
+    background-color: #0056b3;
+  }
+
+  

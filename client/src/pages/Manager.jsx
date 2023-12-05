@@ -8,8 +8,11 @@ import DialogActions from '@mui/material/DialogActions';
 import { TextField, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 function Manager() {
+  const navigate = useNavigate();
   
   const [DBItems, setDBItems] = useState({ menuItems: [], inventoryItems: [] });
   const [activeView, setActiveView] = useState(DBItems.menuItems);
@@ -291,6 +294,7 @@ function Manager() {
     setInvItemCost('Select an Inventory Item');
     setInvItemStock('Select an Inventory Item');
     setinvItemMinimum('Select an Inventory Item');
+    setShowAddItemForm(false);
   };
 
   const dataGridContainer = () => {
@@ -316,22 +320,101 @@ function Manager() {
       
     );
   };
-  if(showingMenu){
+
+  const { register, handleSubmit, reset } = useForm();
+
+  const onSubmitNewItem = async (data) => {
+    try {
+      const itemData = {
+        itemName: data.itemName,
+        stock: data.stock,
+        cost: data.cost,
+        minStockWarning: data.minStockWarning
+      };
+
+      const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/addInventoryItem'
+        : 'http://localhost:3001/api/addInventoryItem';
+
+
+
+      await axios.post(backendURL, itemData);
+      // console.log('Response:', response.data);
+      alert('Item added successfully!');
+
+      reset(); // Reset form fields after submission
+    } catch (error) {
+      console.error('Failed to add item', error);
+      alert('Failed to add item.');
+    }
+  };
+
+  const newItemForm = () => {
     return (
-      <div className='manager'>
-        <Grid container spacing={2}>
-          
-          <Grid item xs={3.6}>
-            <div className='leftGrid'>
-              <div className='scrollView'>
-                <div>
-                  <Button className="managerMenuSwapButton" variant="contained" disableElevation onClick={handleViewToggle}>
-                    Swap Menu/Inventory
-                  </Button>
-                </div>
-                <ManagerNavButtons items={activeView}/>
+      <div className="managerForm">
+        <h2>Add New Inventory Item</h2>
+        <form onSubmit={handleSubmit(onSubmitNewItem)}>
+          <div className="formField">
+            <TextField {...register('itemName')} placeholder="Item Name" required fullWidth />
+          </div>
+          <div className="formField">
+            <TextField {...register('stock')} placeholder="Stock" type="number" required fullWidth />
+          </div>
+          <div className="formField">
+            <TextField {...register('cost')} placeholder="Cost" type="number" required fullWidth />
+          </div>
+          <div className="formField">
+            <TextField {...register('minStockWarning')} placeholder="Minimum Stock Warning" type="number" required fullWidth />
+          </div>
+          <Button type="submit" className="submitButton" variant="contained">Add Item</Button>
+        </form>
+      </div>
+    );
+  };
+
+
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
+
+  // Function to toggle the add item form
+  const handleToggleAddItemForm = () => {
+    setShowAddItemForm(!showAddItemForm);
+    if (!showAddItemForm) {
+      // Add any state resets here if you want to hide other components when showing the form
+      // For example:
+      setShowingMenu(false);
+    }
+  };
+
+  const handleAddItem = () => {
+    navigate('/add-menu-item'); // Use the route you set up for adding a menu item
+  };
+
+  return (
+    <div className='manager'>
+      <Grid container spacing={2}>
+        
+        <Grid item xs={3.6}>
+          <div className='leftGrid'>
+            <div className='scrollView'>
+              <div>
+                <Button className="managerMenuSwapButton managerActionButton" variant="contained" disableElevation onClick={handleViewToggle}>
+                  Swap Menu/Inventory
+                </Button>
+                <Button className="toggleAddItemFormButton managerActionButton" variant="contained" disableElevation onClick={handleToggleAddItemForm}>
+                  {showAddItemForm ? 'Hide Add Item Form' : 'Show Add Item Form'}
+                </Button>
+                {!showAddItemForm && (
+                  <>
+                    <Button className="managerActionButton" variant="contained" disableElevation onClick={handleAddItem}>
+                      Add Menu Item
+                    </Button>
+                    <ManagerNavButtons items={activeView}/>
+                  </>
+                )}
               </div>
             </div>
+          </div>
+          {showingMenu ? (
             <div className='managerDeleteButton-Container'>
               <Button onClick={() => {
                 if(displayedMenuItemName !== "Select a Menu Item"){
@@ -355,51 +438,7 @@ function Manager() {
                   </DialogActions>
                 </Dialog>
             </div>
-          </Grid>
-          
-          <Grid item xs={5.4}>
-            <div className='.editPane'>{dataGridContainer()}</div>
-          </Grid>
-
-          <Grid item xs={3}>
-            <div className='rightGrid'>
-              <div>
-                <div>
-                  <h1 className='recipeTitle'>Recipe</h1>
-                </div>
-                <div className="scrollView" style={{ height: '600px', overflowY: 'scroll' }}>
-                  <div>
-                  {
-                    displayedRecipe && displayedRecipe.map((item, index) => (
-                    <p key={index}>
-                      {item.name}: <b>{item.quantity}</b>
-                    </p>
-                  ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Grid>
-        </Grid>
-      </div>
-    )
-  }
-  else{
-    return (
-      <div className='manager'>
-        <Grid container spacing={2}>
-          
-          <Grid item xs={3.6}>
-            <div className='leftGrid'>
-              <div className='scrollView'>
-                <div>
-                  <Button className= "managerMenuSwapButton" variant="contained" disableElevation onClick={handleViewToggle}>
-                    Swap Menu/Inventory
-                  </Button>
-                </div>
-                <ManagerNavButtons  items={activeView}/>
-              </div>
-            </div>
+          ) : (
             <div className='managerDeleteButton-Container'>
               <Button onClick={() => {
                   if(displayedInvItemName !== "Select an Inventory Item"){
@@ -423,20 +462,44 @@ function Manager() {
                     </DialogActions>
                   </Dialog>
             </div>
+          )}
+        </Grid>
+        
+        {showAddItemForm ? (
+          // Show the addItemForm when showAddItemForm is true
+          <Grid item xs={5.4}>
+            {newItemForm()}
           </Grid>
-          
+        ) : (
+          // Otherwise, show menu or inventory display based on showingMenu
           <Grid item xs={5.4}>
             <div className='.editPane'>{dataGridContainer()}</div>
           </Grid>
-
-          <Grid item xs={3}>
-          </Grid>
-
+        )}
+  
+        {/* Recipe panel is always shown on the right-hand side */}
+        <Grid item xs={3}>
+          <div className='rightGrid'>
+            <div>
+              <div>
+                <h1 className='recipeTitle'>Recipe</h1>
+              </div>
+              <div className="scrollView" style={{ height: '600px', overflowY: 'scroll' }}>
+                <div>
+                  {displayedRecipe && displayedRecipe.map((item, index) => (
+                    <p key={index}>
+                      {item.name}: <b>{item.quantity}</b>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </Grid>
-
-      </div>
-    )
-  }
+      </Grid>
+    </div>
+  );
+  
 }
 
 export default Manager
