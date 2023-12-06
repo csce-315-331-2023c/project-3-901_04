@@ -144,48 +144,130 @@ app.get('/orderHistory', async (req, res) => {
 
 app.delete('/api/deleteMenuItem', async (req, res) => {
     const deleteMe = req.query.itemToDelete;
-    try {
-        //For an entree
-        pool.query(`DELETE FROM entreerecipes
-                    WHERE entree_id IN (
-                        SELECT id
-                        FROM entrees
-                        WHERE entree_name = '` + deleteMe + `'
-                    );`).then(
-            pool.query(`DELETE FROM orderentreecontents
-                    WHERE entree_id IN (
-                        SELECT id
-                        FROM entrees
-                        WHERE entree_name = '` + deleteMe + `'
-                    );`
 
-            ).then(
-                pool.query(`DELETE FROM entrees WHERE entree_name = '` + deleteMe + `';`)
-            ));
-        //For a drink
-        pool.query(`DELETE FROM drinkrecipes
-                    WHERE drink_id IN (
-                        SELECT id
-                        FROM drinks
-                        WHERE drink_name = '` + deleteMe + `'
-                    );`).then(
-            pool.query(`DELETE FROM orderdrinkcontents
-                    WHERE drink_id IN (
-                        SELECT id
-                        FROM drinks
-                        WHERE drink_name = '` + deleteMe + `'
-                    );`
-
-            ).then(
-                pool.query(`DELETE FROM drinks WHERE drink_name = '` + deleteMe + `';`)
-            ));
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            error: 'Failed to delete menu item ' + deleteMe
+    const deleteEntreeRecipes = () => {
+        return new Promise((resolve, reject) => {
+            pool.query(`DELETE FROM entreerecipes
+                        WHERE entree_id IN (
+                            SELECT id
+                            FROM entrees
+                            WHERE entree_name = '` + deleteMe + `'
+                        );`, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result.rowCount); // rowCount contains the number of affected rows
+            }
+            });
         });
-    }
-    console.log('Deleted ' + deleteMe);
+    };
+
+    const deleteEntreeContents = () => {
+        return new Promise((resolve, reject) => {
+            pool.query(`DELETE FROM orderentreecontents
+                        WHERE entree_id IN (
+                            SELECT id
+                            FROM entrees
+                            WHERE entree_name = '` + deleteMe + `'
+                        );`, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result.rowCount); // rowCount contains the number of affected rows
+            }
+            });
+        });
+    };
+
+    const deleteEntree = () => {
+        return new Promise((resolve, reject) => {
+            pool.query(`DELETE FROM entrees WHERE entree_name = '` + deleteMe + `';`, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result.rowCount); // rowCount contains the number of affected rows
+            }
+            });
+        });
+    };
+
+    const deleteDrinkRecipe = () => {
+        return new Promise((resolve, reject) => {
+            pool.query(`DELETE FROM drinkrecipes
+                        WHERE drink_id IN (
+                            SELECT id
+                            FROM drinks
+                            WHERE drink_name = '` + deleteMe + `'
+                        );`, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result.rowCount); // rowCount contains the number of affected rows
+            }
+            });
+        });
+    };
+
+    const deleteDrinkContents = () => {
+        return new Promise((resolve, reject) => {
+            pool.query(`DELETE FROM orderdrinkcontents
+                        WHERE drink_id IN (
+                            SELECT id
+                            FROM drinks
+                            WHERE drink_name = '` + deleteMe + `'
+                        );`, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result.rowCount); // rowCount contains the number of affected rows
+            }
+            });
+        });
+    };
+
+    const deleteDrink = () => {
+        return new Promise((resolve, reject) => {
+            pool.query(`DELETE FROM drinks WHERE drink_name = '` + deleteMe + `';`, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result.rowCount); // rowCount contains the number of affected rows
+            }
+            });
+        });
+    };
+
+    deleteEntreeRecipes()
+    .then(rowsAffected1 => {
+        console.log('deleteEntreeRecipes affected rows:', rowsAffected1);
+        return deleteEntreeContents();
+    })
+    .then(rowsAffected2 => {
+        console.log('deleteEntreeContents affected rows:', rowsAffected2);
+        return deleteEntree();
+    })
+    .then(rowsAffected3 => {
+        console.log('deleteEntree affected rows:', rowsAffected3);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+    deleteDrinkRecipe()
+    .then(rowsAffected1 => {
+        console.log('deleteDrinkRecipe affected rows:', rowsAffected1);
+        return deleteDrinkContents();
+    })
+    .then(rowsAffected2 => {
+        console.log('deleteDrinkContents affected rows:', rowsAffected2);
+        return deleteDrink();
+    })
+    .then(rowsAffected3 => {
+        console.log('deleteDrink affected rows:', rowsAffected3);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 });
 
 app.delete('/api/deleteInvItem', async (req, res) => {
