@@ -24,6 +24,12 @@ function Manager() {
   const [menuItemTogo, setMenuitemTogo] = useState('Select a Menu Item');
   const [displayedMenuItemTogo, setDisplayedMenuitemTogo] = useState();
 
+  const [menuItemAlcoholic, setMenuitemAlcohol] = useState('Select a Menu Item');
+  const [menuItemHHBeer, setMenuitemHHBeer] = useState('Select a Menu Item');
+  const [menuItemHHWine, setMenuitemHHWine] = useState('Select a Menu Item');
+  const [menuItemCocktail, setMenuitemCocktail] = useState('Select a Menu Item');
+  const [menuItemBrunch, setMenuitemBrunch] = useState('Select a Menu Item');
+  const [menuItemAttributes, setMenuItemAttributes] = useState('Select a Menu Item');
   
   const [invItemName, setInvItemName] = useState('Select an Inventory Item');
   const [displayedInvItemName, setDisplayedInvItemName] = useState();
@@ -88,7 +94,19 @@ function Manager() {
     setDisplayedInvItemCost(invItemCost);
     setDisplayedinvItemMinimum(invItemMinimum);
 
-  }, [menuItemName, menuItemPrice, menuItemTogo, invItemName, invItemStock, invItemCost, invItemMinimum]);
+    setMenuItemAttributes((prevAttributes) => ({
+      ...prevAttributes,
+      [menuItemName]: {
+        togo: menuItemTogo,
+        alcohol: menuItemAlcoholic,
+        happyBeer: menuItemHHBeer,
+        happyWine: menuItemHHWine,
+        cocktail: menuItemCocktail,
+        brunch: menuItemBrunch
+      },
+    }));
+
+  }, [menuItemName, menuItemPrice, menuItemTogo, menuItemAlcoholic, menuItemHHBeer, menuItemHHWine, menuItemCocktail, menuItemBrunch, invItemName, invItemStock, invItemCost, invItemMinimum]);
 
   function handleItemButtonClick(buttonText) {
     console.log('Button clicked: ', buttonText);
@@ -107,6 +125,13 @@ function Manager() {
         setMenuItemName(itemQuery.data.menuItemInfo[0].item_name);
         setMenuItemPrice(itemQuery.data.menuItemInfo[0].price);
         setMenuitemTogo(itemQuery.data.menuItemInfo[0].togo);
+        
+        setMenuitemAlcohol(itemQuery.data.menuItemInfo[0].alcoholic);
+        setMenuitemHHBeer(itemQuery.data.menuItemInfo[0].HHbeer);
+        setMenuitemHHWine(itemQuery.data.menuItemInfo[0].HHwine);
+        setMenuitemCocktail(itemQuery.data.menuItemInfo[0].cocktail);
+        setMenuitemBrunch(itemQuery.data.menuItemInfo[0].brunch);
+        
         setInvItemName(itemQuery.data.invItemInfo[0].item_name);
         setInvItemStock(itemQuery.data.invItemInfo[0].stock);
         setInvItemCost(itemQuery.data.invItemInfo[0].cost);
@@ -168,6 +193,14 @@ function Manager() {
   };
 
   const menuDataDisplay = () => {
+    //const isChecked = menuItemTogo;
+    const isChecked1 = menuItemAttributes[menuItemName]?.togo || false;
+    const isChecked2 = menuItemAttributes[menuItemName]?.alcoholic || false;
+    const isChecked3 = menuItemAttributes[menuItemName]?.HHbeer || false;
+    const isChecked4 = menuItemAttributes[menuItemName]?.HHwine || false;
+    const isChecked5 = menuItemAttributes[menuItemName]?.cocktail || false;
+    const isChecked6 = menuItemAttributes[menuItemName]?.brunch || false;
+
     return (
       <Grid container spacing={2}>
             <Grid item xs={6} className="editPaneItem">
@@ -175,35 +208,121 @@ function Manager() {
               <TextField
               variant="outlined"
               //value={text}
-              //onChange={handleInputChange}
+              onChange={(e) => setMenuItemName(e.target.value)}
               placeholder="Input New Name"
               >
               </TextField>
             </Grid>
             <Grid item xs={6} className="editPaneItem">
               <h3>Price: <div className="displayedValue">${displayedMenuItemPrice}</div></h3>
-            <TextField
+              <TextField
               variant="outlined"
               //value={text}
-              //onChange={handleInputChange}
+              onChange={(e) => setMenuItemPrice(e.target.value)}
               placeholder="Input New Price"
               >
               </TextField>
             </Grid>
+            <Grid item xs={12} className="editPaneItem">
+              {/* <h3>Attributes: <div className="displayedValue">{displayedMenuItemTogo}</div></h3> */}
+              <h3>Attributes: <div className="displayedValue"></div></h3>
+              
+              <input type="checkbox" id="features" name="options" value="ToGo" checked={isChecked1}
+              onChange={() => {
+                setMenuItemAttributes((prevAttributes) => ({
+                ...prevAttributes,
+                [menuItemName]: {
+                  ...prevAttributes[menuItemName],
+                  togo: !isChecked1,
+                },
+              }));
+              }}/>To-Go
+              <input type="checkbox" id="features" name="options" value="Alcohol" checked={isChecked2}
+              onChange={() => {
+                setMenuItemAttributes((prevAttributes) => ({
+                ...prevAttributes,
+                [menuItemName]: {
+                  ...prevAttributes[menuItemName],
+                  alcohol: !isChecked2,
+                },
+              }));
+              }}/>Alcoholic
+              <input type="checkbox" id="features" name="options" value="HappyBeer" checked={isChecked3}
+              onChange={() => {
+                setMenuItemAttributes((prevAttributes) => ({
+                ...prevAttributes,
+                [menuItemName]: {
+                  ...prevAttributes[menuItemName],
+                  happyBeer: !isChecked3,
+                },
+              }));
+              }}/>Happy Hour Beer
+              <input type="checkbox" id="features" name="options" value="HappyWine" checked={isChecked4}
+              onChange={() => {
+                setMenuItemAttributes((prevAttributes) => ({
+                ...prevAttributes,
+                [menuItemName]: {
+                  ...prevAttributes[menuItemName],
+                  happyWine: !isChecked4,
+                },
+              }));
+              }}/>Happy Hour Wine
+              <input type="checkbox" id="features" name="options" value="Cocktail" checked={isChecked5}
+              onChange={() => {
+                setMenuItemAttributes((prevAttributes) => ({
+                ...prevAttributes,
+                [menuItemName]: {
+                  ...prevAttributes[menuItemName],
+                  cocktail: !isChecked5,
+                },
+              }));
+              }}/>Cocktail
+              <input type="checkbox" id="features" name="options" value="Brunch" checked={isChecked6}
+              onChange={() => {
+                setMenuItemAttributes((prevAttributes) => ({
+                ...prevAttributes,
+                [menuItemName]: {
+                  ...prevAttributes[menuItemName],
+                  brunch: !isChecked6,
+                },
+              }));
+              }}/>Brunch
+            </Grid>
             <Grid item xs={6} className="editPaneItem">
-              <h3>To-Go: <div className="displayedValue">{displayedMenuItemTogo}</div></h3>
-              <TextField
-              variant="outlined"
-              //value={text}
-              //onChange={handleInputChange}
-              placeholder="True/False"
-              >
-              </TextField>
+            <Button variant="contained" onClick={handleInputChange}>
+              Save Changes
+            </Button>
             </Grid>
           </Grid>
     );
   };
 
+  const handleInputChange = async () => {
+    const backendURL = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/updateMenuItem'
+      : 'http://localhost:3001/api/updateMenuItem';
+  
+    try {
+      const response = await axios.put(backendURL, {
+        itemName: menuItemName,
+        newPrice: menuItemPrice,
+        togo: menuItemAttributes[menuItemName]?.togo || false,
+        alcohol: menuItemAttributes[menuItemName]?.alcohol || false,
+        happyBeer: menuItemAttributes[menuItemName]?.happyBeer || false,
+        happyWine: menuItemAttributes[menuItemName]?.happyWine || false,
+        cocktail: menuItemAttributes[menuItemName]?.cocktail || false,
+        brunch: menuItemAttributes[menuItemName]?.brunch || false,
+      });
+  
+      // Handle the response, e.g., show a success message or update local state
+      console.log('Update successful:', response.data);
+    } catch (error) {
+      console.error('Update failed:', error);
+      // Handle errors, e.g., show an error message
+    }
+  };
+
+  
   const handleViewToggle = () => {
     setActiveGrid(activeGrid === 1 ? 2 : 1);
     setActiveView(activeView === DBItems.menuItems ? DBItems.inventoryItems : DBItems.menuItems);

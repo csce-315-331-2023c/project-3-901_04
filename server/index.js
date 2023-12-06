@@ -101,7 +101,7 @@ app.get('/api/recipe', async (req, res) => {
         else if(menuResult.rows.length == 0 && invResult.rows.length != 0){ //If reqItem is an inventory item
             res.json({
                 recipe: recipeResult.rows,
-                menuItemInfo: [ {item_name: '', price: -1, togo: false} ],
+                menuItemInfo: [ {item_name: '', price: -1, togo: false, alcoholic: false, HHbeer: false, HHwine: false, cocktail: false, brunch: false} ],
                 invItemInfo: invResult.rows
             })
         }
