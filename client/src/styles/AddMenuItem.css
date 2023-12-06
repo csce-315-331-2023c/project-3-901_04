@@ -1,0 +1,156 @@
+/* AddMenuItem.css */
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .ingredient-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ingredient-field > span {
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    flex-shrink: 0; 
+    margin-right: 10px; 
+    width: 40%;
+}
+
+.ingredient-field > div {
+    flex-grow: 1; 
+    margin-right: 10px; 
+}
+
+.ingredient-field > button.remove-button {
+    flex-shrink: 0;
+    padding: 5px 10px; 
+}
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .back-button {
+    margin-bottom: 20px;
+  }
+  
+  .add-menu-item-layout {
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.form-container {
+    flex: 1;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.ingredients-container {
+    flex: 1;
+    padding: 20px;
+    max-width: 600px;
+}
+
+.added-ingredients {
+    margin-bottom: 20px;
+}
+
+.ingredient-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.inventory-buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.inventory-buttons button {
+    margin: 5px;
+}
+
+.toggle-switches {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.inventory-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.ingredient-field > div {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.ingredient-field span {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.added-ingredients, .inventory-buttons {
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.buttons button {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.buttons button:last-child {
+  margin-right: 0;
+}
+
+.inventory-buttons button {
+  margin: 5px;
+  height: 50px; 
+  padding: 0 10px; 
+  display: block; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid blue; 
+  border-radius: 4px; 
+  background-color: #fff; 
+  color: #000; 
+  text-align: center; 
+}
+
+.back-to-top-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; 
+}
+

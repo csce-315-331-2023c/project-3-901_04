@@ -5,6 +5,7 @@ import logoimg from '../media/mos.svg';
 const Navbar = () => {
     const [visible, setVisible] = useState(true);
     const isEmployee = JSON.parse(localStorage.getItem('isEmployee')); // Retrieve the isEmployee flag
+    const isManager = JSON.parse(localStorage.getItem('isManager')); // Retrieve the isManager flag
 
     const handleScroll = () => {
         const currentScrollPos = window.scrollY;
@@ -38,7 +39,7 @@ const Navbar = () => {
                         <img src={logoimg} alt="logo" height="40" width="100" />
                     </Link>
                     <Link to="/cashier">Cashier</Link>
-                    <Link to="/manager">Manager</Link>
+                    {isManager && <Link to="/manager">Manager</Link>}
                 </>}
             </nav>
         </>

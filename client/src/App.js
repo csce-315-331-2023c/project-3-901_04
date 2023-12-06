@@ -13,6 +13,9 @@ import Signup from './pages/Signup.jsx';
 import AccessibilityWidget from './components/AccessibilityWidget';
 import ManagerReports from './pages/ManagerReports.jsx';
 import ManagerOrders from './pages/ManagerOrders.jsx';
+import AddMenuItem from './pages/AddMenuItem';
+import AdministratorTools from './pages/AdministratorTools.jsx';
+
 
 // Import css for the app
 import './styles/navbar.css';
@@ -59,6 +62,9 @@ function App() {
             <Route path="manager" element={<Manager />} />
             <Route path="managerReports" element={<ManagerReports />} />
             <Route path="managerOrders" element={<ManagerOrders />} />
+            <Route path="/add-menu-item" element={<AddMenuItem />} />
+            <Route path="/admin-tools" element={<AdministratorTools/>} />
+
           </Route>
         </Routes>
         <AccessibilityWidget isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
