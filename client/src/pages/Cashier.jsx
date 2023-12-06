@@ -205,7 +205,7 @@ function Cashier({ isHighContrast }) {
             {showEntrees && (
               <div>
                 <h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Entrees</h2>
-                {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
+                {entrees.map((entree) => (
                   <Tooltip 
                     title={<React.Fragment><Typography variant='subtitle1'>{entree.entree_name + ' (' + entree.price + ')'}</Typography></React.Fragment>}
                     placement='top' 
@@ -267,7 +267,7 @@ function Cashier({ isHighContrast }) {
             {showDrinks && (
               <div>
                 <h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Drinks</h2>
-                {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
+                {drinks.map((drink) => (
                   <Tooltip 
                   title={<Typography variant='subtitle1'>{drink.drink_name + ' (' + drink.price + ')'}</Typography>}
                   placement='top' 
