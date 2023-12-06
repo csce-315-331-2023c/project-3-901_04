@@ -316,7 +316,7 @@ function Customer({ isHighContrast }) {
           <Button variant="contained" onClick={handleOpen}>
           <Typography variant='subtitle2'>Order History</Typography>
           </Button>
-          <FormControl sx={{m:.5}} size="small">
+          <FormControl sx={{m:.5, backgroundColor: (isHighContrast ? '#0c0' : 'white')}} size="small">
             <InputLabel variant='standard' htmlFor='uncontrolled-native'>Sort By</InputLabel>
             <NativeSelect label='SortBy' onClick={handleSort}>
               <option value={0}>Alphabetical</option>
