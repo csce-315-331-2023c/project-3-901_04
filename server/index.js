@@ -295,6 +295,44 @@ app.post('/postid', async (req, res) => {
     res.send("Success!");
 });
 
+app.put('/api/updateMenuItem', async (req, res) => {
+    const {
+      itemName,
+      newPrice,
+      togo,
+      alcohol,
+      happyBeer,
+      happyWine,
+      cocktail,
+      brunch,
+    } = req.body;
+  
+    try {
+      const updateQuery = await pool.query(
+        '',
+        [
+          newPrice,
+          togo,
+          alcohol,
+          happyBeer,
+          happyWine,
+          cocktail,
+          brunch,
+          itemName,
+        ]
+      );
+  
+      if (updateQuery.rowCount === 1) {
+        res.status(200).json({ success: true, message: 'Menu item updated successfully' });
+      } else {
+        res.status(404).json({ success: false, message: 'Menu item not found' });
+      }
+    } catch (error) {
+      console.error('Error updating menu item:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  });
+
 function getTimeDate() {
     const time = new Date();
     const year = getYear();

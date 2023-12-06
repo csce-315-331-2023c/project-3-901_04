@@ -143,7 +143,8 @@ function Manager() {
     };
     fetchRecipeData();
   }  
-
+  
+  
   const inventoryDataDisplay = () => {
     return (
       
@@ -289,7 +290,7 @@ function Manager() {
               }}/>Brunch
             </Grid>
             <Grid item xs={6} className="editPaneItem">
-            <Button variant="contained" onClick={handleInputChange}>
+            <Button variant="contained" onClick={updateMenuItem}>
               Save Changes
             </Button>
             </Grid>
@@ -297,28 +298,26 @@ function Manager() {
     );
   };
 
-  const handleInputChange = async () => {
-    const backendURL = process.env.NODE_ENV === 'production'
-      ? 'https://mos-irish-server-901-04.vercel.app/api/updateMenuItem'
-      : 'http://localhost:3001/api/updateMenuItem';
-  
+  const updateMenuItem = async () => {
     try {
-      const response = await axios.put(backendURL, {
-        itemName: menuItemName,
-        newPrice: menuItemPrice,
-        togo: menuItemAttributes[menuItemName]?.togo || false,
-        alcohol: menuItemAttributes[menuItemName]?.alcohol || false,
-        happyBeer: menuItemAttributes[menuItemName]?.happyBeer || false,
-        happyWine: menuItemAttributes[menuItemName]?.happyWine || false,
-        cocktail: menuItemAttributes[menuItemName]?.cocktail || false,
-        brunch: menuItemAttributes[menuItemName]?.brunch || false,
+      const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/updateMenuItem'
+        : 'http://localhost:3001/api/updateMenuItem';
+
+      await axios.put(backendURL, {
+        menuItemName,
+        menuItemPrice,
+        menuItemTogo,
+        menuItemAlcoholic,
+        menuItemHHBeer,
+        menuItemHHWine,
+        menuItemCocktail,
+        menuItemBrunch,
       });
-  
-      // Handle the response, e.g., show a success message or update local state
-      console.log('Update successful:', response.data);
+
+      console.log('Menu item updated successfully!');
     } catch (error) {
-      console.error('Update failed:', error);
-      // Handle errors, e.g., show an error message
+      console.error('Error updating menu item', error);
     }
   };
 
