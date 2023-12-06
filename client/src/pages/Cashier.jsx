@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Cashier.css';
+import '../styles/Cashier_HC.css'
 import Button from '@mui/material/Button';
 import { TextField, Grid, Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
 //import { getTime } from 'date-fns'; 
@@ -10,7 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-function Cashier() {
+function Cashier({ isHighContrast }) {
   const [entrees, setEntrees] = useState([]);
   const [drinks, setDrinks] = useState([]);
   const [order, setOrder] = useState([]);
@@ -140,7 +141,7 @@ function Cashier() {
   })
 
   return (
-    <div className="Cashier">
+    <div className={"Cashier" + (isHighContrast ? "-HC" : "")}>
       <ThemeProvider theme={theme}>
         <Grid container spacing={2}>
           {/* Left side */}
@@ -156,7 +157,7 @@ function Cashier() {
             {/* Display Entrees or Drinks based on state */}
             {showEntrees && (
               <div>
-                <h2 class="heading">Entrees</h2>
+                <h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Entrees</h2>
                 {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
                   <Tooltip 
                     title={<React.Fragment><Typography variant='subtitle1'>{entree.entree_name + ' (' + entree.price + ')'}</Typography></React.Fragment>}
@@ -165,19 +166,19 @@ function Cashier() {
                   >
                   {entree.seasonal ? (
                   <Button
-                    className="itemButton"
+                    className={"itemButton" + (isHighContrast ? "-HC" : "")}
                     key={(entree.entree_name)}
                     onClick={() => handleAddItem(entree.entree_name, entree.price)}
                     variant="outlined"
                     sx={{
                       margin: '5px',
                       border: '1px solid #c8e6c9',
-                      backgroundColor: '#f5bf42',
-                      color: '#0a3a0a',
+                      backgroundColor: (isHighContrast ? '#333' : '#f5bf42'),
+                      color: (isHighContrast ? '#f5bf42' : '#0a3a0a'),
                       borderRadius: 2,
                       padding: '30px 0px',
                       '&:hover': {
-                        backgroundColor: '#f5aa42',
+                        backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
                       },
                       // Add other styles as needed
                     }}
@@ -186,19 +187,19 @@ function Cashier() {
                 </Button>
                   ) : (
                     <Button
-                      className="itemButton"
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
                       key={(entree.entree_name)}
                       onClick={() => handleAddItem(entree.entree_name, entree.price)}
                       variant="outlined"
                       sx={{
                         margin: '5px',
                         border: '1px solid #c8e6c9',
-                        backgroundColor: '#a5d6a7',
-                        color: '#0a3a0a',
+                        backgroundColor: (isHighContrast ? '#333' : '#a5d6a7'),
+                        color: (isHighContrast ? '#0f0' : '#0a3a0a'),
                         borderRadius: 2,
                         padding: '30px 0px',
                         '&:hover': {
-                          backgroundColor: '#81c784',
+                          backgroundColor: (isHighContrast ? '#000' : '#81c784'),
                         },
                         // Add other styles as needed
                       }}
@@ -214,7 +215,7 @@ function Cashier() {
 
             {showDrinks && (
               <div>
-                <h2 class="heading">Drinks</h2>
+                <h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Drinks</h2>
                 {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
                   <Tooltip 
                   title={<Typography variant='subtitle1'>{drink.drink_name + ' (' + drink.price + ')'}</Typography>}
@@ -223,18 +224,18 @@ function Cashier() {
                 >
                   {drink.seasonal ? (
                     <Button
-                      className="itemButton"
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
                       key={drink.drink_name}
                       onClick={() => handleAddItem(drink.drink_name, drink.price)}
                       sx={{
                         margin: '5px',
                         border: '1px solid #c8e6c9',
-                        backgroundColor: '#f5bf42',
-                        color: '#0a3a0a',
+                        backgroundColor: (isHighContrast ? '#333' : '#f5bf42'),
+                        color: (isHighContrast ? '#f5bf42' : '#0a3a0a'),
                         borderRadius: 2,
                         padding: '30px 0px',
                         '&:hover': {
-                          backgroundColor: '#f5aa42',
+                          backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
                         },
                         // Add other styles as needed
                       }}
@@ -243,18 +244,18 @@ function Cashier() {
                   </Button>
                   ) : (
                     <Button
-                      className="itemButton"
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
                       key={drink.drink_name}
                       onClick={() => handleAddItem(drink.drink_name, drink.price)}
                       sx={{
                         margin: '5px',
                         border: '1px solid #c8e6c9',
-                        backgroundColor: '#a5d6a7',
-                        color: '#0a3a0a',
+                        backgroundColor: (isHighContrast ? '#333' : '#a5d6a7'),
+                        color: (isHighContrast ? '#0f0' : '#0a3a0a'),
                         borderRadius: 2,
                         padding: '30px 0px',
                         '&:hover': {
-                          backgroundColor: '#81c784',
+                          backgroundColor: (isHighContrast ? '#000' : '#81c784'),
                         },
                         // Add other styles as needed
                       }}
@@ -287,16 +288,16 @@ function Cashier() {
                     variant="filled"
                     sx={{
                       input: {
-                        color: "black",
-                        background: "#c8e6c9"
+                        color: (isHighContrast ? "#0f0" : "black"),
+                        background: (isHighContrast ? "#333" : "#c8e6c9")
                       }
                     }}
                     color="success"
-                    inputProps={{style: {fontSize: 18}}} // font size of input text
-                    InputLabelProps={{style: {fontSize: 18}}} // font size of input label
+                    inputProps={{style: {fontSize: 18, textColorStyle: (isHighContrast ? "0f0" : "grey")}}} // font size of input text
+                    InputLabelProps={{style: {fontSize: 18, textColorStyle: (isHighContrast ? "0f0" : "grey")}}} // font size of input label
                 />
               </Grid>
-              <Grid item xs={3.1} className='Ordersign'>
+              <Grid item xs={3.1} className={'Ordersign' + (isHighContrast ? "-HC" : "")}>
               <FormGroup>
                 <FormControlLabel control={<Checkbox
                   checked={check}
@@ -311,7 +312,7 @@ function Cashier() {
             {order.map((item, index) => (
               <div
                 key={index}
-                className="OrderItem"
+                className={"OrderItem" + (isHighContrast ? "-HC" : "")}
                 onClick={() => handleRemoveItem(index)}
                 style={{ padding: '10px', margin: '5px 0', borderRadius: '4px', transition: 'background-color 0.3s' }}
               >
@@ -320,45 +321,45 @@ function Cashier() {
               </div>
             ))}
 
-            <div className="OrderTotal">
+            <div className={"OrderTotal" + (isHighContrast ? "-HC" : "")}>
             <Typography variant='subtitle1'><strong>Total:</strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}</Typography>
             </div>
             <div style={{ height: '10px' }}></div>
 
             {/* Action buttons for the order */}
-            <Button
-              sx={{
-                backgroundColor: '#ffcc80',
-                color: '#5d4037',
-                '&:hover': {
-                  backgroundColor: '#ffa726',
-                },
-              }}
-              onClick={handleRemoveLastItem}>
-              {<Typography variant='body2'>Remove Last Item</Typography>}
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: '#ffcc80',
-                color: '#5d4037',
-                '&:hover': {
-                  backgroundColor: '#ffa726',
-                },
-              }}
-              onClick={handleClearOrder}>
-              {<Typography variant='body2'>Clear Order</Typography>}
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: '#ffb74d',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#ff9800',
-                },
-              }}
-              onClick={handlePlaceOrder}>
-              {<Typography variant='body2'>Place Order</Typography>}
-            </Button>
+          <Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffcc80'),
+              color: (isHighContrast ? '#000' : '#5d4037'),
+              '&:hover': {
+                backgroundColor: '#ffa726',
+              },
+            }}
+            onClick={handleRemoveLastItem}>
+            Remove Last Item
+          </Button>
+          <Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffcc80'),
+              color: (isHighContrast ? '#000' : '#5d4037'),
+              '&:hover': {
+                backgroundColor: '#ffa726',
+              },
+            }}
+            onClick={handleClearOrder}>
+            Clear Order
+          </Button>
+          <Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffb74d'),
+              color: (isHighContrast ? '#000' : '#fff'),
+              '&:hover': {
+                backgroundColor: '#ff9800',
+              },
+            }}
+            onClick={handlePlaceOrder}>
+            Place Order
+          </Button>
 
 
           </Grid>

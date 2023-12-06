@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import '../styles/ManagerOrders.css'
+import '../styles/ManagerOrders_HC.css'
 
-function ManagerOrders() {
+function ManagerOrders({ isHighContrast }) {
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -76,11 +77,11 @@ function ManagerOrders() {
 
     return (
         <div>
-            <div className='ordersLink'><Link to="/manager"><b>Return to Manager</b></Link></div>
-            <div className='managerOrders'>
-                <div className='MOleftPanel'>
-                    <div className='dateInputContainer'>
-                        <p className='managerReportsPar'>Start Date</p>
+            <div className={'ordersLink' + (isHighContrast ? "-HC" : "")}><Link to="/manager"><b>Return to Manager</b></Link></div>
+            <div className={'managerOrders' + (isHighContrast ? "-HC" : "")}>
+                <div className={'MOleftPanel' + (isHighContrast ? "-HC" : "")}>
+                    <div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        <p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>Start Date</p>
                         <input
                             type="datetime-local"
                             id="dateTimeInput"
@@ -89,8 +90,8 @@ function ManagerOrders() {
                             onChange={handleStartDateChange}
                         />
                     </div>
-                    <div className='dateInputContainer'>
-                        <p className='managerReportsPar'>End Date</p>
+                    <div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        <p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>End Date</p>
                         <input
                             type="datetime-local"
                             id="dateTimeInput"
@@ -99,22 +100,22 @@ function ManagerOrders() {
                             onChange={handleEndDateChange}
                         />
                     </div>
-                    <div className="generateButtonContainer">
-                        <Button className="generateButton" onClick={fetchOrders} variant="contained">
+                    <div className={"generateButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        <Button className={"generateButton" + (isHighContrast ? "-HC" : "")} onClick={fetchOrders} variant="contained">
                             Submit
                         </Button>
                     </div>
                 </div>    
-                <div className='MOcenterPanel'>
+                <div className={'MOcenterPanel' + (isHighContrast ? "-HC" : "")}>
                 {fetchedOrders.map((order) => (
-                    <Button onClick={() => displayOrderContents(order.id)} variant="outlined" className="managerMenuButton" key={order}>
+                    <Button onClick={() => displayOrderContents(order.id)} variant="outlined" className={"managerMenuButton" + (isHighContrast ? "-HC" : "")} key={order}>
                         {order.order_timestamp + ' | ' + order.customer_name}
                     </Button>
                 ))}
                     
                 </div>
-                <div className='MOrightPanel-Container'>
-                    <div className='MOrightPanel-top'>
+                <div className={'MOrightPanel-Container' + (isHighContrast ? "-HC" : "")}>
+                    <div className={'MOrightPanel-top' + (isHighContrast ? "-HC" : "")}>
                         <table>
                             <thead>
                                 <tr>
@@ -126,9 +127,9 @@ function ManagerOrders() {
                             <tbody>
                                 {currentOrderMetaData.map((row) => (
                                 <tr>
-                                    <td className='metaDataItem'>{currentOrderMetaData[0].employee_name}</td>
-                                    <td className='metaDataItem'>${currentOrderMetaData[0].price_total}</td>
-                                    <td className='metaDataItem'>{currentOrderMetaData[0].table_num == 0 ? (
+                                    <td className={'metaDataItem' + (isHighContrast ? "-HC" : "")}>{currentOrderMetaData[0].employee_name}</td>
+                                    <td className={'metaDataItem' + (isHighContrast ? "-HC" : "")}>${currentOrderMetaData[0].price_total}</td>
+                                    <td className={'metaDataItem' + (isHighContrast ? "-HC" : "")}>{currentOrderMetaData[0].table_num == 0 ? (
                                         'TO-GO'
                                     ) : (
                                         currentOrderMetaData[0].table_num
@@ -138,7 +139,7 @@ function ManagerOrders() {
                             </tbody>
                         </table>
                     </div>
-                    <div className='MOrightPanel-bottom'>
+                    <div className={'MOrightPanel-bottom' + (isHighContrast ? "-HC" : "")}>
                         <table>
                             <thead>
                                 <tr>

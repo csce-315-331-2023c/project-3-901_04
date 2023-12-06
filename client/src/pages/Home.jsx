@@ -1,5 +1,6 @@
 import React from 'react'
 import '../styles/Home.css';
+import '../styles/Home_HC.css';
 import GMap from '../components/Map';
 import ImageReel from '../components/ImageReel';
   import bakedpasta from '../media/foodPhotos/bakedpasta.png';
@@ -25,7 +26,7 @@ import ImageReel from '../components/ImageReel';
   import logoimg from '../media/mos.svg';
   import buildingimg from '../media/moslocation.jpg';
 
-function Home() {
+function Home({ isHighContrast }) {
   const user = JSON.parse(localStorage.getItem('user')); // Retrieve the user data
 
   const imageReelImages = [
@@ -54,33 +55,33 @@ function Home() {
 
   return (
       <div>
-        <div class="homeTop">
-          <ImageReel foodImages={imageReelImages} scrollInterval={3500} userName = {user?.name} />
+        <div class={"homeTop" + (isHighContrast ? "-HC" : "")}>
+          <ImageReel foodImages={imageReelImages} scrollInterval={3500} userName = {user?.name} isHighContrast={isHighContrast}/>
         </div>
-        <div class="lowerGrid">
-          <div class="leftPanel">
-            <h2 class="homeContentTitle">Hours of Operation</h2>
-            <h3 class="homeContentHours">Mon-Wed: 3pm-11pm*</h3>
-            <h3 class="homeContentHours">Thur: 10am-11pm*</h3>
-            <h3 class="homeContentHours">Fri-Sat: 10am-12am*</h3>
-            <h3 class="homeContentHours">Sun: 10am-11pm*</h3>
-            <h3 class="homeContentHours">*Limited Menu After 10pm</h3>
-            <h2 class="homeContentTitle">Happy Hours</h2>
-            <h3 class="homeContentHours">Mon-Fri: 3pm-6pm</h3>
+        <div class={"lowerGrid" + (isHighContrast ? "-HC" : "")}>
+          <div class={"leftPanel" + (isHighContrast ? "-HC" : "")}>
+            <h2 class={"homeContentTitle" + (isHighContrast ? "-HC" : "")}>Hours of Operation</h2>
+            <h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Mon-Wed: 3pm-11pm*</h3>
+            <h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Thur: 10am-11pm*</h3>
+            <h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Fri-Sat: 10am-12am*</h3>
+            <h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Sun: 10am-11pm*</h3>
+            <h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>*Limited Menu After 10pm</h3>
+            <h2 class={"homeContentTitle" + (isHighContrast ? "-HC" : "")}>Happy Hours</h2>
+            <h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Mon-Fri: 3pm-6pm</h3>
             <hr/>
-            <h3 class="homeContentLocationTitle">Where to Find Us</h3>
-            <p class="homeContentLocationContent">1025 University Dr, Suite 101 College Station, TX 77840</p>
-            <p class="homeContentLocationContent">Phone: (979) 704-3275</p>
+            <h3 class={"homeContentLocationTitle" + (isHighContrast ? "-HC" : "")}>Where to Find Us</h3>
+            <p class={"homeContentLocationContent" + (isHighContrast ? "-HC" : "")}>1025 University Dr, Suite 101 College Station, TX 77840</p>
+            <p class={"homeContentLocationContent" + (isHighContrast ? "-HC" : "")}>Phone: (979) 704-3275</p>
             <GMap/>
           </div>
-          <div class="rightPanel">
-            <img class="aboutMosLogo" src={logoimg} alt="logo" height="182" width="352" />
-            <p class="aboutMos">
+          <div class={"rightPanel" + (isHighContrast ? "-HC" : "")}>
+            <img class={"aboutMosLogo" + (isHighContrast ? "-HC" : "")} src={logoimg} alt="logo" height="182" width="352" />
+            <p class={"aboutMos" + (isHighContrast ? "-HC" : "")}>
               Mo’s Irish Pub is not just another Pub. It’s a place where camaraderie is forged. We don’t just serve beer and drinks. We serve you a culture that is unique. We serve you with liquor and the food that goes with it. It’s not just a pub, it’s an extension of home, community, and family.
             </p>
           </div>
         </div>
-        <img class="moslocationimg" src={buildingimg} alt="logo" height="100%" width="100%" />
+        <img class={"moslocationimg" + (isHighContrast ? "-HC" : "")} src={buildingimg} alt="logo" height="100%" width="100%" />
       </div>
   );
 }

@@ -32,49 +32,49 @@ import './App.css';
 // };
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isHighContrast, setHighContrast] = useState(false);
 
   document.title = 'Mo\'s Irish Pub';
 
   useEffect(() => {
     const savedMode = localStorage.getItem('dark-mode');
     if (savedMode) {
-      setIsDarkMode(JSON.parse(savedMode));
+      setHighContrast(JSON.parse(savedMode));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('dark-mode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
+    localStorage.setItem('dark-mode', JSON.stringify(isHighContrast));
+  }, [isHighContrast]);
 
   return (
-    <div className={isDarkMode ? "dark-mode" : ""}>
+    <div className={isHighContrast ? "dark-mode" : ""}>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<Login isHighContrast={isHighContrast} />} />
+          <Route path="/signup" element={<Signup isHighContrast={isHighContrast} />} />
           {/* Wrap the protected routes in a single element */}
-          <Route path="/" element={<ProtectedLayout />}>
-            <Route path="home" element={<Home />} />
-            <Route path="menu" element={<Menu />} />
-            <Route path="customer" element={<Customer />} />
-            <Route path="cashier" element={<Cashier />} />
-            <Route path="manager" element={<Manager />} />
-            <Route path="managerReports" element={<ManagerReports />} />
-            <Route path="managerOrders" element={<ManagerOrders />} />
-            <Route path="/add-menu-item" element={<AddMenuItem />} />
-            <Route path="/admin-tools" element={<AdministratorTools/>} />
+          <Route path="/" element={<ProtectedLayout isHighContrast={isHighContrast} />}>
+            <Route path="home" element={<Home isHighContrast={isHighContrast} />} />
+            <Route path="menu" element={<Menu isHighContrast={isHighContrast} />} />
+            <Route path="customer" element={<Customer isHighContrast={isHighContrast}  />} />
+            <Route path="cashier" element={<Cashier isHighContrast={isHighContrast} />} />
+            <Route path="manager" element={<Manager isHighContrast={isHighContrast}  />} />
+            <Route path="managerReports" element={<ManagerReports isHighContrast={isHighContrast}  />} />
+            <Route path="managerOrders" element={<ManagerOrders isHighContrast={isHighContrast} />} />
+            <Route path="/add-menu-item" element={<AddMenuItem isHighContrast={isHighContrast}  />} />
+            <Route path="/admin-tools" element={<AdministratorTools isHighContrast={isHighContrast} />} />
 
           </Route>
         </Routes>
-        <AccessibilityWidget isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <AccessibilityWidget isHighContrast={isHighContrast} setHighContrast={setHighContrast} />
       </Router>
     </div>
   );
 }
 
 // Protected Layout Component
-function ProtectedLayout() {
+function ProtectedLayout({isHighContrast}) {
   const location = useLocation();
   const showNavbar = !['/', '/signup'].includes(location.pathname);
 

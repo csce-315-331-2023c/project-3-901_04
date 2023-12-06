@@ -1,0 +1,99 @@
+@import url('//translate.google.com/translate_static/css/translateelement.css');
+
+.Customer-HC {
+    padding: 20px;
+    /* background-color: #f4f4f4; Light cream background */
+    color: #0f0; /* Dark green text */
+    height: auto;
+  }
+  
+  /*h2 {
+    color: #005030; /* Slightly darker green for headings 
+  }*/
+  
+  .Button-HC {
+    margin: 5px;
+    border: 1px solid #0f0; /* Light green border */
+    background-color: #0f0; /* Light green background */
+    color: #000; /* Dark green text */
+  }
+  
+  .Button-HC:hover {
+    background-color: #6f6; /* Darker green on hover */
+  }
+  
+  .OrderItem-HC {
+    background-color: #666; /* Very light green for order items */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+
+ .OrderItem-HC:hover {
+    background-color: #aa7777; /* Light red color on hover */
+    cursor: pointer; /* Change cursor to indicate item is clickable */
+  }
+
+  .Ordersign-HC {
+    line-height: 1px;
+  }
+
+  h2.heading-HC {
+    color:#0f0; /*heading color*/
+  }
+  
+  .OrderTotal-HC {
+    background-color: #555; /* Light green for total */
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .OrderTotal-HC strong {
+    color: #0f0; /* Even darker green for the total "Total" */
+  }
+  
+  /* Update the button styles */
+  .Button-HC {
+    border-radius: 4px;
+    padding: 10px 15px;
+  }
+  
+  /* Secondary buttons */
+  .Button--secondary-HC {
+    background-color: orange; /* Soft orange */
+    color: black; /* Brown text */
+  }
+  
+  .Button--secondary-HC:hover {
+    background-color: #cb810b; /* Darker orange */
+  }
+  
+  /* Primary button */
+  .Button--primary-HC {
+    background-color: orange; /* Orange */
+    color: #000; /* White text */
+  }
+  
+  .Button--primary-HC:hover {
+    background-color: #ff9800; /* Darker orange */
+  }
+  
+  /* Add some space between buttons and their labels */
+  .Button-HC + span {
+    margin-left: 8px;
+  }
+
+  .itemButton-HC {
+    min-height: 50%;
+    max-height: 50%;
+    width: 20%;
+  }
+
+  .modal-dialong-HC {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  

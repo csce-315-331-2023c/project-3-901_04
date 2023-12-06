@@ -1,6 +1,6 @@
 @import url('//translate.google.com/translate_static/css/translateelement.css');
 
-.menu {
+.menu-HC {
     width: auto;
     height: auto;
     display: flex;
@@ -8,7 +8,7 @@
     padding: 20px;
 }
 
-.entrees {
+.entrees-HC {
     flex: 1;
     width: 25%;
     display: flex;
@@ -16,62 +16,62 @@
     margin-left: 8%
 }
 
-.drinksLeft {
+.drinksLeft-HC {
     width: 25%;
     flex: 1;
     margin-left: 10%;
     margin-right: 5%;
 }
 
-.drinksRight {
+.drinksRight-HC {
     width: 25%;
     flex: 1;
     margin-left: 5%;
     margin-right: 8%;
 }
 
-.menuHeader {
-    color: #309060;
+.menuHeader-HC {
+    color: #0f0;
     font-family: arial black, sans-serif;
     font-size: 48px;
-    border-bottom: 4px solid #309060;
+    border-bottom: 4px solid #0f0;
 }
 
-.menuSubHeader {
-    color: #399f6f;
+.menuSubHeader-HC {
+    color: #0f0;
     font-family: arial black, sans-serif;
     font-size: 36px;
-    border-bottom: 2px solid #399f6f;
+    border-bottom: 2px solid #0f0;
 }
 
-.drinkName, .entreeName {
-    color: #e2ae65;
+.drinkName-HC, .entreeName-HC {
+    color: #0d0;
     font-family: arial black, sans-serif;
     transition: 0.1s ease-in-out;
     transform-origin: left center;
     overflow: hidden;
 }
 
-.drinkName:hover, .entreeName:hover {
+.drinkName-HC:hover, .entreeName-HC:hover {
     transform: scale(1.4);
 }
 
-.happyHourFooter {
+.happyHourFooter-HC {
     text-align: center;
     transition: 0.1s ease-in-out;
     transform-origin: center;
     font-size: 16px;
 }
 
-.happyHourFooter:hover{
+.happyHourFooter-HC:hover{
     transform: scale(1.4);
 }
 
-.prices {
-    color: dimgray;
+.prices-HC {
+    color: #0f0;
     font-family: "Open Sans" sans-serif;
 }
 
-.menuBreak {
-    color: #399f6f;
+.menuBreak-HC {
+    color: #0f0;
 }

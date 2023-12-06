@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import '../styles/ManagerReports.css'
+import '../styles/ManagerReports.css';
+import '../styles/ManagerReports_HC.css';
 
-function ManagerReports() {
+function ManagerReports({ isHighContrast }) {
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -178,11 +179,11 @@ function ManagerReports() {
 
     return (
         <div>
-            <div className='reportsLink'><Link to="/manager"><b>Return to Manager</b></Link></div>
-            <div className='managerReports'>
-                <div className='MRleftPanel'>
-                    <div className='dateInputContainer'>
-                        <p className='managerReportsPar'>Start Date</p>
+            <div className={'reportsLink' + (isHighContrast ? "-HC" : "")}><Link to="/manager"><b>Return to Manager</b></Link></div>
+            <div className={'managerReports' + (isHighContrast ? "-HC" : "")}>
+                <div className={'MRleftPanel' + (isHighContrast ? "-HC" : "")}>
+                    <div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        <p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>Start Date</p>
                         <input
                             type="datetime-local"
                             id="dateTimeInput"
@@ -191,8 +192,8 @@ function ManagerReports() {
                             onChange={handleStartDateChange}
                         />
                     </div>
-                    <div className='dateInputContainer'>
-                        <p className='managerReportsPar'>End Date</p>
+                    <div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        <p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>End Date</p>
                         <input
                             type="datetime-local"
                             id="dateTimeInput"
@@ -201,35 +202,35 @@ function ManagerReports() {
                             onChange={handleEndDateChange}
                         />
                     </div>
-                    <div className="reportButtonContainer">
-                        <Button className="reportButton" onClick={generateProductReport} variant="contained" style={displayProductReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                    <div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        <Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateProductReport} variant="contained" style={displayProductReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
                             Product Report
                         </Button>
                     </div>
-                    <div className="reportButtonContainer">
-                        <Button className="reportButton" onClick={generateSalesReport} variant="contained" style={displaySalesReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                    <div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        <Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateSalesReport} variant="contained" style={displaySalesReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
                             Sales Report
                         </Button>
                     </div>
-                    <div className="reportButtonContainer">
-                        <Button className="reportButton" onClick={generateExcessReport} variant="contained" style={displayExcessReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                    <div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        <Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateExcessReport} variant="contained" style={displayExcessReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
                             Excess Report
                         </Button>
                     </div>
-                    <div className="reportButtonContainer">
-                        <Button className="reportButton" onClick={generateRestockReport} variant="contained" style={displayRestockReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                    <div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        <Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateRestockReport} variant="contained" style={displayRestockReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
                             Restock Report
                         </Button>
                     </div>
-                    <div className="reportButtonContainer">
-                        <Button className="reportButton" onClick={generateWSTReport} variant="contained" style={displayWSTReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                    <div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        <Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateWSTReport} variant="contained" style={displayWSTReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
                             What Sells Together Report
                         </Button>
                     </div>
                 </div>    
-                <div className='MRrightPanel'>
+                <div className={'MRrightPanel' + (isHighContrast ? "-HC" : "")}>
                     {!displayProductReport && !displaySalesReport && !displayExcessReport && !displayRestockReport && !displayWSTReport && //DISPLAY NOTHING
-                        <p className="selectAReport">Select dates (if applicable) and select a report to generate a table</p>
+                        <p className={"selectAReport" + (isHighContrast ? "-HC" : "")}>Select dates (if applicable) and select a report to generate a table</p>
                     }
                     {displayProductReport && !displaySalesReport && !displayExcessReport && !displayRestockReport && !displayWSTReport && //DISPLAY PRODUCT REPORT
                         <table>

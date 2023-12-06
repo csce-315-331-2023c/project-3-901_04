@@ -1,0 +1,78 @@
+@import url('//translate.google.com/translate_static/css/translateelement.css');
+
+.home-HC {
+    width: 100vw;     
+    height: 1000px;     
+    display: flex;     
+    justify-content: center;
+    align-items: center;     
+}
+
+.lowerGrid-HC{
+    display: grid;
+    grid-template-columns: 40% 60%;
+    height: 100vh; /* 100% of the viewport height */
+}
+
+.leftPanel-HC{
+    text-align: center;
+    overflow: hidden;
+}
+    .homeContentTitle-HC{
+        transition: 0.12s ease-in-out
+    }
+    .homeContentHours-HC{
+        transition: 0.12s ease-in-out
+    }
+    .homeContentLocationTitle-HC{
+        transition: 0.12s ease-in-out
+    }
+    .homeContentLocationContent-HC{
+        transition: 0.12s ease-in-out
+    }
+    .homeContentTitle-HC:hover{
+        transform: scale(1.65);
+    }
+    .homeContentHours-HC:hover{
+        transform: scale(1.65);
+    }
+    .homeContentLocationTitle-HC:hover{
+        transform: scale(1.65);
+    }
+    .homeContentLocationContent-HC:hover{
+        transform: scale(1.65);
+    }
+
+
+.rightPanel-HC{
+    background-color: #000;
+    background-image: url('../media/blackmarble.jpg'); /* Replace with the actual path to your image */
+    background-size: cover; /* Ensures the image covers the entire container */
+    background-position: center; /* Center the image within the container */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    color:#0f0;
+    display: grid;
+    grid-template-rows: 30% 40%;
+    place-items: center;
+}
+    .aboutMos-HC{
+        margin-bottom: 100px;
+        font-family: "Open Sans" sans-serif;
+        font-size: 34px;
+        text-align: center;
+        margin-right: 30px;
+        margin-left: 30px;
+        color:#0f0;
+    }
+
+.theMap-HC > div {
+   height: 400px;
+}
+
+.moslocationimg-HC {
+    border: 8px solid #000;
+}
+
+.homeContentTitle-HC {
+    font-family: arial black, sans-serif;
+}

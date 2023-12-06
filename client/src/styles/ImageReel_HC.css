@@ -1,75 +1,73 @@
-.imageReel {
+.imageReel-HC {
     overflow: hidden;
     width: 100%;
     position: relative;
   }
 
-  .weatherWidget {
+  .weatherWidget-HC {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: #399f6f; /* Set the background color as needed */
-    padding: 5px; /* Set the padding as needed */
+    background-color: #0f0;
+    padding: 5px;
     z-index: 4;
-    border-right: 8px solid #333;
-    border-bottom: 8px solid #333;
+    border-right: 8px solid #000;
+    border-bottom: 8px solid #000;
     border-left: none;
-    border-top: 8px solid #333;
+    border-top: 8px solid #000;
     border-radius: 0 0 20px 0;
-    color: white;
+    color: #000;
     transition: transform 0.3s ease-in-out;
     transform-origin: top left;
   }
 
-  .weatherWidget:hover {
+  .weatherWidget-HC:hover {
     transform: scale(1.5);
   }
   
-  .imageContainer {
+  .imageContainer-HC {
     display: flex;
     transition: transform 2s ease-out;
   }
   
-  .imageContainer img {
+  .imageContainer-HC img {
     width: 25%;
     height: auto;
   }
 
-  .welcomeOverlay {
+  .welcomeOverlay-HC {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white; /* Adjust text color as needed */
-    font-size: 44px; /* Adjust font size as needed */
+    color: #0f0;
+    font-size: 44px;
     font-family: arial black, sans-serif;
     padding: 10px;
     font-weight: bold;
     text-align: center;
-    background-color: #333;
-    border-color: white;
-    border-width: 3px;
+    background-color: #000;
   }
 
-  .imageContainer::before,
-  .imageContainer::after {
+  .imageContainer-HC::before,
+  .imageContainer-HC::after {
     content: '';
     display: block;
     position: absolute;
     width: 500%;
-    height: 8px; /* Adjust the height of the black borders as needed */
-    background-color: #333;
+    height: 8px;
+    background-color: #000;
   }
 
-  .imageContainer::before {
+  .imageContainer-HC::before {
     top: 0;
   }
 
-  .imageContainer::after {
+  .imageContainer-HC::after {
     bottom: 0;
   }
 
-  .weatherBox {
+  .weatherBox-HC {
     display: grid;
     grid-template-columns: 40% 60%;
     padding-left: 10px;

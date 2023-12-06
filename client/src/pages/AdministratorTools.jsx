@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdministratorTools.css';
+import '../styles/AdministratorTools_HC.css';
 
 const backendBaseURL = process.env.NODE_ENV === 'production'
     ? 'https://mos-irish-server-901-04.vercel.app/api'
     : 'http://localhost:3001/api';
 
-const AdministratorTools = () => {
+const AdministratorTools = ({ isHighContrast }) => {
     const [users, setUsers] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentUserToEdit, setCurrentUserToEdit] = useState(null);
@@ -115,15 +116,15 @@ const AdministratorTools = () => {
 
 
     return (
-        <div className="administrator-tools">
+        <div className={"administrator-tools" + (isHighContrast ? "-HC" : "")}>
             {isEditModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={() => setIsEditModalOpen(false)}>
+                <div className={"modal" + (isHighContrast ? "-HC" : "")}>
+                    <div className={"modal-content-Admin" + (isHighContrast ? "-HC" : "")}>
+                        <span className={"close" + (isHighContrast ? "-HC" : "")} onClick={() => setIsEditModalOpen(false)}>
                             &times;
                         </span>
                         <h2>Edit User: {currentUserToEdit?.name}</h2>
-                        <div className="custom-checkbox">
+                        <div className={"custom-checkbox" + (isHighContrast ? "-HC" : "")}>
                             <label>
                                 <input
                                     type="checkbox"
@@ -135,12 +136,12 @@ const AdministratorTools = () => {
                                         })
                                     }
                                 />
-                                <span className="checkmark"></span>
+                                <span className={"checkmark" + (isHighContrast ? "-HC" : "")}></span>
                                 Is Employee
                             </label>
                         </div>
 
-                        <div className="custom-checkbox">
+                        <div className={"custom-checkbox" + (isHighContrast ? "-HC" : "")}>
                             <label>
                                 <input
                                     type="checkbox"
@@ -152,12 +153,12 @@ const AdministratorTools = () => {
                                         })
                                     }
                                 />
-                                <span className="checkmark"></span>
+                                <span className={"checkmark" + (isHighContrast ? "-HC" : "")}></span>
                                 Is Manager
                             </label>
                         </div>
 
-                        <div className="custom-checkbox">
+                        <div className={"custom-checkbox" + (isHighContrast ? "-HC" : "")}>
                             <label>
                                 <input
                                     type="checkbox"
@@ -169,7 +170,7 @@ const AdministratorTools = () => {
                                         })
                                     }
                                 />
-                                <span className="checkmark"></span>
+                                <span className={"checkmark" + (isHighContrast ? "-HC" : "")}></span>
                                 Is Clocked In
                             </label>
                         </div>
@@ -177,21 +178,21 @@ const AdministratorTools = () => {
                     </div>
                 </div>
             )}
-            <div className='adminToolsLink'><Link to="/manager"><b>Return Manager</b></Link></div>
-            <div className="user-management-container">
+            <div className={'adminToolsLink' + (isHighContrast ? "-HC" : "")}><Link to="/manager"><b>Return Manager</b></Link></div>
+            <div className={"user-management-container" + (isHighContrast ? "-HC" : "")}>
                 <h1>User Management</h1>
             </div>
-            <div className="user-cards-container">
+            <div className={"user-cards-container" + (isHighContrast ? "-HC" : "")}>
                 {users.map((user) => (
-                    <div key={user._id} className="user-card">
+                    <div key={user._id} className={"user-card" + (isHighContrast ? "-HC" : "")}>
                         <h2>{user.name}</h2>
                         <p>Email: {user.email}</p>
                         <p>Employee: {user.isEmployee ? 'Yes' : 'No'}</p>
                         <p>Manager: {user.isManager ? 'Yes' : 'No'}</p>
                         <p>Clocked In: {user.isClockedIn ? 'Yes' : 'No'}</p>
-                        <div className="user-card-actions">
-                            <button onClick={() => openEditModal(user)} className="edit-user-button">Edit</button>
-                            <button onClick={() => handleDeleteUser(user._id)} className="delete-user-button">Delete</button>
+                        <div className={"user-card-actions" + (isHighContrast ? "-HC" : "")}>
+                            <button onClick={() => openEditModal(user)} className={"edit-user-button" + (isHighContrast ? "-HC" : "")}>Edit</button>
+                            <button onClick={() => handleDeleteUser(user._id)} className={"delete-user-button" + (isHighContrast ? "-HC" : "")}>Delete</button>
                         </div>
                     </div>
                 ))}

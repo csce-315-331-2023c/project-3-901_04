@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Manager.css';
+import '../styles/Manager_HC.css';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -11,7 +12,7 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-function Manager() {
+function Manager({ isHighContrast }) {
   const navigate = useNavigate();
   
   const [DBItems, setDBItems] = useState({ menuItems: [], inventoryItems: [] });
@@ -187,13 +188,13 @@ function Manager() {
     return (
 
       <div>
-        <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
-        <div class='ordersLink'><Link to="/managerOrders"><b>Order History</b></Link></div>
-        <div class='adminToolsLink'><Link to="/admin-tools"><b>Admin Tools</b></Link></div>
+        <div class={'reportsLink' + (isHighContrast ? "-HC" : "")}><Link to="/managerReports"><b>Reports</b></Link></div>
+        <div class={'ordersLink' + (isHighContrast ? "-HC" : "")}><Link to="/managerOrders"><b>Order History</b></Link></div>
+        <div class={'adminToolsLink' + (isHighContrast ? "-HC" : "")}><Link to="/admin-tools"><b>Admin Tools</b></Link></div>
 
         <Grid container spacing={2}>
               <Grid item xs={6}>
-                <h3>Name: <div className="displayedValue">{displayedInvItemName}</div></h3>
+                <h3>Name: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedInvItemName}</div></h3>
                 <TextField
                 variant="outlined"
                 //value={text}
@@ -203,7 +204,7 @@ function Manager() {
                 </TextField>
               </Grid>
               <Grid item xs={6}>
-                <h3>Stock: <div className="displayedValue">{displayedInvItemStock}</div></h3>
+                <h3>Stock: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedInvItemStock}</div></h3>
                 <TextField
                 variant="outlined"
                 //value={text}
@@ -213,7 +214,7 @@ function Manager() {
                 </TextField>
               </Grid>
               <Grid item xs={6}>
-                <h3>Cost: <div className="displayedValue">${displayedInvItemCost}</div></h3>
+                <h3>Cost: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>${displayedInvItemCost}</div></h3>
                 <TextField
                 variant="outlined"
                 //value={text}
@@ -223,7 +224,7 @@ function Manager() {
                 </TextField>
               </Grid>
               <Grid item xs={6}>
-                <h3>Minimum Stock Warning: <div className="displayedValue">{displayedInvItemMinimum}</div></h3>
+                <h3>Minimum Stock Warning: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedInvItemMinimum}</div></h3>
                 <TextField
                 variant="outlined"
                 //value={text}
@@ -242,13 +243,13 @@ function Manager() {
 
       <div>
 
-        <div class='reportsLink'><Link to="/managerReports"><b>Reports</b></Link></div>
-        <div class='ordersLink'><Link to="/managerOrders"><b>Order History</b></Link></div>
-        <div class='adminToolsLink'><Link to="/admin-tools"><b>Admin Tools</b></Link></div>
+        <div class={'reportsLink' + (isHighContrast ? "-HC" : "")}><Link to="/managerReports"><b>Reports</b></Link></div>
+        <div class={'ordersLink' + (isHighContrast ? "-HC" : "")}><Link to="/managerOrders"><b>Order History</b></Link></div>
+        <div class={'adminToolsLink' + (isHighContrast ? "-HC" : "")}><Link to="/admin-tools"><b>Admin Tools</b></Link></div>
 
         <Grid container spacing={2}>
-            <Grid item xs={6} className="editPaneItem">
-              <h3>Name: <div className="displayedValue">{displayedMenuItemName}</div></h3>
+            <Grid item xs={6} className={"editPaneItem" + (isHighContrast ? "-HC" : "")}>
+              <h3>Name: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedMenuItemName}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
@@ -257,8 +258,8 @@ function Manager() {
               >
               </TextField>
             </Grid>
-            <Grid item xs={6} className="editPaneItem">
-              <h3>Price: <div className="displayedValue">${displayedMenuItemPrice}</div></h3>
+            <Grid item xs={6} className={"editPaneItem" + (isHighContrast ? "-HC" : "")}>
+              <h3>Price: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>${displayedMenuItemPrice}</div></h3>
             <TextField
               variant="outlined"
               //value={text}
@@ -267,8 +268,8 @@ function Manager() {
               >
               </TextField>
             </Grid>
-            <Grid item xs={6} className="editPaneItem">
-              <h3>To-Go: <div className="displayedValue">{displayedMenuItemTogo}</div></h3>
+            <Grid item xs={6} className={"editPaneItem" + (isHighContrast ? "-HC" : "")}>
+              <h3>To-Go: <div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedMenuItemTogo}</div></h3>
               <TextField
               variant="outlined"
               //value={text}
@@ -309,10 +310,10 @@ function Manager() {
 
   const ManagerNavButtons = ({ items }) => {
     return (
-      <div className="scrollView" style={{ height: '600px', overflowY: 'scroll' }}>
+      <div className={"scrollView" + (isHighContrast ? "-HC" : "")} style={{ height: '600px', overflowY: 'scroll' }}>
         <div>
           {items.map((item) => (
-            <Button onClick={() => handleItemButtonClick(item.item_name)} variant="outlined" className="managerMenuButton" key={item}>
+            <Button onClick={() => handleItemButtonClick(item.item_name)} variant="outlined" className={"managerMenuButton" + (isHighContrast ? "-HC" : "")} key={item}>
               {item.item_name}
             </Button>
           ))}
@@ -352,22 +353,22 @@ function Manager() {
 
   const newItemForm = () => {
     return (
-      <div className="managerForm">
+      <div className={"managerForm" + (isHighContrast ? "-HC" : "")}>
         <h2>Add New Inventory Item</h2>
         <form onSubmit={handleSubmit(onSubmitNewItem)}>
-          <div className="formField">
+          <div className={"formField" + (isHighContrast ? "-HC" : "")}>
             <TextField {...register('itemName')} placeholder="Item Name" required fullWidth />
           </div>
-          <div className="formField">
+          <div className={"formField" + (isHighContrast ? "-HC" : "")}>
             <TextField {...register('stock')} placeholder="Stock" type="number" required fullWidth />
           </div>
-          <div className="formField">
+          <div className={"formField" + (isHighContrast ? "-HC" : "")}>
             <TextField {...register('cost')} placeholder="Cost" type="number" required fullWidth />
           </div>
-          <div className="formField">
+          <div className={"formField" + (isHighContrast ? "-HC" : "")}>
             <TextField {...register('minStockWarning')} placeholder="Minimum Stock Warning" type="number" required fullWidth />
           </div>
-          <Button type="submit" className="submitButton" variant="contained">Add Item</Button>
+          <Button type="submit" className={"submitButton" + (isHighContrast ? "-HC" : "")} variant="contained">Add Item</Button>
         </form>
       </div>
     );
@@ -391,22 +392,22 @@ function Manager() {
   };
 
   return (
-    <div className='manager'>
+    <div className={'manager' + (isHighContrast ? "-HC" : "")}>
       <Grid container spacing={2}>
         
         <Grid item xs={3.6}>
-          <div className='leftGrid'>
-            <div className='scrollView'>
+          <div className={'leftGrid' + (isHighContrast ? "-HC" : "")}>
+            <div className={'scrollView' + (isHighContrast ? "-HC" : "")}>
               <div>
-                <Button className="managerMenuSwapButton managerActionButton" variant="contained" disableElevation onClick={handleViewToggle}>
+                <Button className={isHighContrast ? "managerMenuSwapButton-HC managerActionButton-HC" : "managerMenuSwapButton managerActionButton"} variant="contained" disableElevation onClick={handleViewToggle}>
                   Swap Menu/Inventory
                 </Button>
-                <Button className="toggleAddItemFormButton managerActionButton" variant="contained" disableElevation onClick={handleToggleAddItemForm}>
+                <Button className={isHighContrast ? "toggleAddItemFormButton-HC managerActionButton-HC" : "toggleAddItemFormButton managerActionButton"} variant="contained" disableElevation onClick={handleToggleAddItemForm}>
                   {showAddItemForm ? 'Hide Add Item Form' : 'Show Add Item Form'}
                 </Button>
                 {!showAddItemForm && (
                   <>
-                    <Button className="managerActionButton" variant="contained" disableElevation onClick={handleAddItem}>
+                    <Button className={"managerActionButton" + (isHighContrast ? "-HC" : "")} variant="contained" disableElevation onClick={handleAddItem}>
                       Add Menu Item
                     </Button>
                     <ManagerNavButtons items={activeView}/>
@@ -416,12 +417,12 @@ function Manager() {
             </div>
           </div>
           {showingMenu ? (
-            <div className='managerDeleteButton-Container'>
+            <div className={'managerDeleteButton-Container' + (isHighContrast ? "-HC" : "")}>
               <Button onClick={() => {
                 if(displayedMenuItemName !== "Select a Menu Item"){
                   setDeleteDialogOpen(true)} 
                 }}
-                style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className="managerDeleteButton">
+                style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className={"managerDeleteButton" + (isHighContrast ? "-HC" : "")}>
                 {displayedMenuItemName === 'Select a Menu Item' ? 'Select an Item' : 'Delete'}
               </Button>
                 <Dialog open={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
@@ -440,12 +441,12 @@ function Manager() {
                 </Dialog>
             </div>
           ) : (
-            <div className='managerDeleteButton-Container'>
+            <div className={'managerDeleteButton-Container'  + (isHighContrast ? "-HC" : "")}>
               <Button onClick={() => {
                   if(displayedInvItemName !== "Select an Inventory Item"){
                     setDeleteDialogOpen(true)} 
                   }}
-                  style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className="managerDeleteButton">
+                  style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className={"managerDeleteButton" + (isHighContrast ? "-HC" : "")}>
                   {displayedInvItemName === "Select an Inventory Item" ? 'Select an Item' : 'Delete'}
                 </Button>
                   <Dialog open={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
@@ -474,18 +475,18 @@ function Manager() {
         ) : (
           // Otherwise, show menu or inventory display based on showingMenu
           <Grid item xs={5.4}>
-            <div className='.editPane'>{dataGridContainer()}</div>
+            <div className={'editPane' + (isHighContrast ? "-HC" : "")}>{dataGridContainer()}</div>
           </Grid>
         )}
   
         {/* Recipe panel is always shown on the right-hand side */}
         <Grid item xs={3}>
-          <div className='rightGrid'>
+          <div className={'rightGrid' + (isHighContrast ? "-HC" : "")}>
             <div>
               <div>
-                <h1 className='recipeTitle'>Recipe</h1>
+                <h1 className={'recipeTitle' + (isHighContrast ? "-HC" : "")}>Recipe</h1>
               </div>
-              <div className="scrollView" style={{ height: '600px', overflowY: 'scroll' }}>
+              <div className={"scrollView" + (isHighContrast ? "-HC" : "")} style={{ height: '600px', overflowY: 'scroll' }}>
                 <div>
                   {displayedRecipe && displayedRecipe.map((item, index) => (
                     <p key={index}>

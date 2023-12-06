@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Weather.css';
+import '../styles/ImageReel.css';
 
 /**
  * This function takes the geological location of Mo's (or the user) and queries the weather for it.
@@ -60,15 +60,15 @@ const Weather = () => {
     }, [coords]);
 
     return (
-        <div class="weatherContainer">
+        <div>
             {(typeof (weather.name) != 'undefined' && weather.name != null) ? (
                 <div class="weatherBox">
                     {/*<p>Location: {weather.name}</p>*/}
-                    <div class="rightPane">
+                    <div>
                         <p>{Math.round(celToFah(weather.main.temp))}°F/{Math.round(weather.main.temp)}°C</p>
                         <p>{(weather.weather[0].description).charAt(0).toUpperCase() + (weather.weather[0].description).slice(1)}</p>
                     </div>
-                    <div class="leftPane">
+                    <div>
                         <img src={image} />
                     </div>
                 </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logoimg from '../media/mos.svg';
 
-const Navbar = () => {
+const Navbar = ( ) => {
     const [visible, setVisible] = useState(true);
     const isEmployee = JSON.parse(localStorage.getItem('isEmployee')); // Retrieve the isEmployee flag
     const isManager = JSON.parse(localStorage.getItem('isManager')); // Retrieve the isManager flag

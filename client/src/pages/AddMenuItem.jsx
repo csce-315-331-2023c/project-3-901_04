@@ -10,7 +10,7 @@ const backendBaseURL = process.env.NODE_ENV === 'production'
 
 
 
-const AddMenuItem = () => {
+const AddMenuItem = ({ isHighContrast }) => {
     const [menuItemName, setMenuItemName] = useState('');
     const [menuItemPrice, setMenuItemPrice] = useState('');
     const [isToGo, setIsToGo] = useState(false);

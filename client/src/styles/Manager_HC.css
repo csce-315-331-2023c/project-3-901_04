@@ -1,0 +1,213 @@
+@import url('//translate.google.com/translate_static/css/translateelement.css');
+
+.reportsLink-HC a {
+    color: #0f0;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5%;
+    width: 13%;
+    position: absolute;
+    top: 10%;
+    text-align: center;
+    right: 6%;
+    padding: 10px;
+    background-color: #333;
+    border: 2px solid #0f0;
+    transition: 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.reportsLink-HC a:hover {
+    background-color: #000;
+    font-size: larger;
+}
+
+.ordersLink-HC a {
+    color: #0f0;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5%;
+    width: 13%;
+    text-align: center;
+    position: absolute;
+    top: 10%;
+    right: 20%;
+    padding: 10px;
+    border: 2px solid #0f0;
+    background-color: #333;
+    transition: 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.ordersLink-HC a:hover {
+    background-color: #000;
+    font-size: larger;
+}
+
+.adminToolsLink-HC a {
+    color: #0f0;
+    border-radius: 6px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    border: 2px solid #0f0;
+    align-items: center;
+    height: 5%;
+    width: 13%;
+    position: absolute;
+    top: 10%;
+    right: 34%; /* Adjust this value based on your layout */
+    padding: 10px;
+    background-color: #333;
+    transition: 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.adminToolsLink-HC a:hover {
+    background-color: #000;
+    font-size: larger;
+}
+
+.manager-HC{
+    width: auto;     
+    height: 100vh; 
+    display: flex;     
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;     
+}
+
+.leftGrid-HC{
+    display: 'flex';
+    width: '95%';
+    margin-left: 5px;
+    border: 4px solid #0f0;
+    border-radius: 4px;
+    padding-top: 10px;
+}
+
+.rightGrid-HC{
+    display: 'flex';
+    width: '100%';
+    margin-right: 50px;
+    border: 4px solid #0f0;
+    border-radius: 4px;
+    padding-top: 10px;
+}
+
+.recipeTitle-HC{
+    text-align: center;
+}
+
+.scrollView-HC{
+    flex: 1;
+    width: '33%';
+    text-align: center;
+    /*border: 1px solid black;*/
+}
+
+.managerMenuButton-HC{
+    display: inline;
+    width: 26vw;
+    background-color: lightgrey;
+}
+
+/* .managerMenuSwapButton{
+    
+} */
+
+.editPane-HC{
+    display: inline;
+}
+
+.editPaneItem-HC{
+    text-align: center;
+}
+
+.displayedValue-HC{
+    color: #0d0;
+}
+
+.managerDeleteButton-Container-HC{
+    margin-top: 20px;
+    padding-left: 20%;
+    padding-right: 20%;
+    justify-content: center;
+    height: 10%;
+    width: 100%;
+}
+
+.managerDeleteButton-HC{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+
+/* merging */
+.managerForm-HC{
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    /* background: #f3f3f3; */
+    border-radius: 10px;
+  }
+  
+  .managerForm-HC h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .formField-HC {
+    margin-bottom: 15px;
+  }
+  
+  .formField-HC input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .submitButton-HC {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton-HC:hover {
+    background-color: #0056b3;
+  }
+
+  .managerActionButton-HC {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 0px; 
+  }
+  
+  .managerActionButton-HC:last-child {
+    margin-bottom: 0; /* This ensures that there is no extra space after the last button */
+  }
+  
+  .managerActionButton-HC:hover {
+    background-color: #0056b3;
+  }
+
+  

@@ -6,7 +6,7 @@ import { gapi } from 'gapi-script';
 import CookieConsent from "react-cookie-consent";
 import '../styles/Login.css';
 
-function Login() {
+function Login({ isHighContrast }) {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
