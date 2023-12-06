@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import '../styles/ManagerReports.css';
 import '../styles/ManagerReports_HC.css';
+import '../styles/ManagerReports.css';
+
 
 /**
  * ManagerOrders Component - Handles displaying and managing orders for Mo's Irish Pub.
