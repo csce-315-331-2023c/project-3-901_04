@@ -6,7 +6,13 @@
     /* background-color: #f4f4f4; Light cream background */
     color: #0a3a0a; /* Dark green text */
     height: auto;
+    font-size: large;
   }
+
+.body {
+  font-size:larger;
+}
+
   
   /*h2 {
     color: #005030; /* Slightly darker green for headings 
@@ -96,5 +102,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
+  
 
   
