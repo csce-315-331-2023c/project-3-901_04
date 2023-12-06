@@ -1,3 +1,10 @@
+/**
+ * File: App.jsx
+ * Description: Main component for the Mos Irish Pub frontend.
+ * Author: Your Name
+ * Last Modified: 2023-12-05
+ */
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, Outlet } from 'react-router-dom';
 
@@ -16,7 +23,6 @@ import ManagerOrders from './pages/ManagerOrders.jsx';
 import AddMenuItem from './pages/AddMenuItem';
 import AdministratorTools from './pages/AdministratorTools.jsx';
 
-
 // Import css for the app
 import './styles/navbar.css';
 import './App.css';
@@ -31,6 +37,12 @@ import './App.css';
 //   return checkAuth() ? children : <Navigate to="/" />;
 // };
 
+/**
+ * Functional component representing the main application.
+ *
+ * @function App
+ * @returns {JSX.Element} - Rendered App component.
+ */
 function App() {
   const [isHighContrast, setHighContrast] = useState(false);
 
@@ -64,7 +76,6 @@ function App() {
             <Route path="managerOrders" element={<ManagerOrders isHighContrast={isHighContrast} />} />
             <Route path="/add-menu-item" element={<AddMenuItem isHighContrast={isHighContrast}  />} />
             <Route path="/admin-tools" element={<AdministratorTools isHighContrast={isHighContrast} />} />
-
           </Route>
         </Routes>
         <AccessibilityWidget isHighContrast={isHighContrast} setHighContrast={setHighContrast} />
@@ -74,6 +85,14 @@ function App() {
 }
 
 // Protected Layout Component
+/**
+ * Functional component representing the layout for protected routes.
+ *
+ * @function ProtectedLayout
+ * @param {Object} props - React props.
+ * @param {boolean} props.isHighContrast - Flag indicating high contrast mode.
+ * @returns {JSX.Element} - Rendered ProtectedLayout component.
+ */
 function ProtectedLayout({isHighContrast}) {
   const location = useLocation();
   const showNavbar = !['/', '/signup'].includes(location.pathname);

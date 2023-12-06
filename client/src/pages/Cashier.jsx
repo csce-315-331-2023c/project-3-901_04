@@ -12,6 +12,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 
+
+/**
+ * Cashier component for handling customer orders.
+ * @param {Object} props - React component props.
+ * @param {boolean} props.isHighContrast - Flag indicating high contrast mode.
+ * @returns {JSX.Element} - JSX element representing the Cashier component.
+ */
 function Cashier({ isHighContrast }) {
   const [entrees, setEntrees] = useState([]);
   const [drinks, setDrinks] = useState([]);

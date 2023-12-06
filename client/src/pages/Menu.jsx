@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Menu.css';
 import '../styles/Menu_HC.css';
 
+
+/**
+ * Menu Component - Displays the menu for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
 function Menu({ isHighContrast }) {
   const [menu, setMenu] = useState({ entrees: [], draft: [],  bottled: [], wine: [], cocktails: [], noAlch: [], brunchDrinks: []});
 

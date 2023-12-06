@@ -26,6 +26,14 @@ import ImageReel from '../components/ImageReel';
   import logoimg from '../media/mos.svg';
   import buildingimg from '../media/moslocation.jpg';
 
+  /**
+ * Home component for displaying the main page content.
+ * 
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {boolean} props.isHighContrast - Indicates whether the high contrast mode is enabled.
+ * @returns {JSX.Element} The rendered Home component.
+ */
 function Home({ isHighContrast }) {
   const user = JSON.parse(localStorage.getItem('user')); // Retrieve the user data
 

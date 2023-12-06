@@ -12,6 +12,13 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Manager Component - Handles menu and inventory management for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
 function Manager({ isHighContrast }) {
   const navigate = useNavigate();
   

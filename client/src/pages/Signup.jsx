@@ -3,6 +3,14 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Signup.css';
 
+
+/**
+ * Signup Component - Handles user signup for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
 function Signup({ isHighContrast }) {
     const navigate = useNavigate();
     const [name, setName] = useState('');

@@ -6,6 +6,14 @@ import { gapi } from 'gapi-script';
 import CookieConsent from "react-cookie-consent";
 import '../styles/Login.css';
 
+/**
+ * Login component for handling user login.
+ * 
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {boolean} props.isHighContrast - Indicates whether the high contrast mode is enabled.
+ * @returns {JSX.Element} The rendered Login component.
+ */
 function Login({ isHighContrast }) {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');

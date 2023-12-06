@@ -1,3 +1,10 @@
+/**
+ * File: index.jsx
+ * Description: Entry point for the Mos Irish Pub React application.
+ * Author: Your Name
+ * Last Modified: 2023-12-05
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

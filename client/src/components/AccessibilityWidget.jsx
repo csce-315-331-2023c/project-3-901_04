@@ -3,18 +3,35 @@ import '../styles/AccessibilityWidget.css';
 import '../styles/AccessibilityWidget_HC.css';
 import TranslateWidget from '../components/TranslateWidget';
 
-
+/**
+ * AccessibilityWidget Component - Provides accessibility options for Mo's Irish Pub website.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @param {function} props.setHighContrast - Function to toggle high contrast mode.
+ * @returns {JSX.Element} - Rendered component.
+ */
 function AccessibilityWidget({ isHighContrast, setHighContrast }) {
     const [isOpen, setIsOpen] = useState(false);
 
+    /**
+     * Handles the click event on the accessibility widget.
+     */
     const handleWidgetClick = () => {
         setIsOpen(true);
     };
 
+    /**
+     * Closes the accessibility options modal.
+     */
     const handleCloseModal = () => {
         setIsOpen(false);
     };
 
+    /**
+     * Render function for the AccessibilityWidget component.
+     * @returns {JSX.Element} - Rendered component.
+     */
     return (
         <div>
             <div className={"accessibility-widget" + (isHighContrast ? "-HC" : "")} onClick={handleWidgetClick}>

@@ -5,6 +5,14 @@ import axios from 'axios';
 import '../styles/ManagerOrders.css'
 import '../styles/ManagerOrders_HC.css'
 
+
+/**
+ * ManagerOrders Component - Handles displaying and managing orders for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
 function ManagerOrders({ isHighContrast }) {
 
     const [startDate, setStartDate] = useState('');

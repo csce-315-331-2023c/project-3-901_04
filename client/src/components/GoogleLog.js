@@ -1,13 +1,22 @@
-// GoogleLog component
 import React from 'react';
 import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 
 const clientId = process.env.REACT_APP_CLIENTID;
 
+/**
+ * GoogleLog Component - Provides Google login functionality.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {function} props.navigate - Function to navigate to another page.
+ * @returns {JSX.Element} - Rendered component.
+ */
+function GoogleLog({ navigate }) {
 
-function GoogleLog({ navigate }) { // Accept navigate as a prop
-
+    /**
+     * Handles the successful Google login.
+     * @param {Object} res - Google login response object.
+     */
     const onSuccess = async (res) => {
         console.log("LOGIN SUCCESSFUL! Current user:", res.profileObj);
         localStorage.setItem('token', res.tokenId); // Store the token
@@ -23,9 +32,9 @@ function GoogleLog({ navigate }) { // Accept navigate as a prop
             const response = await axios.get(`${backendURL}/api/isEmployee?name=${name}`);
             localStorage.setItem('isEmployee', response.data.isEmployee);
 
-                            //check if the user is a manager
-                            const managerCheckResponse = await axios.get(`${backendURL}/api/isManager?name=${name}`);
-                            localStorage.setItem('isManager', managerCheckResponse.data.isManager);
+            // Check if the user is a manager
+            const managerCheckResponse = await axios.get(`${backendURL}/api/isManager?name=${name}`);
+            localStorage.setItem('isManager', managerCheckResponse.data.isManager);
 
             navigate('/home');
         } catch (error) {
@@ -34,10 +43,18 @@ function GoogleLog({ navigate }) { // Accept navigate as a prop
         }
     }
 
+    /**
+     * Handles the failed Google login.
+     * @param {Object} res - Google login response object.
+     */
     const onFailure = (res) => {
         console.log("LOGIN FAILED! res:", res);
     }
 
+    /**
+     * Render function for the GoogleLog component.
+     * @returns {JSX.Element} - Rendered component.
+     */
     return (
         <div id="signInButton">
             <GoogleLogin

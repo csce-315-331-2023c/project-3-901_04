@@ -25,6 +25,21 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 
+
+/**
+ * Customer component for managing restaurant orders.
+ *
+ * @component
+ * @example
+ * // Usage of Customer component in another component
+ * import Customer from './Customer';
+ * // ...
+ * <Customer isHighContrast={true} />
+ *
+ * @param {Object} props - React props for the Customer component.
+ * @param {boolean} props.isHighContrast - Flag indicating high contrast mode.
+ * @returns {JSX.Element} Rendered Customer component.
+ */
 function Customer({ isHighContrast }) {
   const [entrees, setEntrees] = useState([]);
   const [drinks, setDrinks] = useState([]);
