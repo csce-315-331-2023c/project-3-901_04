@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/Login.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/Login.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+import GoogleLog from '../components/GoogleLog';
+import { gapi } from 'gapi-script';
+import CookieConsent from "react-cookie-consent";
+import '../styles/Login.css';
+
+/**
+ * Login component for handling user login.
+ * 
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {boolean} props.isHighContrast - Indicates whether the high contrast mode is enabled.
+ * @returns {JSX.Element} The rendered Login component.
+ */
+function Login({ isHighContrast }) {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+
+    const clientId = process.env.REACT_APP_CLIENTID;
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        try {
+            //http://localhost:3001/login
+            //https://mos-irish-server-901-04.vercel.app/login
+            const backendURL = process.env.NODE_ENV === 'production'
+                ? 'https://mos-irish-server-901-04.vercel.app'
+                : 'http://localhost:3001';
+
+            // Then use it in your axios call
+            const response = await axios.post(`${backendURL}/login`, { email, password });
+
+            if (response.data.status === 'ok') {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user)); // Store the user data
+
+                const user = JSON.parse(localStorage.getItem('user'));
+
+                // Check if the user is an employee
+                const employeeCheckResponse = await axios.get(`${backendURL}/api/isEmployee?name=${user.name}`);
+                localStorage.setItem('isEmployee', employeeCheckResponse.data.isEmployee);
+
+                //check if the user is a manager
+                const managerCheckResponse = await axios.get(`${backendURL}/api/isManager?name=${user.name}`);
+                localStorage.setItem('isManager', managerCheckResponse.data.isManager);
+                
+                navigate('/home');
+            } else {
+                // Handle login failure
+                alert('Login failed');
+            }
+        } catch (error) {
+            console.error('Login error', error);
+        }
+    }
+
+    useEffect(() => {
+        function start() {
+            gapi.client.init({
+                clientId: clientId,
+                scope: ""
+            })
+        };
+
+
+        gapi.load('client:auth2', start);
+    });
+
+    return (
+        &lt;div className="login">
+            &lt;CookieConsent
+                location="top"
+                buttonText="I understand"
+                cookieName="myAwesomeCookieName2"
+                style={{ background: "#2B373B", padding: "10px" }}
+                buttonStyle={{ color: "#FFFFFF", fontSize: "16px", backgroundColor: "#4e503b", border: "none", padding: "10px 20px", borderRadius: "5px", margin: "10px 0" }}
+                contentStyle={{ color: "#FFFFFF", fontSize: "14px" }}
+                expires={150}
+                debug={false}
+            >
+
+                &lt;span style={{ fontSize: "14px", display: "block" }}>This website requires cookies to enhance the user experience.{" "}&lt;/span>
+            &lt;/CookieConsent>
+            &lt;h1>Login&lt;/h1>
+            &lt;form onSubmit={handleLogin}>
+                &lt;input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+                &lt;input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                &lt;button type="submit">Login&lt;/button>
+                &lt;GoogleLog navigate={navigate} />
+            &lt;/form>
+            &lt;p>
+                Don't have an account? &lt;Link to="/signup">Sign up&lt;/Link>
+            &lt;/p>
+        &lt;/div>
+    );
+}
+
+export default Login;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

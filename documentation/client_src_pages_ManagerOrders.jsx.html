@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/ManagerOrders.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/ManagerOrders.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import axios from 'axios';
+import '../styles/ManagerOrders.css'
+import '../styles/ManagerOrders_HC.css'
+
+
+/**
+ * ManagerOrders Component - Handles displaying and managing orders for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
+function ManagerOrders({ isHighContrast }) {
+
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    const [fetchedOrders, setFetchedOrders] = useState([]);
+    const [currentOrderContents, setCurrentOrderContents] = useState([]);
+    const [currentOrderMetaData, setCurrentOrderMetaData] = useState([]);
+
+    const handleStartDateChange = (event) => {
+        setStartDate(event.target.value);
+        //console.log(startDate);
+    };
+
+    const handleEndDateChange = (event) => {
+        setEndDate(event.target.value);
+        //console.log(endDate);
+    };
+
+    function fetchOrders() {
+
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/managerOrders'
+        : 'http://localhost:3001/api/managerOrders';
+        console.log("Attempting to fetch orders from " + startDate + " to " + endDate);
+        const fetchOrders = async () => {
+          try {
+            const ordersQuery = await axios.get(backendURL, {
+                params: {
+                    startTime: startDate,
+                    endTime: endDate
+                },
+            });
+
+            setFetchedOrders(ordersQuery.data.orders);
+            console.log(ordersQuery.data.orders);
+
+          } catch (error) {
+            console.error('Fetch Orders error', error);
+          }
+        };
+        fetchOrders();
+    };
+
+    function displayOrderContents(orderId) {
+        console.log("Fetching the order and meta data of order #" + orderId);
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/orderContents'
+        : 'http://localhost:3001/api/orderContents';
+        const fetchOrderData = async () => {
+          try {
+            const orderContentQuery = await axios.get(backendURL, {
+                params: {
+                    id: orderId
+                },
+            });
+
+            setCurrentOrderMetaData(orderContentQuery.data.orderMetaData);
+            console.log(orderContentQuery.data.orderMetaData);
+
+            setCurrentOrderContents(orderContentQuery.data.orderContents);
+            console.log(orderContentQuery.data.orderContents);
+
+          } catch (error) {
+            console.error('Order Content Query error', error);
+          }
+        };
+        fetchOrderData();
+    };
+
+    return (
+        &lt;div>
+            &lt;div className={'ordersLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/manager">&lt;b>Return to Manager&lt;/b>&lt;/Link>&lt;/div>
+            &lt;div className={'managerOrders' + (isHighContrast ? "-HC" : "")}>
+                &lt;div className={'MOleftPanel' + (isHighContrast ? "-HC" : "")}>
+                    &lt;div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        &lt;p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>Start Date&lt;/p>
+                        &lt;input
+                            type="datetime-local"
+                            id="dateTimeInput"
+                            name="dateTimeInput"
+                            //value={startDate}
+                            onChange={handleStartDateChange}
+                        />
+                    &lt;/div>
+                    &lt;div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        &lt;p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>End Date&lt;/p>
+                        &lt;input
+                            type="datetime-local"
+                            id="dateTimeInput"
+                            name="dateTimeInput"
+                            //value={endDate}
+                            onChange={handleEndDateChange}
+                        />
+                    &lt;/div>
+                    &lt;div className={"generateButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        &lt;Button className={"generateButton" + (isHighContrast ? "-HC" : "")} onClick={fetchOrders} variant="contained">
+                            Submit
+                        &lt;/Button>
+                    &lt;/div>
+                &lt;/div>    
+                &lt;div className={'MOcenterPanel' + (isHighContrast ? "-HC" : "")}>
+                {fetchedOrders.map((order) => (
+                    &lt;Button onClick={() => displayOrderContents(order.id)} variant="outlined" className={"managerMenuButton" + (isHighContrast ? "-HC" : "")} key={order}>
+                        {order.order_timestamp + ' | ' + order.customer_name}
+                    &lt;/Button>
+                ))}
+                    
+                &lt;/div>
+                &lt;div className={'MOrightPanel-Container' + (isHighContrast ? "-HC" : "")}>
+                    &lt;div className={'MOrightPanel-top' + (isHighContrast ? "-HC" : "")}>
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>Cashier&lt;/th>
+                                &lt;th>Total&lt;/th>
+                                &lt;th>Table&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {currentOrderMetaData.map((row) => (
+                                &lt;tr>
+                                    &lt;td className={'metaDataItem' + (isHighContrast ? "-HC" : "")}>{currentOrderMetaData[0].employee_name}&lt;/td>
+                                    &lt;td className={'metaDataItem' + (isHighContrast ? "-HC" : "")}>${currentOrderMetaData[0].price_total}&lt;/td>
+                                    &lt;td className={'metaDataItem' + (isHighContrast ? "-HC" : "")}>{currentOrderMetaData[0].table_num == 0 ? (
+                                        'TO-GO'
+                                    ) : (
+                                        currentOrderMetaData[0].table_num
+                                    )}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+                    &lt;/div>
+                    &lt;div className={'MOrightPanel-bottom' + (isHighContrast ? "-HC" : "")}>
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>Item&lt;/th>
+                                &lt;th>Amount&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {currentOrderContents.map((row) => (
+                                &lt;tr key={row.item_name}>
+                                    &lt;td>{row.item_name}&lt;/td>
+                                    &lt;td>{row.item_count}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+                    &lt;/div>
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
+    )
+}
+
+export default ManagerOrders</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

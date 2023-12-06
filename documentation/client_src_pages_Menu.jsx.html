@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/Menu.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/Menu.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import '../styles/Menu.css';
+import '../styles/Menu_HC.css';
+
+
+/**
+ * Menu Component - Displays the menu for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
+function Menu({ isHighContrast }) {
+  const [menu, setMenu] = useState({ entrees: [], draft: [],  bottled: [], wine: [], cocktails: [], noAlch: [], brunchDrinks: []});
+
+  useEffect(() => {
+
+    const backendURL = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
+      : 'http://localhost:3001/api/menu';
+    fetch(backendURL) //backend url
+      .then(res => res.json())
+      .then(data => {
+        setMenu(data);
+      });
+    
+  }, []);
+
+  return (
+    &lt;div class={'menu' + (isHighContrast ? "-HC" : "")}>
+
+      &lt;div class={"entrees" + (isHighContrast ? "-HC" : "")}>
+        &lt;h1 class={"menuHeader" + (isHighContrast ? "-HC" : "")}>Entrees&lt;/h1>
+        {menu.entrees.map((entree, index) => (
+          &lt;p class={"entreeName" + (isHighContrast ? "-HC" : "")} key={index}>{(entree.entree_name).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{entree.price}&lt;/b>&lt;/p>
+        ))}
+      &lt;/div>
+
+      &lt;div class={"drinksLeft" + (isHighContrast ? "-HC" : "")}>
+
+        &lt;h1 class={"menuHeader" + (isHighContrast ? "-HC" : "")}>Drinks&lt;/h1>
+
+        &lt;h2 class={"menuSubHeader" + (isHighContrast ? "-HC" : "")}>Draft&lt;/h2>
+        {menu.draft.map((drink, index) => (
+          &lt;p class={"drinkName" + (isHighContrast ? "-HC" : "")} key={index}>{(drink[0]).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{drink[1]}&lt;/b>&lt;/p>
+        ))}
+
+        &lt;div class={"happyHourFooter" + (isHighContrast ? "-HC" : "")}>
+        &lt;p>*Happy Hour Price $2.92/beer&lt;/p>
+        &lt;p>Mon-Fri 3 to 6pm&lt;/p>
+        &lt;/div>
+
+        &lt;h2 class={"menuSubHeader" + (isHighContrast ? "-HC" : "")}>Bottled&lt;/h2>
+        {menu.bottled.map((drink, index) => (
+          &lt;p class={"drinkName" + (isHighContrast ? "-HC" : "")} key={index}>{(drink[0]).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{drink[1]}&lt;/b>&lt;/p>
+        ))}
+
+      &lt;/div>
+
+      &lt;div class={"drinksRight" + (isHighContrast ? "-HC" : "")}>
+
+        &lt;h2 class={"menuSubHeader" + (isHighContrast ? "-HC" : "")}>Wine&lt;/h2>
+        {menu.wine.map((drink, index) => (
+          &lt;p class={"drinkName" + (isHighContrast ? "-HC" : "")} key={index}>{(drink[0]).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{drink[1]}&lt;/b>&lt;/p>
+        ))}
+
+        &lt;div class={"happyHourFooter" + (isHighContrast ? "-HC" : "")}>
+        &lt;p>*Happy Hour Price $5/glass&lt;/p>
+        &lt;p>Mon-Fri 3 to 6pm&lt;/p>
+        &lt;/div>
+
+        &lt;h2 class={"menuSubHeader" + (isHighContrast ? "-HC" : "")}>Cocktails&lt;/h2>
+        {menu.cocktails.map((drink, index) => (
+          &lt;p class={"drinkName" + (isHighContrast ? "-HC" : "")} key={index}>{(drink[0]).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{drink[1]}&lt;/b>&lt;/p>
+        ))}
+
+        &lt;h2 class={"menuSubHeader" + (isHighContrast ? "-HC" : "")}>Brunch&lt;/h2>
+        {menu.brunchDrinks.map((drink, index) => (
+          &lt;p class={"drinkName" + (isHighContrast ? "-HC" : "")} key={index}>{(drink[0]).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{drink[1]}&lt;/b>&lt;/p>
+        ))}
+
+        &lt;h2 class={"menuSubHeader" + (isHighContrast ? "-HC" : "")}>Non Alcoholic&lt;/h2>
+        {menu.noAlch.map((drink, index) => (
+          &lt;p class={"drinkName" + (isHighContrast ? "-HC" : "")} key={index}>{(drink[0]).toUpperCase()}: &lt;b class={"prices" + (isHighContrast ? "-HC" : "")}>{drink[1]}&lt;/b>&lt;/p>
+        ))}
+
+      &lt;/div>
+
+
+    &lt;/div>
+  );
+}
+
+export default Menu;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

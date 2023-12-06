@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/Manager.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/Manager.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import '../styles/Manager.css';
+import '../styles/Manager_HC.css';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import { TextField, Grid } from '@mui/material';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * Manager Component - Handles menu and inventory management for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
+function Manager({ isHighContrast }) {
+  const navigate = useNavigate();
+  
+  const [DBItems, setDBItems] = useState({ menuItems: [], inventoryItems: [] });
+  const [activeView, setActiveView] = useState(DBItems.menuItems);
+
+  const [menuItemRecipe, setRecipe] = useState([]);
+  const [displayedRecipe, setDisplayedRecipe] = useState([]);
+
+  const [activeGrid, setActiveGrid] = useState(2);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const [menuItemName, setMenuItemName] = useState('Select a Menu Item');
+  const [displayedMenuItemName, setDisplayedMenuItemName] = useState();
+
+  const [menuItemPrice, setMenuItemPrice] = useState('Select a Menu Item');
+  const [displayedMenuItemPrice, setDisplayedMenuItemPrice] = useState();
+
+  const [menuItemTogo, setMenuitemTogo] = useState('Select a Menu Item');
+  const [displayedMenuItemTogo, setDisplayedMenuitemTogo] = useState();
+
+  
+  const [invItemName, setInvItemName] = useState('Select an Inventory Item');
+  const [displayedInvItemName, setDisplayedInvItemName] = useState();
+
+  const [invItemStock, setInvItemStock] = useState('Select an Inventory Item');
+  const [displayedInvItemStock, setDisplayedInvItemStock] = useState();
+
+  const [invItemCost, setInvItemCost] = useState('Select an Inventory Item');
+  const [displayedInvItemCost, setDisplayedInvItemCost] = useState();
+
+  const [invItemMinimum, setinvItemMinimum] = useState('Select an Inventory Item');
+  const [displayedInvItemMinimum, setDisplayedinvItemMinimum] = useState();
+
+
+  const [showingMenu, setShowingMenu] = useState(true);
+
+  useEffect(() => {
+    fetchMenu();
+    handleViewToggle()
+  }, []);
+
+  function fetchMenu(){
+    const backendURL = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/managerMenu'
+      : 'http://localhost:3001/api/managerMenu';
+    fetch(backendURL) //backend url
+      .then(res => res.json())
+      .then(data => {
+        setDBItems(data);
+        setActiveView(DBItems.menuItems);
+        //console.log(data);
+      });
+  }
+
+  useEffect(() => {
+    //console.log('Updated menuItemRecipe:', menuItemRecipe);
+
+    const updatedDisplay = menuItemRecipe.map((item) => ({
+      name: item.item_name,
+      quantity: item.quantity,
+    }));
+    
+    setDisplayedRecipe(updatedDisplay);
+
+  }, [menuItemRecipe]);
+
+  useEffect(() => {
+    /*
+    console.log("Updated menuItemName: ", menuItemName);
+    console.log("Updated menuItemPrice: ", menuItemPrice);
+    console.log("Updated menuItemTogo: ", menuItemTogo);
+    console.log("Updated invItemName: ", invItemName);
+    console.log("Updated invItemStock: ", invItemStock);
+    console.log("Updated invItemCost: ", invItemCost);
+    console.log("Updated invItemMinimum: ", invItemMinimum);
+    */
+
+    setDisplayedMenuItemName(menuItemName);
+    setDisplayedMenuItemPrice(menuItemPrice);
+    if(menuItemTogo){
+      setDisplayedMenuitemTogo('☑');
+    }
+    else{
+      setDisplayedMenuitemTogo('☒');
+    }
+    setDisplayedInvItemName(invItemName);
+    setDisplayedInvItemStock(invItemStock);
+    setDisplayedInvItemCost(invItemCost);
+    setDisplayedinvItemMinimum(invItemMinimum);
+
+  }, [menuItemName, menuItemPrice, menuItemTogo, invItemName, invItemStock, invItemCost, invItemMinimum]);
+
+  function handleItemButtonClick(buttonText) {
+    const backendURL2 = process.env.NODE_ENV === 'production'
+    ? 'https://mos-irish-server-901-04.vercel.app/api/recipe'
+    : 'http://localhost:3001/api/recipe';
+    const fetchRecipeData = async () => {
+      try {
+        const itemQuery = await axios.get(backendURL2, {
+          params: {
+            requestedItem: buttonText,
+          },
+        });
+
+        setRecipe(itemQuery.data.recipe);
+        setMenuItemName(itemQuery.data.menuItemInfo[0].item_name);
+        setMenuItemPrice(itemQuery.data.menuItemInfo[0].price);
+        setMenuitemTogo(itemQuery.data.menuItemInfo[0].togo);
+        setInvItemName(itemQuery.data.invItemInfo[0].item_name);
+        setInvItemStock(itemQuery.data.invItemInfo[0].stock);
+        setInvItemCost(itemQuery.data.invItemInfo[0].cost);
+        setinvItemMinimum(itemQuery.data.invItemInfo[0].min_stock_warning);
+
+      } catch (error) {
+        console.error('Recipe error', error);
+      }
+    };
+    fetchRecipeData();
+  }  
+
+  function handleDeleteInvItem(itemToDelete) {
+    const deleteInvItem = async (itemToDelete) => {
+      const backendURL2 = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/deleteInvItem'
+        : 'http://localhost:3001/api/deleteInvItem';
+
+      try {
+        const deleteRes = await axios.delete(backendURL2, {
+          params: {
+            itemToDelete: itemToDelete,
+          },
+        });
+
+        console.log(deleteRes.data);
+
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
+
+    };
+    deleteInvItem(itemToDelete);
+    setDeleteDialogOpen(false);
+    window.location.reload();
+  }
+    
+  function handleDeleteMenuItem(itemToDelete) {
+    const deleteMenuItem = async (itemToDelete) => {
+      const backendURL2 = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/deleteMenuItem'
+      : 'http://localhost:3001/api/deleteMenuItem';
+
+      try {
+        const deleteRes = await axios.delete(backendURL2, {
+          params: {
+            itemToDelete: itemToDelete,
+          },
+        });
+
+        console.log(deleteRes.data);
+        
+      } catch (error) {
+        console.error('Error deleting item:', error);
+      }
+
+    };
+    deleteMenuItem(itemToDelete);
+    setDeleteDialogOpen(false);
+    window.location.reload();
+  }
+    
+
+  const inventoryDataDisplay = () => {
+    return (
+
+      &lt;div>
+        &lt;div class={'reportsLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/managerReports">&lt;b>Reports&lt;/b>&lt;/Link>&lt;/div>
+        &lt;div class={'ordersLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/managerOrders">&lt;b>Order History&lt;/b>&lt;/Link>&lt;/div>
+        &lt;div class={'adminToolsLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/admin-tools">&lt;b>Admin Tools&lt;/b>&lt;/Link>&lt;/div>
+
+        &lt;Grid container spacing={2}>
+              &lt;Grid item xs={6}>
+                &lt;h3>Name: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedInvItemName}&lt;/div>&lt;/h3>
+                &lt;TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New Name"
+                >
+                &lt;/TextField>
+              &lt;/Grid>
+              &lt;Grid item xs={6}>
+                &lt;h3>Stock: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedInvItemStock}&lt;/div>&lt;/h3>
+                &lt;TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New Stock"
+                >
+                &lt;/TextField>
+              &lt;/Grid>
+              &lt;Grid item xs={6}>
+                &lt;h3>Cost: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>${displayedInvItemCost}&lt;/div>&lt;/h3>
+                &lt;TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New Cost"
+                >
+                &lt;/TextField>
+              &lt;/Grid>
+              &lt;Grid item xs={6}>
+                &lt;h3>Minimum Stock Warning: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedInvItemMinimum}&lt;/div>&lt;/h3>
+                &lt;TextField
+                variant="outlined"
+                //value={text}
+                //onChange={handleInputChange}
+                placeholder="Input New MSW"
+                >
+                &lt;/TextField>
+              &lt;/Grid>
+            &lt;/Grid>
+      &lt;/div>
+    );
+  };
+
+  const menuDataDisplay = () => {
+    return (
+
+      &lt;div>
+
+        &lt;div class={'reportsLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/managerReports">&lt;b>Reports&lt;/b>&lt;/Link>&lt;/div>
+        &lt;div class={'ordersLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/managerOrders">&lt;b>Order History&lt;/b>&lt;/Link>&lt;/div>
+        &lt;div class={'adminToolsLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/admin-tools">&lt;b>Admin Tools&lt;/b>&lt;/Link>&lt;/div>
+
+        &lt;Grid container spacing={2}>
+            &lt;Grid item xs={6} className={"editPaneItem" + (isHighContrast ? "-HC" : "")}>
+              &lt;h3>Name: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedMenuItemName}&lt;/div>&lt;/h3>
+              &lt;TextField
+              variant="outlined"
+              //value={text}
+              //onChange={handleInputChange}
+              placeholder="Input New Name"
+              >
+              &lt;/TextField>
+            &lt;/Grid>
+            &lt;Grid item xs={6} className={"editPaneItem" + (isHighContrast ? "-HC" : "")}>
+              &lt;h3>Price: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>${displayedMenuItemPrice}&lt;/div>&lt;/h3>
+            &lt;TextField
+              variant="outlined"
+              //value={text}
+              //onChange={handleInputChange}
+              placeholder="Input New Price"
+              >
+              &lt;/TextField>
+            &lt;/Grid>
+            &lt;Grid item xs={6} className={"editPaneItem" + (isHighContrast ? "-HC" : "")}>
+              &lt;h3>To-Go: &lt;div className={"displayedValue" + (isHighContrast ? "-HC" : "")}>{displayedMenuItemTogo}&lt;/div>&lt;/h3>
+              &lt;TextField
+              variant="outlined"
+              //value={text}
+              //onChange={handleInputChange}
+              placeholder="True/False"
+              >
+              &lt;/TextField>
+            &lt;/Grid>
+          &lt;/Grid>
+
+      &lt;/div>
+    );
+  };
+
+  const handleViewToggle = () => {
+    setActiveGrid(activeGrid === 1 ? 2 : 1);
+    setActiveView(activeView === DBItems.menuItems ? DBItems.inventoryItems : DBItems.menuItems);
+    setShowingMenu(!showingMenu);
+    setRecipe( [{ item_name: 'Select a menu item to update', quantity: 0}] );
+    setMenuItemName('Select a Menu Item');
+    setMenuItemPrice('Select a Menu Item');
+    setMenuitemTogo('Select a Menu Item');
+    setInvItemName('Select an Inventory Item');
+    setInvItemCost('Select an Inventory Item');
+    setInvItemStock('Select an Inventory Item');
+    setinvItemMinimum('Select an Inventory Item');
+    setShowAddItemForm(false);
+  };
+
+  const dataGridContainer = () => {
+    return (
+      &lt;div>
+        {activeGrid === 1 &amp;&amp; inventoryDataDisplay()}
+        {activeGrid === 2 &amp;&amp; menuDataDisplay()}
+      &lt;/div>
+    );
+  };
+
+  const ManagerNavButtons = ({ items }) => {
+    return (
+      &lt;div className={"scrollView" + (isHighContrast ? "-HC" : "")} style={{ height: '600px', overflowY: 'scroll' }}>
+        &lt;div>
+          {items.map((item) => (
+            &lt;Button onClick={() => handleItemButtonClick(item.item_name)} variant="outlined" className={"managerMenuButton" + (isHighContrast ? "-HC" : "")} key={item}>
+              {item.item_name}
+            &lt;/Button>
+          ))}
+        &lt;/div>
+      &lt;/div>
+      
+    );
+  };
+
+  const { register, handleSubmit, reset } = useForm();
+
+  const onSubmitNewItem = async (data) => {
+    try {
+      const itemData = {
+        itemName: data.itemName,
+        stock: data.stock,
+        cost: data.cost,
+        minStockWarning: data.minStockWarning
+      };
+
+      const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/addInventoryItem'
+        : 'http://localhost:3001/api/addInventoryItem';
+
+
+
+      await axios.post(backendURL, itemData);
+      // console.log('Response:', response.data);
+      alert('Item added successfully!');
+
+      reset(); // Reset form fields after submission
+    } catch (error) {
+      console.error('Failed to add item', error);
+      alert('Failed to add item.');
+    }
+  };
+
+  const newItemForm = () => {
+    return (
+      &lt;div className={"managerForm" + (isHighContrast ? "-HC" : "")}>
+        &lt;h2>Add New Inventory Item&lt;/h2>
+        &lt;form onSubmit={handleSubmit(onSubmitNewItem)}>
+          &lt;div className={"formField" + (isHighContrast ? "-HC" : "")}>
+            &lt;TextField {...register('itemName')} placeholder="Item Name" required fullWidth />
+          &lt;/div>
+          &lt;div className={"formField" + (isHighContrast ? "-HC" : "")}>
+            &lt;TextField {...register('stock')} placeholder="Stock" type="number" required fullWidth />
+          &lt;/div>
+          &lt;div className={"formField" + (isHighContrast ? "-HC" : "")}>
+            &lt;TextField {...register('cost')} placeholder="Cost" type="number" required fullWidth />
+          &lt;/div>
+          &lt;div className={"formField" + (isHighContrast ? "-HC" : "")}>
+            &lt;TextField {...register('minStockWarning')} placeholder="Minimum Stock Warning" type="number" required fullWidth />
+          &lt;/div>
+          &lt;Button type="submit" className={"submitButton" + (isHighContrast ? "-HC" : "")} variant="contained">Add Item&lt;/Button>
+        &lt;/form>
+      &lt;/div>
+    );
+  };
+
+
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
+
+  // Function to toggle the add item form
+  const handleToggleAddItemForm = () => {
+    setShowAddItemForm(!showAddItemForm);
+    if (!showAddItemForm) {
+      // Add any state resets here if you want to hide other components when showing the form
+      // For example:
+      setShowingMenu(false);
+    }
+  };
+
+  const handleAddItem = () => {
+    navigate('/add-menu-item'); // Use the route you set up for adding a menu item
+  };
+
+  return (
+    &lt;div className={'manager' + (isHighContrast ? "-HC" : "")}>
+      &lt;Grid container spacing={2}>
+        
+        &lt;Grid item xs={3.6}>
+          &lt;div className={'leftGrid' + (isHighContrast ? "-HC" : "")}>
+            &lt;div className={'scrollView' + (isHighContrast ? "-HC" : "")}>
+              &lt;div>
+                &lt;Button className={isHighContrast ? "managerMenuSwapButton-HC managerActionButton-HC" : "managerMenuSwapButton managerActionButton"} variant="contained" disableElevation onClick={handleViewToggle}>
+                  Swap Menu/Inventory
+                &lt;/Button>
+                &lt;Button className={isHighContrast ? "toggleAddItemFormButton-HC managerActionButton-HC" : "toggleAddItemFormButton managerActionButton"} variant="contained" disableElevation onClick={handleToggleAddItemForm}>
+                  {showAddItemForm ? 'Hide Add Item Form' : 'Show Add Item Form'}
+                &lt;/Button>
+                {!showAddItemForm &amp;&amp; (
+                  &lt;>
+                    &lt;Button className={"managerActionButton" + (isHighContrast ? "-HC" : "")} variant="contained" disableElevation onClick={handleAddItem}>
+                      Add Menu Item
+                    &lt;/Button>
+                    &lt;ManagerNavButtons items={activeView}/>
+                  &lt;/>
+                )}
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+          {showingMenu ? (
+            &lt;div className={'managerDeleteButton-Container' + (isHighContrast ? "-HC" : "")}>
+              &lt;Button onClick={() => {
+                if(displayedMenuItemName !== "Select a Menu Item"){
+                  setDeleteDialogOpen(true)} 
+                }}
+                style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className={"managerDeleteButton" + (isHighContrast ? "-HC" : "")}>
+                {displayedMenuItemName === 'Select a Menu Item' ? 'Select an Item' : 'Delete'}
+              &lt;/Button>
+                &lt;Dialog open={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                  &lt;DialogTitle>Confirmation&lt;/DialogTitle>
+                  &lt;DialogContent>
+                    Are you sure you want to delete {displayedMenuItemName}?
+                  &lt;/DialogContent>
+                  &lt;DialogActions>
+                    &lt;Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+                      Cancel
+                    &lt;/Button>
+                    &lt;Button onClick={() => handleDeleteMenuItem(displayedMenuItemName)} style={{"color": "red"}}>
+                      Confirm Delete
+                    &lt;/Button>
+                  &lt;/DialogActions>
+                &lt;/Dialog>
+            &lt;/div>
+          ) : (
+            &lt;div className={'managerDeleteButton-Container'  + (isHighContrast ? "-HC" : "")}>
+              &lt;Button onClick={() => {
+                  if(displayedInvItemName !== "Select an Inventory Item"){
+                    setDeleteDialogOpen(true)} 
+                  }}
+                  style={{'background-color': 'rgb(230, 85, 85)', 'color': 'white', 'font-size': '20px'}} className={"managerDeleteButton" + (isHighContrast ? "-HC" : "")}>
+                  {displayedInvItemName === "Select an Inventory Item" ? 'Select an Item' : 'Delete'}
+                &lt;/Button>
+                  &lt;Dialog open={isDeleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                    &lt;DialogTitle>Confirmation&lt;/DialogTitle>
+                    &lt;DialogContent>
+                      Are you sure you want to delete {displayedInvItemName}?
+                    &lt;/DialogContent>
+                    &lt;DialogActions>
+                      &lt;Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+                        Cancel
+                      &lt;/Button>
+                      &lt;Button onClick={() => handleDeleteInvItem(displayedInvItemName)} style={{"color": "red"}}>
+                        Confirm Delete
+                      &lt;/Button>
+                    &lt;/DialogActions>
+                  &lt;/Dialog>
+            &lt;/div>
+          )}
+        &lt;/Grid>
+        
+        {showAddItemForm ? (
+          // Show the addItemForm when showAddItemForm is true
+          &lt;Grid item xs={5.4}>
+            {newItemForm()}
+          &lt;/Grid>
+        ) : (
+          // Otherwise, show menu or inventory display based on showingMenu
+          &lt;Grid item xs={5.4}>
+            &lt;div className={'editPane' + (isHighContrast ? "-HC" : "")}>{dataGridContainer()}&lt;/div>
+          &lt;/Grid>
+        )}
+  
+        {/* Recipe panel is always shown on the right-hand side */}
+        &lt;Grid item xs={3}>
+          &lt;div className={'rightGrid' + (isHighContrast ? "-HC" : "")}>
+            &lt;div>
+              &lt;div>
+                &lt;h1 className={'recipeTitle' + (isHighContrast ? "-HC" : "")}>Recipe&lt;/h1>
+              &lt;/div>
+              &lt;div className={"scrollView" + (isHighContrast ? "-HC" : "")} style={{ height: '600px', overflowY: 'scroll' }}>
+                &lt;div>
+                  {displayedRecipe &amp;&amp; displayedRecipe.map((item, index) => (
+                    &lt;p key={index}>
+                      {item.name}: &lt;b>{item.quantity}&lt;/b>
+                    &lt;/p>
+                  ))}
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/Grid>
+      &lt;/Grid>
+    &lt;/div>
+  );
+  
+}
+
+export default Manager</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

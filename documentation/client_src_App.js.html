@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/App.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/App.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * File: App.jsx
+ * Description: Main component for the Mos Irish Pub frontend.
+ * Author: Your Name
+ * Last Modified: 2023-12-05
+ */
+
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, Outlet } from 'react-router-dom';
+
+// Import components and pages
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Menu from './pages/Menu';
+import Customer from './pages/Customer';
+import Cashier from './pages/Cashier';
+import Manager from './pages/Manager';
+import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
+import AccessibilityWidget from './components/AccessibilityWidget';
+import ManagerReports from './pages/ManagerReports.jsx';
+import ManagerOrders from './pages/ManagerOrders.jsx';
+import AddMenuItem from './pages/AddMenuItem';
+import AdministratorTools from './pages/AdministratorTools.jsx';
+
+// Import css for the app
+import './styles/navbar.css';
+import './App.css';
+
+// Protected Route Component
+// const PrivateRoute = ({ children }) => {
+//   const checkAuth = () => {
+//     const token = localStorage.getItem('token');
+//     return !!token;
+//   };
+
+//   return checkAuth() ? children : &lt;Navigate to="/" />;
+// };
+
+/**
+ * Functional component representing the main application.
+ *
+ * @function App
+ * @returns {JSX.Element} - Rendered App component.
+ */
+function App() {
+  const [isHighContrast, setHighContrast] = useState(false);
+
+  document.title = 'Mo\'s Irish Pub';
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem('dark-mode');
+    if (savedMode) {
+      setHighContrast(JSON.parse(savedMode));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('dark-mode', JSON.stringify(isHighContrast));
+  }, [isHighContrast]);
+
+  return (
+    &lt;div className={isHighContrast ? "dark-mode" : ""}>
+      &lt;Router>
+        &lt;Routes>
+          &lt;Route path="/" element={&lt;Login isHighContrast={isHighContrast} />} />
+          &lt;Route path="/signup" element={&lt;Signup isHighContrast={isHighContrast} />} />
+          {/* Wrap the protected routes in a single element */}
+          &lt;Route path="/" element={&lt;ProtectedLayout isHighContrast={isHighContrast} />}>
+            &lt;Route path="home" element={&lt;Home isHighContrast={isHighContrast} />} />
+            &lt;Route path="menu" element={&lt;Menu isHighContrast={isHighContrast} />} />
+            &lt;Route path="customer" element={&lt;Customer isHighContrast={isHighContrast}  />} />
+            &lt;Route path="cashier" element={&lt;Cashier isHighContrast={isHighContrast} />} />
+            &lt;Route path="manager" element={&lt;Manager isHighContrast={isHighContrast}  />} />
+            &lt;Route path="managerReports" element={&lt;ManagerReports isHighContrast={isHighContrast}  />} />
+            &lt;Route path="managerOrders" element={&lt;ManagerOrders isHighContrast={isHighContrast} />} />
+            &lt;Route path="/add-menu-item" element={&lt;AddMenuItem isHighContrast={isHighContrast}  />} />
+            &lt;Route path="/admin-tools" element={&lt;AdministratorTools isHighContrast={isHighContrast} />} />
+          &lt;/Route>
+        &lt;/Routes>
+        &lt;AccessibilityWidget isHighContrast={isHighContrast} setHighContrast={setHighContrast} />
+      &lt;/Router>
+    &lt;/div>
+  );
+}
+
+// Protected Layout Component
+/**
+ * Functional component representing the layout for protected routes.
+ *
+ * @function ProtectedLayout
+ * @param {Object} props - React props.
+ * @param {boolean} props.isHighContrast - Flag indicating high contrast mode.
+ * @returns {JSX.Element} - Rendered ProtectedLayout component.
+ */
+function ProtectedLayout({isHighContrast}) {
+  const location = useLocation();
+  const showNavbar = !['/', '/signup'].includes(location.pathname);
+
+  const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  };
+
+  if (!checkAuth()) {
+    return &lt;Navigate to="/" />;
+  }
+
+  return (
+    &lt;>
+      {showNavbar &amp;&amp; &lt;Navbar />}
+      &lt;div className="main-content">
+        &lt;Outlet /> {/* Render child routes here */}
+      &lt;/div>
+    &lt;/>
+  );
+}
+
+export default App;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

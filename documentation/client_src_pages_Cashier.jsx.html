@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/Cashier.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/Cashier.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import '../styles/Cashier.css';
+import '../styles/Cashier_HC.css'
+import Button from '@mui/material/Button';
+import { TextField, Grid, Tooltip, InputLabel } from '@mui/material';
+import axios from 'axios';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
+
+
+/**
+ * Cashier component for handling customer orders.
+ * @param {Object} props - React component props.
+ * @param {boolean} props.isHighContrast - Flag indicating high contrast mode.
+ * @returns {JSX.Element} - JSX element representing the Cashier component.
+ */
+function Cashier({ isHighContrast }) {
+  const [entrees, setEntrees] = useState([]);
+  const [drinks, setDrinks] = useState([]);
+  const [order, setOrder] = useState([]);
+  const [orderPrices, setOrderPrices] = useState([]);
+
+  const [showEntrees, setShowEntrees] = useState(true);
+  const [showDrinks, setShowDrinks] = useState(true);
+
+  //customer name
+  const [custName, setCust] = useState("");
+  const [check, setCheck] = useState(false);
+  const namePass = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
+
+  useEffect(() => {
+    const backendURL = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
+      : 'http://localhost:3001/api/menu';
+
+    const getData = async () => {
+      try {
+        const response = await fetch(backendURL);
+        const res = await response.json();
+
+        setEntrees(res.entrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name)))
+        setDrinks(res.drinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name)))
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    getData();
+  }, []);
+
+  const handleAddItem = (itemName, itemPrice) => {
+    var addon = "";
+    if (check == true) {
+      entrees.map(current => {
+        if (current.entree_name == itemName) {
+          addon = " (TOGO)";
+        }
+      })
+    }
+    setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);  
+    setOrder((prevOrder) => [...prevOrder, itemName + addon]);
+  };
+
+  const handleRemoveLastItem = () => {
+    setOrder((prevOrder) => prevOrder.slice(0, -1));
+    setOrderPrices((prevPrices) => prevPrices.slice(0, -1));
+  };
+
+  const handleRemoveItem = (index) => {
+    setOrder((prevOrder) => prevOrder.filter((_, itemIndex) => itemIndex !== index));
+    setOrderPrices((prevPrices) => prevPrices.filter((_, priceIndex) => priceIndex !== index));
+  };
+
+  const handleClearOrder = () => {
+    setOrder([]);
+    setOrderPrices([]);
+  };
+
+  const handleCheck = (event) => {
+    setCheck(event.target.checked);
+  };
+
+  function handleSort(event) {
+    var num = event.target.value;
+    const newEntrees = [...entrees];
+    const newDrinks = [...drinks];
+    if (num == 0) {
+      newEntrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name))
+      setDrinks(newDrinks);
+    }
+    //reverse alphabetical
+    else if (num == 1) {
+      newEntrees.sort((a,b) => b.entree_name.localeCompare(a.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.drink_name.localeCompare(a.drink_name))
+      setDrinks(newDrinks);
+    }
+    //price
+    else if (num == 2) {
+      newEntrees.sort((a,b) => a.price - b.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.price - b.price)
+      setDrinks(newDrinks);
+    }
+    //reverse price
+    else if (num == 3) {
+      newEntrees.sort((a,b) => b.price - a.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.price - a.price)
+      setDrinks(newDrinks);
+    }
+  }
+
+  function getName(original) {
+    original = JSON.stringify(original).replace(/['"]+/g, '');
+    if (original.length > 18) {
+      original = original.slice(0, 16) + "...";
+      return (original);
+    }
+    return original;
+  }
+
+  async function placeOrder(e) {
+    if(order.length){
+      const backendURL2 = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/postid'
+      : 'http://localhost:3001/postid';
+      try {
+          const response = await axios.post(backendURL2, {order, orderPrices, custName, namePass});
+          console.log(response.data);
+      } catch (error) {
+          console.error('Order error', error);
+      }
+    }
+    else{
+      console.log("Order is empty. No order placed.");
+    }
+  }
+
+  const handlePlaceOrder = () => {
+    console.log('Order placed:', order, orderPrices);
+    console.log("customer name: " + custName);
+    placeOrder();
+    handleClearOrder();
+  };
+
+  const theme = createTheme({
+    typography: {
+      subtitle1: {
+        fontSize: 18,
+        textTransform: 'none'
+      },
+      subtitle2: {
+        fontSize: 18,
+        textTransform: 'none'
+      },
+      h6: {
+        fontSize: 20
+      },
+      h5: {
+        fontSize: 20,
+        textTransform: 'none'
+      },
+      body1: {
+        fontSize: 16,
+        textTransform: 'none'
+      },
+      body2: {
+        fontsize: 20
+      }
+    }
+  })
+
+  return (
+    &lt;div className={"Cashier" + (isHighContrast ? "-HC" : "")}>
+      &lt;ThemeProvider theme={theme}>
+        &lt;Grid container spacing={2}>
+          {/* Left side */}
+          &lt;Grid item xs={8.6}> {/* 70% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
+            &lt;Button sx={{fontSize: '20px', textTransform: 'inherit', }} variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
+              {showEntrees ? 'Hide Entrees' : 'Show Entrees'}
+            &lt;/Button>
+            &amp;nbsp;{/* This adds a space between buttons */}
+            &lt;Button sx={{fontSize: '20px', textTransform: 'inherit',}}variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
+              {showDrinks ? 'Hide Drinks' : 'Show Drinks'}
+            &lt;/Button>
+            &lt;FormControl sx={{m:.5, backgroundColor: (isHighContrast ? '#0c0' : 'white')}} size="small">
+              &lt;InputLabel variant='standard' htmlFor='uncontrolled-native'>Sort By&lt;/InputLabel>
+              &lt;NativeSelect label='SortBy' onClick={handleSort}>
+                &lt;option value={0}>Alphabetical&lt;/option>
+                &lt;option value={1}>Reverse Alphabetical&lt;/option>
+                &lt;option value={2}>Price (low to high)&lt;/option>
+                &lt;option value={3}>Price (high to low)&lt;/option>
+              &lt;/NativeSelect>
+            &lt;/FormControl>
+
+            {/* Display Entrees or Drinks based on state */}
+            {showEntrees &amp;&amp; (
+              &lt;div>
+                &lt;h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Entrees&lt;/h2>
+                {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
+                  &lt;Tooltip 
+                    title={&lt;React.Fragment>&lt;Typography variant='subtitle1'>{entree.entree_name + ' (' + entree.price + ')'}&lt;/Typography>&lt;/React.Fragment>}
+                    placement='top' 
+                    size="sm"
+                  >
+                  {entree.seasonal ? (
+                  &lt;Button
+                    className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                    key={(entree.entree_name)}
+                    onClick={() => handleAddItem(entree.entree_name, entree.price)}
+                    variant="outlined"
+                    sx={{
+                      margin: '5px',
+                      border: '1px solid #c8e6c9',
+                      backgroundColor: (isHighContrast ? '#333' : '#f5bf42'),
+                      color: (isHighContrast ? '#f5bf42' : '#0a3a0a'),
+                      borderRadius: 2,
+                      padding: '30px 0px',
+                      '&amp;:hover': {
+                        backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
+                      },
+                      fontSize: '17px',
+                      textTransform: 'inherit'                      
+                      // Add other styles as needed
+                    }}
+                >
+                  {getName(entree.entree_name)}
+                &lt;/Button>
+                  ) : (
+                    &lt;Button
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                      key={(entree.entree_name)}
+                      onClick={() => handleAddItem(entree.entree_name, entree.price)}
+                      variant="outlined"
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: (isHighContrast ? '#333' : '#a5d6a7'),
+                        color: (isHighContrast ? '#0f0' : '#0a3a0a'),
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&amp;:hover': {
+                          backgroundColor: (isHighContrast ? '#000' : '#81c784'),
+                        },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
+                        // Add other styles as needed
+                      }}
+                  >
+                    {getName(entree.entree_name)}
+                  &lt;/Button>
+                  )}
+                  &lt;/Tooltip>
+                ))}
+
+              &lt;/div>
+            )}
+
+            {showDrinks &amp;&amp; (
+              &lt;div>
+                &lt;h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Drinks&lt;/h2>
+                {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
+                  &lt;Tooltip 
+                  title={&lt;Typography variant='subtitle1'>{drink.drink_name + ' (' + drink.price + ')'}&lt;/Typography>}
+                  placement='top' 
+                  size="sm"
+                >
+                  {drink.seasonal ? (
+                    &lt;Button
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                      key={drink.drink_name}
+                      onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: (isHighContrast ? '#333' : '#f5bf42'),
+                        color: (isHighContrast ? '#f5bf42' : '#0a3a0a'),
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&amp;:hover': {
+                          backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
+                        },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
+                        // Add other styles as needed
+                      }}
+                  >
+                    {getName(drink.drink_name)}
+                  &lt;/Button>
+                  ) : (
+                    &lt;Button
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                      key={drink.drink_name}
+                      onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: (isHighContrast ? '#333' : '#a5d6a7'),
+                        color: (isHighContrast ? '#0f0' : '#0a3a0a'),
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&amp;:hover': {
+                          backgroundColor: (isHighContrast ? '#000' : '#81c784'),
+                        },
+                        textTransform: 'inherit',
+                        fontSize: '17px'
+                        // Add other styles as needed
+                      }}
+                  >
+                    {getName(drink.drink_name)}
+                  &lt;/Button>
+                  )}
+                  &lt;/Tooltip>
+                ))}
+
+              &lt;/div>
+            )}
+          &lt;/Grid>
+
+          {/* Right side */}
+          &lt;Grid item xs={3.4}> {/* 30% of 12*/}
+
+            &lt;Grid container spacing={2}>
+              &lt;Grid item xs={8.9}>
+                {/*For the customer name*/}
+                {''}
+                &lt;TextField 
+                    value={custName}
+                    onChange={(e) => {setCust(e.target.value)}}
+                    label="Customer Name"
+                    margin="dense"
+                    maxRows="1"
+                    size="small"
+                    fullWidth
+                    variant="filled"
+                    sx={{
+                      input: {
+                        color: (isHighContrast ? "#0f0" : "black"),
+                        background: (isHighContrast ? "#333" : "#c8e6c9")
+                      }
+                    }}
+                    color="success"
+                    inputProps={{style: {fontSize: 18, textColorStyle: (isHighContrast ? "0f0" : "grey")}}} // font size of input text
+                    InputLabelProps={{style: {fontSize: 18, textColorStyle: (isHighContrast ? "0f0" : "grey")}}} // font size of input label
+                />
+              &lt;/Grid>
+              &lt;Grid item xs={3.1} className={'Ordersign' + (isHighContrast ? "-HC" : "")}>
+              &lt;FormGroup>
+                &lt;FormControlLabel control={&lt;Checkbox
+                  checked={check}
+                  onChange={handleCheck}
+                />} label={&lt;Typography variant='subtitle1'>To-go&lt;/Typography>}/>
+
+                &lt;/FormGroup>
+              &lt;/Grid>
+            &lt;/Grid>
+
+            {/* Iterate over the order array to display each item with its price */}
+            {order.map((item, index) => (
+              &lt;div
+                key={index}
+                className={"OrderItem" + (isHighContrast ? "-HC" : "")}
+                onClick={() => handleRemoveItem(index)}
+                style={{ padding: '10px', margin: '5px 0', borderRadius: '4px', transition: 'background-color 0.3s' }}
+              >
+                &lt;span>{item}&lt;/span>
+                &lt;span style={{ marginLeft: 'auto' }}> ${orderPrices[index].toFixed(2)}&lt;/span>
+              &lt;/div>
+            ))}
+
+            &lt;div className={"OrderTotal" + (isHighContrast ? "-HC" : "")}>
+            &lt;Typography variant='subtitle1'>&lt;strong>Total:&lt;/strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}&lt;/Typography>
+            &lt;/div>
+            &lt;div style={{ height: '10px' }}>&lt;/div>
+
+            {/* Action buttons for the order */}
+          &lt;Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffcc80'),
+              color: (isHighContrast ? '#000' : '#5d4037'),
+              '&amp;:hover': {
+                backgroundColor: '#ffa726',
+              },
+            }}
+            onClick={handleRemoveLastItem}>
+            Remove Last Item
+          &lt;/Button>
+          &lt;Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffcc80'),
+              color: (isHighContrast ? '#000' : '#5d4037'),
+              '&amp;:hover': {
+                backgroundColor: '#ffa726',
+              },
+            }}
+            onClick={handleClearOrder}>
+            Clear Order
+          &lt;/Button>
+          &lt;Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffb74d'),
+              color: (isHighContrast ? '#000' : '#fff'),
+              '&amp;:hover': {
+                backgroundColor: '#ff9800',
+              },
+            }}
+            onClick={handlePlaceOrder}>
+            Place Order
+          &lt;/Button>
+
+
+          &lt;/Grid>
+        &lt;/Grid>
+      &lt;/ThemeProvider>
+    &lt;/div>
+  );
+}
+
+export default Cashier;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

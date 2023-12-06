@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/Home.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/Home.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react'
+import '../styles/Home.css';
+import '../styles/Home_HC.css';
+import GMap from '../components/Map';
+import ImageReel from '../components/ImageReel';
+  import bakedpasta from '../media/foodPhotos/bakedpasta.png';
+  import biscuits from '../media/foodPhotos/biscuits.png';
+  import burger from '../media/foodPhotos/burger.png';
+  import cheesecake from '../media/foodPhotos/cheesecake.png';
+  import chipsandsalsa from '../media/foodPhotos/chipsandsalsa.png';
+  import dessert from '../media/foodPhotos/dessert.png';
+  import friedjalapeno from '../media/foodPhotos/friedjalapeno.png';
+  import grilledchicken from '../media/foodPhotos/grilledchicken.png';
+  import loadedfries from '../media/foodPhotos/loadedfries.jpg';
+  import mozzerellasticks from '../media/foodPhotos/mozzerellasticks.png';
+  import multipleburgers from '../media/foodPhotos/multipleburgers.jpg';
+  import nachos from '../media/foodPhotos/nachos.png';
+  import pancake from '../media/foodPhotos/pancake.png';
+  import pasta from '../media/foodPhotos/pasta.png';
+  import potatoesandavocado from '../media/foodPhotos/potatoesandavocado.png';
+  import quesadias from '../media/foodPhotos/quesadias.png';
+  import sandwich from '../media/foodPhotos/sandwich.png';
+  import sandwich2 from '../media/foodPhotos/sandwich2.png';
+  import steak from '../media/foodPhotos/steak.png';
+  import tenders from '../media/foodPhotos/tenders.png';
+  import logoimg from '../media/mos.svg';
+  import buildingimg from '../media/moslocation.jpg';
+
+  /**
+ * Home component for displaying the main page content.
+ * 
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {boolean} props.isHighContrast - Indicates whether the high contrast mode is enabled.
+ * @returns {JSX.Element} The rendered Home component.
+ */
+function Home({ isHighContrast }) {
+  const user = JSON.parse(localStorage.getItem('user')); // Retrieve the user data
+
+  const imageReelImages = [
+    bakedpasta,
+    biscuits,
+    burger,
+    cheesecake,
+    chipsandsalsa,
+    dessert,
+    friedjalapeno,
+    grilledchicken,
+    loadedfries,
+    mozzerellasticks,
+    multipleburgers,
+    nachos,
+    pancake,
+    pasta,
+    potatoesandavocado,
+    quesadias,
+    sandwich,
+    sandwich2,
+    steak,
+    tenders
+  ];
+
+
+  return (
+      &lt;div>
+        &lt;div class={"homeTop" + (isHighContrast ? "-HC" : "")}>
+          &lt;ImageReel foodImages={imageReelImages} scrollInterval={3500} userName = {user?.name} isHighContrast={isHighContrast}/>
+        &lt;/div>
+        &lt;div class={"lowerGrid" + (isHighContrast ? "-HC" : "")}>
+          &lt;div class={"leftPanel" + (isHighContrast ? "-HC" : "")}>
+            &lt;h2 class={"homeContentTitle" + (isHighContrast ? "-HC" : "")}>Hours of Operation&lt;/h2>
+            &lt;h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Mon-Wed: 3pm-11pm*&lt;/h3>
+            &lt;h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Thur: 10am-11pm*&lt;/h3>
+            &lt;h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Fri-Sat: 10am-12am*&lt;/h3>
+            &lt;h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Sun: 10am-11pm*&lt;/h3>
+            &lt;h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>*Limited Menu After 10pm&lt;/h3>
+            &lt;h2 class={"homeContentTitle" + (isHighContrast ? "-HC" : "")}>Happy Hours&lt;/h2>
+            &lt;h3 class={"homeContentHours" + (isHighContrast ? "-HC" : "")}>Mon-Fri: 3pm-6pm&lt;/h3>
+            &lt;hr/>
+            &lt;h3 class={"homeContentLocationTitle" + (isHighContrast ? "-HC" : "")}>Where to Find Us&lt;/h3>
+            &lt;p class={"homeContentLocationContent" + (isHighContrast ? "-HC" : "")}>1025 University Dr, Suite 101 College Station, TX 77840&lt;/p>
+            &lt;p class={"homeContentLocationContent" + (isHighContrast ? "-HC" : "")}>Phone: (979) 704-3275&lt;/p>
+            &lt;GMap/>
+          &lt;/div>
+          &lt;div class={"rightPanel" + (isHighContrast ? "-HC" : "")}>
+            &lt;img class={"aboutMosLogo" + (isHighContrast ? "-HC" : "")} src={logoimg} alt="logo" height="182" width="352" />
+            &lt;p class={"aboutMos" + (isHighContrast ? "-HC" : "")}>
+              Mo’s Irish Pub is not just another Pub. It’s a place where camaraderie is forged. We don’t just serve beer and drinks. We serve you a culture that is unique. We serve you with liquor and the food that goes with it. It’s not just a pub, it’s an extension of home, community, and family.
+            &lt;/p>
+          &lt;/div>
+        &lt;/div>
+        &lt;img class={"moslocationimg" + (isHighContrast ? "-HC" : "")} src={buildingimg} alt="logo" height="100%" width="100%" />
+      &lt;/div>
+  );
+}
+
+export default Home;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

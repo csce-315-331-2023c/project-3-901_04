@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/components/AccessibilityWidget.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/components/AccessibilityWidget.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import '../styles/AccessibilityWidget.css';
+import '../styles/AccessibilityWidget_HC.css';
+import TranslateWidget from '../components/TranslateWidget';
+
+/**
+ * AccessibilityWidget Component - Provides accessibility options for Mo's Irish Pub website.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @param {function} props.setHighContrast - Function to toggle high contrast mode.
+ * @returns {JSX.Element} - Rendered component.
+ */
+function AccessibilityWidget({ isHighContrast, setHighContrast }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    /**
+     * Handles the click event on the accessibility widget.
+     */
+    const handleWidgetClick = () => {
+        setIsOpen(true);
+    };
+
+    /**
+     * Closes the accessibility options modal.
+     */
+    const handleCloseModal = () => {
+        setIsOpen(false);
+    };
+
+    /**
+     * Render function for the AccessibilityWidget component.
+     * @returns {JSX.Element} - Rendered component.
+     */
+    return (
+        &lt;div>
+            &lt;div className={"accessibility-widget" + (isHighContrast ? "-HC" : "")} onClick={handleWidgetClick}>
+                &lt;svg xmlns="http://www.w3.org/2000/svg" style={{ fill: 'white' }} viewBox="0 0 24 24" width="30px" height="30px">
+                    &lt;path d="M0 0h24v24H0V0z" fill="none">&lt;/path>
+                    &lt;path d="M20.5 6c-2.61.7-5.67 1-8.5 1s-5.89-.3-8.5-1L3 8c1.86.5 4 .83 6 1v13h2v-6h2v6h2V9c2-.17 4.14-.5 6-1l-.5-2zM12 6c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z">&lt;/path>
+                &lt;/svg>
+            &lt;/div>
+
+            {isOpen &amp;&amp; (
+                &lt;div className={"modal" + (isHighContrast ? "-HC" : "")}>
+                    &lt;div className={"modal-content" + (isHighContrast ? "-HC" : "")}>
+                        &lt;span className={"close-button" + (isHighContrast ? "-HC" : "")} onClick={handleCloseModal}>
+                            &amp;times;
+                        &lt;/span>
+                        &lt;h2>Accessibility Options&lt;/h2>
+                        &lt;p className={"hoverTextNotice" + (isHighContrast ? "-HC" : "")}>&lt;i>Having trouble reading text?&lt;/i>&lt;/p>
+                        &lt;p className={"hoverTextNotice" + (isHighContrast ? "-HC" : "")}>&lt;i>Mouse over it to expand it!&lt;/i>&lt;/p>
+                        &lt;button onClick={() => setHighContrast(!isHighContrast)}>
+                            {isHighContrast ? "Normal Mode" : "High Contrast Mode"}
+                        &lt;/button>
+                        &lt;TranslateWidget />
+                    &lt;/div>
+                &lt;/div>
+            )}
+
+        &lt;/div>
+    );
+}
+
+export default AccessibilityWidget;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

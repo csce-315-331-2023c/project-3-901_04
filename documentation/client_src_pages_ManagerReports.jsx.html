@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/ManagerReports.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/ManagerReports.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import axios from 'axios';
+import '../styles/ManagerReports.css';
+import '../styles/ManagerReports_HC.css';
+
+/**
+ * ManagerOrders Component - Handles displaying and managing orders for Mo's Irish Pub.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.isHighContrast - Indicates whether high contrast mode is enabled.
+ * @returns {JSX.Element} - Rendered component.
+ */
+function ManagerReports({ isHighContrast }) {
+
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    const [productReport, setProductReport] = useState([]);
+    const [salesReport, setSalesReport] = useState([]);
+    const [excessReport, setExcessReport] = useState([]);
+    const [restockReport, setRestockReport] = useState([]);
+    const [WSTReport, setWSTReport] = useState([]);
+
+    const [displayProductReport, setDisplayProductReport] = useState(false);
+    const [displaySalesReport, setDisplaySalesReport] = useState(false);
+    const [displayExcessReport, setDisplayExcessReport] = useState(false);
+    const [displayRestockReport, setDisplayRestockReport] = useState(false);
+    const [displayWSTReport, setDisplayWSTReport] = useState(false);
+
+    const handleStartDateChange = (event) => {
+        setStartDate(event.target.value);
+        //console.log(startDate);
+    }
+
+    const handleEndDateChange = (event) => {
+        setEndDate(event.target.value);
+        //console.log(endDate);
+    }
+
+    function generateProductReport() {
+
+        setDisplayProductReport(true);
+        setDisplaySalesReport(false);
+        setDisplayExcessReport(false);
+        setDisplayRestockReport(false);
+        setDisplayWSTReport(false);
+
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/productReport'
+        : 'http://localhost:3001/api/productReport';
+        const fetchReportData = async () => {
+          try {
+            const reportQuery = await axios.get(backendURL, {
+              params: {
+                startTime: startDate,
+                endTime: endDate
+              },
+            });
+
+            setProductReport(reportQuery.data.productReport);
+            console.log("Product Report from " + startDate + " to " + endDate + " successful.");
+    
+          } catch (error) {
+            console.error('Product Report error', error);
+            setDisplayProductReport(false);
+          }
+        };
+        fetchReportData();
+        
+    }
+
+    function generateSalesReport() {
+
+        setDisplayProductReport(false);
+        setDisplaySalesReport(true);
+        setDisplayExcessReport(false);
+        setDisplayRestockReport(false);
+        setDisplayWSTReport(false);
+
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/salesReport'
+        : 'http://localhost:3001/api/salesReport';
+        const fetchReportData = async () => {
+          try {
+            const reportQuery = await axios.get(backendURL, {
+              params: {
+                startTime: startDate,
+                endTime: endDate
+              },
+            });
+
+            setSalesReport(reportQuery.data.salesReport);
+            console.log(reportQuery.data.salesReport);
+            console.log("Sales Report from " + startDate + " to " + endDate + " successful.");
+    
+          } catch (error) {
+            console.error('Sales Report error', error);
+            setDisplaySalesReport(false);
+          }
+        };
+        fetchReportData();
+    }
+
+    function generateExcessReport() {
+
+        setDisplayProductReport(false);
+        setDisplaySalesReport(false);
+        setDisplayExcessReport(true);
+        setDisplayRestockReport(false);
+        setDisplayWSTReport(false);
+
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/excessReport'
+        : 'http://localhost:3001/api/excessReport';
+        const fetchReportData = async () => {
+          try {
+            const reportQuery = await axios.get(backendURL, {
+              params: {
+                startTime: startDate
+              },
+            });
+
+            setExcessReport(reportQuery.data.excessReport);
+            console.log(reportQuery.data.excessReport);
+            console.log("Excess Report from today to " + startDate + " successful.");
+    
+          } catch (error) {
+            console.error('Report error', error);
+            setDisplayExcessReport(false);
+          }
+        };
+        fetchReportData();
+    }
+
+    function generateRestockReport() {
+
+        setDisplayProductReport(false);
+        setDisplaySalesReport(false);
+        setDisplayExcessReport(false);
+        setDisplayRestockReport(true);
+        setDisplayWSTReport(false);
+
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/restockReport'
+        : 'http://localhost:3001/api/restockReport';
+        fetch(backendURL) //backend url
+            .then(res => res.json())
+            .then(data => {
+                setRestockReport(data.restockReport);
+            });
+    };
+
+    function generateWSTReport() {
+
+        setDisplayProductReport(false);
+        setDisplaySalesReport(false);
+        setDisplayExcessReport(false);
+        setDisplayRestockReport(false);
+        setDisplayWSTReport(true);
+
+        const backendURL = process.env.NODE_ENV === 'production'
+        ? 'https://mos-irish-server-901-04.vercel.app/api/WSTReport'
+        : 'http://localhost:3001/api/WSTReport';
+        const fetchReportData = async () => {
+          try {
+            const reportQuery = await axios.get(backendURL, {
+              params: {
+                startTime: startDate,
+                endTime: endDate
+              },
+            });
+
+            setWSTReport(reportQuery.data.WSTReport);
+            console.log(reportQuery.data.WSTReport);
+            console.log("What Sells Together Report from " + startDate + " to " + endDate + " successful.");
+
+          } catch (error) {
+            console.error('WST Report error', error);
+            setDisplayWSTReport(false);
+          }
+        };
+        fetchReportData();
+    }
+
+    return (
+        &lt;div>
+            &lt;div className={'reportsLink' + (isHighContrast ? "-HC" : "")}>&lt;Link to="/manager">&lt;b>Return to Manager&lt;/b>&lt;/Link>&lt;/div>
+            &lt;div className={'managerReports' + (isHighContrast ? "-HC" : "")}>
+                &lt;div className={'MRleftPanel' + (isHighContrast ? "-HC" : "")}>
+                    &lt;div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        &lt;p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>Start Date&lt;/p>
+                        &lt;input
+                            type="datetime-local"
+                            id="dateTimeInput"
+                            name="dateTimeInput"
+                            //value={startDate}
+                            onChange={handleStartDateChange}
+                        />
+                    &lt;/div>
+                    &lt;div className={'dateInputContainer' + (isHighContrast ? "-HC" : "")}>
+                        &lt;p className={'managerReportsPar' + (isHighContrast ? "-HC" : "")}>End Date&lt;/p>
+                        &lt;input
+                            type="datetime-local"
+                            id="dateTimeInput"
+                            name="dateTimeInput"
+                            //value={endDate}
+                            onChange={handleEndDateChange}
+                        />
+                    &lt;/div>
+                    &lt;div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        &lt;Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateProductReport} variant="contained" style={displayProductReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                            Product Report
+                        &lt;/Button>
+                    &lt;/div>
+                    &lt;div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        &lt;Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateSalesReport} variant="contained" style={displaySalesReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                            Sales Report
+                        &lt;/Button>
+                    &lt;/div>
+                    &lt;div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        &lt;Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateExcessReport} variant="contained" style={displayExcessReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                            Excess Report
+                        &lt;/Button>
+                    &lt;/div>
+                    &lt;div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        &lt;Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateRestockReport} variant="contained" style={displayRestockReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                            Restock Report
+                        &lt;/Button>
+                    &lt;/div>
+                    &lt;div className={"reportButtonContainer" + (isHighContrast ? "-HC" : "")}>
+                        &lt;Button className={"reportButton" + (isHighContrast ? "-HC" : "")} onClick={generateWSTReport} variant="contained" style={displayWSTReport ? { backgroundColor: '#eef7ee', color: 'black' } : { backgroundColor: '#399f6f', color: 'white' }}>
+                            What Sells Together Report
+                        &lt;/Button>
+                    &lt;/div>
+                &lt;/div>    
+                &lt;div className={'MRrightPanel' + (isHighContrast ? "-HC" : "")}>
+                    {!displayProductReport &amp;&amp; !displaySalesReport &amp;&amp; !displayExcessReport &amp;&amp; !displayRestockReport &amp;&amp; !displayWSTReport &amp;&amp; //DISPLAY NOTHING
+                        &lt;p className={"selectAReport" + (isHighContrast ? "-HC" : "")}>Select dates (if applicable) and select a report to generate a table&lt;/p>
+                    }
+                    {displayProductReport &amp;&amp; !displaySalesReport &amp;&amp; !displayExcessReport &amp;&amp; !displayRestockReport &amp;&amp; !displayWSTReport &amp;&amp; //DISPLAY PRODUCT REPORT
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>Day&lt;/th>
+                                &lt;th>Total Product&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {productReport.map((row) => (
+                                &lt;tr key={row.day}>
+                                    &lt;td>{(row.day).split('T')[0]}&lt;/td>
+                                    &lt;td>{Math.round(row.total_sum * 100, 2) / 100}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+                    }
+                    {!displayProductReport &amp;&amp; displaySalesReport &amp;&amp; !displayExcessReport &amp;&amp; !displayRestockReport &amp;&amp; !displayWSTReport &amp;&amp; //DISPLAY SALES REPORT
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>Menu Item&lt;/th>
+                                &lt;th>Amount Sold&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {salesReport.map((row) => (
+                                &lt;tr key={row.item_name}>
+                                    &lt;td>{row.item_name}&lt;/td>
+                                    &lt;td>{row.quantity}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+                    }
+                    {!displayProductReport &amp;&amp; !displaySalesReport &amp;&amp; displayExcessReport &amp;&amp; !displayRestockReport &amp;&amp; !displayWSTReport &amp;&amp; //DISPLAY EXCESS REPORT
+                        
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>Inventory Item&lt;/th>
+                                &lt;th>Percentage Consumed&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {excessReport.map((row) => (
+                                &lt;tr key={row.day}>
+                                    &lt;td>{row.inventory_name}&lt;/td>
+                                    &lt;td>{Math.round(row.percent_consumed * 100, 2) / 100}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+
+                    }
+                    {!displayProductReport &amp;&amp; !displaySalesReport &amp;&amp; !displayExcessReport &amp;&amp; displayRestockReport &amp;&amp; !displayWSTReport &amp;&amp; //DISPLAY RESTOCK REPORT
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>Inventory Item&lt;/th>
+                                &lt;th>Stock Remaining&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {restockReport.map((row) => (
+                                &lt;tr key={row.item_name}>
+                                    &lt;td>{row.item_name}&lt;/td>
+                                    &lt;td>{row.stock}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+                    }
+                    {!displayProductReport &amp;&amp; !displaySalesReport &amp;&amp; !displayExcessReport &amp;&amp; !displayRestockReport &amp;&amp; displayWSTReport &amp;&amp; //DISPLAY WST REPORT
+                        &lt;table>
+                            &lt;thead>
+                                &lt;tr>
+                                &lt;th>First Item&lt;/th>
+                                &lt;th>Second Item&lt;/th>
+                                &lt;th>Frequency of Pairing&lt;/th>
+                                &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody>
+                                {WSTReport.map((row) => (
+                                &lt;tr key={row.entree_name + " " + row.drink_name}>
+                                    &lt;td>{row.entree_name}&lt;/td>
+                                    &lt;td>{row.drink_name}&lt;/td>
+                                    &lt;td>{row.pair_freq}&lt;/td>
+                                &lt;/tr>
+                                ))}
+                            &lt;/tbody>
+                        &lt;/table>
+                    }
+                    
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
+    )
+}
+
+export default ManagerReports</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

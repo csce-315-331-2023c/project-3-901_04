@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client/src/pages/Customer.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client/src/pages/Customer.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import '../styles/Customer.css';
+import '../styles/Customer_HC.css';
+import React, { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import { Grid, Tooltip, InputLabel } from '@mui/material';
+import axios from 'axios';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Collapse from '@mui/material/Collapse';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
+
+
+/**
+ * Customer component for managing restaurant orders.
+ *
+ * @component
+ * @example
+ * // Usage of Customer component in another component
+ * import Customer from './Customer';
+ * // ...
+ * &lt;Customer isHighContrast={true} />
+ *
+ * @param {Object} props - React props for the Customer component.
+ * @param {boolean} props.isHighContrast - Flag indicating high contrast mode.
+ * @returns {JSX.Element} Rendered Customer component.
+ */
+function Customer({ isHighContrast }) {
+  const [entrees, setEntrees] = useState([]);
+  const [drinks, setDrinks] = useState([]);
+  //current order
+  const [order, setOrder] = useState([]);
+  const [orderPrices, setOrderPrices] = useState([]);
+  //visual settings
+  const [showEntrees, setShowEntrees] = useState(true);
+  const [showDrinks, setShowDrinks] = useState(true);
+  const [loading, setLoad] = useState(true);
+
+  //for each order 
+  const [orderHist, setHist] = useState([]);
+  //for each order's items
+  const [orderInst, setInst] = useState([]);
+  //order history
+  const [popup, setPop] = useState(false);
+  //to-go
+  const [check, setCheck] = useState(false);
+  const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
+  const namePass = 'customer';
+
+  //obtains menu information, sets up default view
+  useEffect(() => {
+    setLoad(true);
+    const backendURL = process.env.NODE_ENV === 'production'
+      ? 'https://mos-irish-server-901-04.vercel.app/api/menu'
+      : 'http://localhost:3001/api/menu';
+    
+    const backendURL3 = process.env.NODE_ENV === 'production'
+    ? 'https://mos-irish-server-901-04.vercel.app/orderHistory'
+    : 'http://localhost:3001/orderHistory';
+
+    const getData = async () => {
+      try {
+        const response = await fetch(backendURL);
+        const res = await response.json();
+
+        setEntrees(res.entrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name)))
+        setDrinks(res.drinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name)))
+
+        const response2 = await axios.get(backendURL3, {
+          params: {
+            custName: custName
+          }
+        });
+        
+        const res2 = await response2.data;
+        setHist(res2.main.rows);
+        setInst(res2.details);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    getData();
+    setLoad(false);
+  }, []);
+
+  //adds item to order list
+  const handleAddItem = (itemName, itemPrice) => {
+    var addon = "";
+    if (check == true) {
+      entrees.map(current => {
+        if (current.entree_name == itemName) {
+          addon = " (TOGO)";
+        }
+      })
+    }
+    setOrderPrices((prevPrices) => [...prevPrices, itemPrice]);  
+    setOrder((prevOrder) => [...prevOrder, itemName + addon]);
+  };
+
+  const handleRemoveLastItem = () => {
+    setOrder((prevOrder) => prevOrder.slice(0, -1));
+    setOrderPrices((prevPrices) => prevPrices.slice(0, -1));
+  };
+
+  const handleRemoveItem = (index) => {
+    setOrder((prevOrder) => prevOrder.filter((_, itemIndex) => itemIndex !== index));
+    setOrderPrices((prevPrices) => prevPrices.filter((_, priceIndex) => priceIndex !== index));
+  };
+
+  const handleClearOrder = () => {
+    setOrder([]);
+    setOrderPrices([]);
+  };
+
+  const handleCheck = (event) => {
+    setCheck(event.target.checked);
+  };
+
+  function reorder(id) {
+    handleClearOrder();
+    orderInst &amp;&amp; orderInst.filter(val => val.id == id).map((item) => (
+      handleAddItem(item.drink_name || item.entree_name, item.price)
+    ))
+  }
+
+  function handleSort(event) {
+    var num = event.target.value;
+    const newEntrees = [...entrees];
+    const newDrinks = [...drinks];
+    if (num == 0) {
+      newEntrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name))
+      setDrinks(newDrinks);
+    }
+    //reverse alphabetical
+    else if (num == 1) {
+      newEntrees.sort((a,b) => b.entree_name.localeCompare(a.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.drink_name.localeCompare(a.drink_name))
+      setDrinks(newDrinks);
+    }
+    //price
+    else if (num == 2) {
+      newEntrees.sort((a,b) => a.price - b.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.price - b.price)
+      setDrinks(newDrinks);
+    }
+    //reverse price
+    else if (num == 3) {
+      newEntrees.sort((a,b) => b.price - a.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.price - a.price)
+      setDrinks(newDrinks);
+    }
+  }
+
+  const handleOpen = () => setPop(true);
+  const handleClose = () => setPop(false); 
+
+  async function placeOrder(e) {
+    const backendURL2 = process.env.NODE_ENV === 'production'
+    ? 'https://mos-irish-server-901-04.vercel.app/postid'
+    : 'http://localhost:3001/postid';
+    try {
+        const response = await axios.post(backendURL2, {order, orderPrices, custName, namePass});
+        console.log(response.data);
+        window.location.reload();
+    } catch (error) {
+        console.error('Order error', error);
+    }
+  }
+
+  const handlePlaceOrder = () => {
+    console.log('Order placed:', order, orderPrices);
+    console.log("customer name: " + custName);
+    placeOrder();
+    handleClearOrder();
+  };
+  
+  if (loading) {
+    console.log('loading');
+    return &lt;div>...loading...&lt;/div>
+  }
+
+  function getName(original) {
+    original = JSON.stringify(original).replace(/['"]+/g, '');
+    if (original.length > 18) {
+      original = original.slice(0, 16) + "...";
+      return (original);
+    }
+    return original;
+  }
+
+  function getDateFromTimestamp(tstamp) {
+    return (JSON.parse(JSON.stringify(tstamp)).split('T')[0] + " " + JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0]);
+  }
+
+  function getTimeFromTimestamp(tstamp) {
+    var timeStr = JSON.parse(JSON.stringify(tstamp)).split('T')[1].split('.')[0];
+    return parseInt(timeStr.split(':')[0]);
+  }
+
+  function getHour() {
+    const time = new Date();
+    return time.getHours();
+  }
+
+  const theme = createTheme({
+    typography: {
+      subtitle1: {
+        fontSize: 20,
+        textTransform: 'none'
+      },
+      subtitle2: {
+        fontSize: 20,
+        textTransform: 'none'
+      },
+      h6: {
+        fontSize: 22
+      },
+      h5: {
+        fontSize: 22,
+        textTransform: 'none'
+      },
+      h4: {
+        fontSize: 20,
+        textTransform: 'none'
+      },
+      body1: {
+        fontSize: 16,
+        textTransform: 'none'
+      },
+      body2: {
+        fontsize: 20
+      },
+    }
+  })
+
+  const styles = theme => ({
+    tablecell: {
+      fontSize: '40pt',
+    }
+  })
+
+  function Row(props) {
+    const [open, setOpen] = useState(false);
+    return (
+      &lt;React.Fragment>
+        &lt;ThemeProvider theme={theme}>
+        &lt;TableRow >
+          &lt;TableCell>
+            &lt;IconButton size="small" onClick={() => setOpen(!open)}>
+              {open ? &lt;KeyboardArrowUpIcon /> : &lt;KeyboardArrowDownIcon/>}
+            &lt;/IconButton>
+          &lt;/TableCell>
+
+          &lt;TableCell>
+            &lt;Button variant='text' onClick={() => reorder(props.od.id)}>&lt;Typography variant='subtitle1'>Order&lt;/Typography>&lt;/Button>
+          &lt;/TableCell>
+          &lt;TableCell className={'body'}>{props.od.id}&lt;/TableCell>
+          &lt;TableCell className={'body'}>{getDateFromTimestamp(props.od.order_timestamp)}&lt;/TableCell>
+          &lt;TableCell className={'body'}>{props.od.price_total}&lt;/TableCell>
+        &lt;/TableRow>
+
+        &lt;TableRow>
+          &lt;TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
+            &lt;Collapse in={open} timeout="auto" unmountOnExit>
+              &lt;Box sx={{margin:1}}>
+                &lt;Table size="small">
+                  &lt;TableHead>
+                    &lt;TableRow>
+                      &lt;TableCell>&lt;Typography variant='h4'>Item Name&lt;/Typography>&lt;/TableCell>
+                      &lt;TableCell>&lt;Typography variant='h4'>Item Price($)&lt;/Typography>&lt;/TableCell>
+                    &lt;/TableRow>
+                  &lt;/TableHead>
+
+                  &lt;TableBody>
+                    {orderInst &amp;&amp; orderInst.filter(val => val.id == props.od.id).map((item) => (
+                      &lt;TableRow key={item.drink_name || item.entree_name}>
+                        &lt;TableCell className={'body'} >
+                          {item.drink_name || item.entree_name}
+                        &lt;/TableCell>
+                        &lt;TableCell>{item.price}&lt;/TableCell>
+                      &lt;/TableRow>
+                    ))}
+                  &lt;/TableBody>
+
+                &lt;/Table>
+              &lt;/Box>
+            &lt;/Collapse>
+          &lt;/TableCell>
+        &lt;/TableRow>
+        &lt;/ThemeProvider>
+      &lt;/React.Fragment>
+    );
+  }
+
+
+  return (
+    &lt;div className={"Customer" + (isHighContrast ? "-HC" : "")}>
+      &lt;ThemeProvider theme={theme}>
+      &lt;Grid container spacing={2}>
+        {/* Left side */}
+        &lt;Grid item xs={8.6}> {/* 75% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
+          &lt;Button variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
+            {showEntrees ? &lt;Typography variant='subtitle2'>Hide Entrees&lt;/Typography> : &lt;Typography variant='subtitle2'>Show Entrees&lt;/Typography>}
+          &lt;/Button>
+          &amp;nbsp;{/* This adds a space between buttons */}
+          &lt;Button variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
+            {showDrinks ? &lt;Typography variant='subtitle2'>Hide Drinks&lt;/Typography> : &lt;Typography variant='subtitle2'>Show Drinks&lt;/Typography>}
+          &lt;/Button>
+          &amp;nbsp;{/* This adds a space between buttons */}
+          &lt;Button variant="contained" onClick={handleOpen}>
+          &lt;Typography variant='subtitle2'>Order History&lt;/Typography>
+          &lt;/Button>
+          &lt;FormControl sx={{m:.5, backgroundColor: (isHighContrast ? '#0c0' : 'white')}} size="small">
+            &lt;InputLabel variant='standard' htmlFor='uncontrolled-native'>Sort By&lt;/InputLabel>
+            &lt;NativeSelect label='SortBy' onClick={handleSort}>
+              &lt;option value={0}>Alphabetical&lt;/option>
+              &lt;option value={1}>Reverse Alphabetical&lt;/option>
+              &lt;option value={2}>Price (low to high)&lt;/option>
+              &lt;option value={3}>Price (high to low)&lt;/option>
+            &lt;/NativeSelect>
+          &lt;/FormControl>
+          &lt;Modal
+            hidebackDrop
+            centered
+            open={popup}
+            onClose={handleClose}
+            xs={1}
+          >
+            &lt;TableContainer component={Paper} sx={{maxHeight:500, overflowY:'auto'}}>
+              &lt;Table>
+                &lt;TableHead>
+                  &lt;TableRow>
+                    &lt;TableCell align="inherit">&lt;Typography variant='h5'> See Details&lt;/Typography>&lt;/TableCell>
+                    &lt;TableCell align="inherit">&lt;Typography variant='h5'> Reorder&lt;/Typography>&lt;/TableCell>
+                    &lt;TableCell align="inherit">&lt;Typography variant='h5'> Order ID&lt;/Typography>&lt;/TableCell>
+                    &lt;TableCell align="inherit">&lt;Typography variant='h5'> Date and Time&lt;/Typography>&lt;/TableCell>
+                    &lt;TableCell align="inherit">&lt;Typography variant='h5'> Total($)&lt;/Typography>&lt;/TableCell>
+                  &lt;/TableRow>
+                &lt;/TableHead>
+                &lt;TableBody>
+                  {orderHist.map((od, index) => (
+                    &lt;Row key={od.id} od={od} index={index}/>
+                  ))}
+                &lt;/TableBody>
+              &lt;/Table>
+            &lt;/TableContainer>
+          &lt;/Modal>
+
+            {/* Display Entrees or Drinks based on state */}
+            {showEntrees &amp;&amp; (
+              &lt;div>
+                &lt;h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Entrees&lt;/h2>
+                {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
+                  &lt;Tooltip 
+                    title={&lt;React.Fragment>&lt;Typography variant='subtitle1'>{entree.entree_name + ' (' + entree.price + ')'}&lt;/Typography>&lt;/React.Fragment>}
+                    placement='top' 
+                    size="sm"
+                  >
+                  {entree.seasonal ? (
+                  &lt;Button
+                    className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                    key={(entree.entree_name)}
+                    onClick={() => handleAddItem(entree.entree_name, entree.price)}
+                    variant="outlined"
+                    
+                    sx={{
+                      margin: '5px',
+                      border: '1px solid #c8e6c9',
+                      backgroundColor: (isHighContrast ? '#333' : '#f5bf42'),
+                      color: (isHighContrast ? '#f5bf42' : '#0a3a0a'),
+                      borderRadius: 2,
+                      padding: '30px 0px',
+                      '&amp;:hover': {
+                        backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
+                      },
+                      fontSize: '17px',
+                      textTransform: 'inherit'                      
+                      // Add other styles as needed
+                    }}
+                >
+                  {getName(entree.entree_name)}
+                &lt;/Button>
+                  ) : (
+                    &lt;Button
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                      key={(entree.entree_name)}
+                      onClick={() => handleAddItem(entree.entree_name, entree.price)}
+                      variant="outlined"
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: (isHighContrast ? '#333' : '#a5d6a7'),
+                        color: (isHighContrast ? '#0f0' : '#0a3a0a'),
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&amp;:hover': {
+                          backgroundColor: (isHighContrast ? '#000' : '#81c784'),
+                        },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
+                        // Add other styles as needed
+                      }}
+                  >
+                    {getName(entree.entree_name)}
+                  &lt;/Button>
+                  )}
+                  &lt;/Tooltip>
+                ))}
+
+              &lt;/div>
+            )}
+
+            {showDrinks &amp;&amp; (
+              &lt;div>
+                &lt;h2 class={"heading" + (isHighContrast ? "-HC" : "")}>Drinks&lt;/h2>
+                {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
+                  &lt;Tooltip 
+                  title={&lt;Typography variant='subtitle1'>{drink.drink_name + ' (' + drink.price + ')'}&lt;/Typography>}
+                  placement='top' 
+                  size="sm"
+                >
+                  {drink.seasonal ? (
+                    &lt;Button
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                      key={drink.drink_name}
+                      onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: (isHighContrast ? '#333' : '#f5bf42'),
+                        color: (isHighContrast ? '#f5bf42' : '#0a3a0a'),
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&amp;:hover': {
+                          backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
+                        },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
+                        // Add other styles as needed
+                      }}
+                  >
+                    {getName(drink.drink_name)}
+                  &lt;/Button>
+                  ) : (
+                    &lt;Button
+                      className={"itemButton" + (isHighContrast ? "-HC" : "")}
+                      key={drink.drink_name}
+                      onClick={() => handleAddItem(drink.drink_name, drink.price)}
+                      sx={{
+                        margin: '5px',
+                        border: '1px solid #c8e6c9',
+                        backgroundColor: (isHighContrast ? '#333' : '#a5d6a7'),
+                        color: (isHighContrast ? '#0f0' : '#0a3a0a'),
+                        borderRadius: 2,
+                        padding: '30px 0px',
+                        '&amp;:hover': {
+                          backgroundColor: (isHighContrast ? '#000' : '#81c784'),
+                        },
+                        textTransform: 'inherit',
+                        fontSize: '17px'
+                        // Add other styles as needed
+                      }}
+                  >
+                    {getName(drink.drink_name)}
+                  &lt;/Button>
+                  )}
+                  &lt;/Tooltip>
+                ))}
+
+              &lt;/div>
+            )}
+        &lt;/Grid>
+
+        {/* Right side */}
+        &lt;Grid item xs={3.4}> {/* 30% of 12*/}
+
+        &lt;Grid container spacing={1}>
+            &lt;Grid item xs={8.1} className={'Ordersign' + (isHighContrast ? "-HC" : "")}>
+              &lt;h2 class={"heading" + (isHighContrast ? "-HC" : "")}>{custName}&lt;/h2>
+            &lt;/Grid>
+            &lt;Grid item xs={3.9} className={'Ordersign' + (isHighContrast ? "-HC" : "")}>
+              &lt;FormGroup>
+                &lt;FormControlLabel control={&lt;Checkbox
+                checked={check}
+                onChange={handleCheck}
+              />} label={&lt;Typography variant='subtitle1'>To-go&lt;/Typography>}/>
+
+              &lt;/FormGroup>
+            &lt;/Grid>
+          &lt;/Grid>
+
+          {/* Iterate over the order array to display each item with its price */}
+          {order.map((item, index) => (
+            &lt;div
+              key={index}
+              className={"OrderItem" + (isHighContrast ? "-HC" : "")}
+              onClick={() => handleRemoveItem(index)}
+              style={{ padding: '10px', margin: '5px 0', borderRadius: '4px', transition: 'background-color 0.3s' }}
+            >
+              &lt;span>{item}&lt;/span>
+              &lt;span style={{ marginLeft: 'auto' }}> ${orderPrices[index].toFixed(2)}&lt;/span>
+            &lt;/div>
+          ))}
+
+          &lt;div className={"OrderTotal" + (isHighContrast ? "-HC" : "")}>
+          &lt;Typography variant='subtitle1'>&lt;strong>Total:&lt;/strong> ${orderPrices.reduce((acc, curr) => acc + curr, 0).toFixed(2)}&lt;/Typography>
+          &lt;/div>
+          &lt;div style={{ height: '10px' }}>&lt;/div>
+
+          {/* Action buttons for the order */}
+          &lt;Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffcc80'),
+              color: (isHighContrast ? '#000' : '#5d4037'),
+              '&amp;:hover': {
+                backgroundColor: '#ffa726',
+              },
+              textTransform: 'inherit',
+              fontSize: '20px'
+            }}
+            onClick={handleRemoveLastItem}
+            className='body'
+            >
+            Remove Last
+          &lt;/Button>
+          &lt;Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffcc80'),
+              color: (isHighContrast ? '#000' : '#5d4037'),
+              '&amp;:hover': {
+                backgroundColor: '#ffa726',
+              },
+              textTransform: 'inherit',
+              fontSize: '20px'
+            }}
+            onClick={handleClearOrder}
+            className='body'
+            >
+            Clear Order
+          &lt;/Button>
+          &lt;Button
+            sx={{
+              backgroundColor: (isHighContrast ? '#ff9900' : '#ffb74d'),
+              color: (isHighContrast ? '#000' : '#fff'),
+              '&amp;:hover': {
+                backgroundColor: '#ff9800',
+              },
+              textTransform: 'inherit',
+              fontSize: '20px'
+            }}
+            onClick={handlePlaceOrder}
+            className='body'
+            >
+            Place Order
+          &lt;/Button>
+
+        &lt;/Grid>
+      &lt;/Grid>
+      &lt;/ThemeProvider>
+    &lt;/div>
+  );
+}
+
+export default Customer
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GMap.html">GMap</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AccessibilityWidget">AccessibilityWidget</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#Cashier">Cashier</a></li><li><a href="global.html#Customer">Customer</a></li><li><a href="global.html#GoogleLog">GoogleLog</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#ImageReel">ImageReel</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Manager">Manager</a></li><li><a href="global.html#ManagerOrders">ManagerOrders</a></li><li><a href="global.html#ManagerReports">ManagerReports</a></li><li><a href="global.html#Menu">Menu</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#ProtectedLayout">ProtectedLayout</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#TranslateWidget">TranslateWidget</a></li><li><a href="global.html#Weather">Weather</a></li><li><a href="global.html#celToFah">celToFah</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#getDay">getDay</a></li><li><a href="global.html#getHour">getHour</a></li><li><a href="global.html#getMinute">getMinute</a></li><li><a href="global.html#getMonth">getMonth</a></li><li><a href="global.html#getSecond">getSecond</a></li><li><a href="global.html#getTimeDate">getTimeDate</a></li><li><a href="global.html#getYear">getYear</a></li><li><a href="global.html#pool">pool</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Dec 06 2023 02:02:44 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
