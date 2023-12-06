@@ -1,3 +1,10 @@
+/**
+ * Filename: app.js
+ * Description: Main application file for the Mos Irish Pub backend.
+ * Author: Your Name
+ * Last Modified: 2023-12-05
+ */
+
 const express = require('express');
 const cors = require('cors');
 const {
@@ -15,6 +22,26 @@ app.use(express.json());
 app.use(cors()); //enable cors for all routes
 app.use(express.json());
 
+/**
+ * PostgreSQL connection pool configuration.
+ * 
+ * @type {Object}
+ * @property {string} user - The PostgreSQL user.
+ * @property {string} host - The PostgreSQL server host.
+ * @property {string} database - The name of the PostgreSQL database.
+ * @property {string} password - The password for the PostgreSQL user.
+ * @property {number} port - The port on which the PostgreSQL server is listening.
+ *
+ * @example
+ * // Example usage:
+ * const pool = new Pool({
+ *   user: process.env.PSQL_USER,
+ *   host: process.env.PSQL_HOST,
+ *   database: process.env.PSQL_DATABASE,
+ *   password: process.env.PSQL_PASSWORD,
+ *   port: 5432,
+ * });
+ */
 const pool = new Pool({
     user: process.env.PSQL_USER,
     host: process.env.PSQL_HOST,
@@ -23,10 +50,40 @@ const pool = new Pool({
     port: 5432,
 });
 
+/**
+ * Handle requests to the root path and respond with a welcome message.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void} This function does not return a value.
+ *
+ * @example
+ * // Example usage:
+ * // GET /
+ * app.get('/', (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/', (req, res) => {
     res.send('Mos Irish Pub Backened!');
 });
 
+/**
+ * Retrieve menu items, including entrees and drinks, with categorized drink items.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error during the query process.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/menu
+ * app.get('/api/menu', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/menu', async (req, res) => {
     try {
         const entreeRes = await pool.query('SELECT entree_name, price FROM entrees WHERE togo = false;');
@@ -95,6 +152,22 @@ app.get('/api/menu', async (req, res) => {
     }
 });
 
+/**
+ * Retrieve the menu items and inventory items for the manager's view.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error during the query process.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/managerMenu
+ * app.get('/api/managerMenu', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/managerMenu', async (req, res) => {
     try {
         const menuRes = await pool.query('(SELECT entree_name AS "item_name" FROM entrees UNION SELECT drink_name FROM drinks) ORDER BY item_name;');
@@ -147,6 +220,22 @@ app.get('/orderHistory', async (req, res) => {
     }
 });
 
+/**
+ * Delete a menu item along with its associated recipes and order contents.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error during the deletion process.
+ *
+ * @example
+ * // Example usage:
+ * // DELETE /api/deleteMenuItem?itemToDelete=Burger
+ * app.delete('/api/deleteMenuItem', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.delete('/api/deleteMenuItem', async (req, res) => {
     const deleteMe = req.query.itemToDelete;
 
@@ -275,6 +364,22 @@ app.delete('/api/deleteMenuItem', async (req, res) => {
     });
 });
 
+/**
+ * Delete an inventory item along with its associated recipes.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error during the deletion process.
+ *
+ * @example
+ * // Example usage:
+ * // DELETE /api/deleteInvItem?itemToDelete=Tomatoes
+ * app.delete('/api/deleteInvItem', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.delete('/api/deleteInvItem', async (req, res) => {
     const deleteMe = req.query.itemToDelete;
     try {
@@ -300,7 +405,22 @@ app.delete('/api/deleteInvItem', async (req, res) => {
     }
 });
 
-
+/**
+ * Get the recipe, menu item information, and inventory item information for a requested item.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error while retrieving information for the requested item.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/recipe?requestedItem=ChickenSoup
+ * app.get('/api/recipe', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/recipe', async (req, res) => {
 
     const reqItem = req.query.requestedItem;
@@ -353,6 +473,23 @@ app.get('/api/recipe', async (req, res) => {
     }
 });
 
+/**
+ * Log in a user with the provided email and password.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error during the login process.
+ *
+ * @example
+ * // Example usage:
+ * // POST /login
+ * // Request body: { "email": "john.doe@example.com", "password": "securePassword" }
+ * app.post('/login', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.post('/login', async (req, res) => {
     const {
         email,
@@ -379,6 +516,23 @@ app.post('/login', async (req, res) => {
     }
 });
 
+/**
+ * Sign up a new user with the provided name, email, and password.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error during the signup process.
+ *
+ * @example
+ * // Example usage:
+ * // POST /signup
+ * // Request body: { "name": "John Doe", "email": "john.doe@example.com", "password": "securePassword" }
+ * app.post('/signup', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.post('/signup', async (req, res) => {
     const {
         name,
@@ -412,6 +566,22 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+/**
+ * Check if an employee with the given name exists.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error checking employee status.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/isEmployee?name=JohnDoe
+ * app.get('/api/isEmployee', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/isEmployee', async (req, res) => {
     const {
         name
@@ -578,6 +748,23 @@ app.post('/postid', async (req, res) => {
 });
 
 //REPORTS --------------------------------------------------------------------
+
+/**
+ * Generate a product report summarizing the total sales of each product within a specified time range.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error generating the product report.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/productReport?startTime=2023-01-01T00:00&endTime=2023-01-02T00:00
+ * app.get('/api/productReport', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/productReport', async (req, res) => {
     try {
 
@@ -630,6 +817,22 @@ app.get('/api/productReport', async (req, res) => {
     }
 });
 
+/**
+ * Generate a sales report for items sold within a specified time range.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error generating the sales report.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/salesReport?startTime=2023-01-01T00:00&endTime=2023-01-02T00:00
+ * app.get('/api/salesReport', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/salesReport', async (req, res) => {
     try {
 
@@ -671,6 +874,22 @@ app.get('/api/salesReport', async (req, res) => {
     }
 });
 
+/**
+ * Generate a report on inventory items with excess stock compared to total sales.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error generating the excess report.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/excessReport?startTime=2023-01-01T00:00
+ * app.get('/api/excessReport', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/excessReport', async (req, res) => {
     try {
         console.log(req.query.startTime);
@@ -710,6 +929,22 @@ app.get('/api/excessReport', async (req, res) => {
     }
 });
 
+/**
+ * Generate a report on items in the inventory that need restocking.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error generating the restock report.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/restockReport
+ * app.get('/api/restockReport', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/restockReport', async (req, res) => {
     try {
 
@@ -730,6 +965,22 @@ app.get('/api/restockReport', async (req, res) => {
     }
 });
 
+/**
+ * Generate a report on the most frequently paired entrees and drinks within a specified time range.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error generating the WST (Wine, Spirits, and Tapas) report.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/WSTReport?startTime=2023-01-01T00:00&endTime=2023-01-02T00:00
+ * app.get('/api/WSTReport', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/WSTReport', async (req, res) => {
     try {
 
@@ -768,6 +1019,23 @@ app.get('/api/WSTReport', async (req, res) => {
 //END OF REPORTS -----------------------------------------------------------
 
 //MANAGER ORDER VIEWER -----------------------------------------------------
+
+/**
+ * Retrieve orders within a specified time range for a manager view.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error retrieving manager orders.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/managerOrders?startTime=2023-01-01T00:00&endTime=2023-01-02T00:00
+ * app.get('/api/managerOrders', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/managerOrders', async (req, res) => {
     try {
         let startDateReq = req.query.startTime.split('T');
@@ -792,6 +1060,22 @@ app.get('/api/managerOrders', async (req, res) => {
     }
 });
 
+/**
+ * Retrieve order contents and metadata for a specific order ID.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error retrieving order contents.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/orderContents?id=123
+ * app.get('/api/orderContents', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/orderContents', async (req, res) => {
     try {
         let id = req.query.id;
@@ -851,6 +1135,7 @@ function getTimeDate() {
 }
 
 /**
+ * Returns the current year
  * @returns current year
  */
 function getYear() {
@@ -859,7 +1144,7 @@ function getYear() {
 }
 
 /**
- * 
+ * Returns the current month
  * @returns current month
  */
 function getMonth() {
@@ -868,7 +1153,7 @@ function getMonth() {
 }
 
 /**
- * 
+ * Returns the current week
  * @returns current week
  */
 Date.prototype.getWeek = function () {
@@ -877,7 +1162,7 @@ Date.prototype.getWeek = function () {
 }
 
 /**
- * 
+ * Returns the current day
  * @returns current day
  */
 function getDay() {
@@ -888,7 +1173,7 @@ function getDay() {
 }
 
 /**
- * 
+ * Gets the current Hour
  * @returns current hour
  */
 function getHour() {
@@ -897,7 +1182,7 @@ function getHour() {
 }
 
 /**
- * 
+ * Gets the current Minute
  * @returns current minute
  */
 function getMinute() {
@@ -906,7 +1191,7 @@ function getMinute() {
 }
 
 /**
- * 
+ * Gets the current second
  * @returns current second
  */
 function getSecond() {
@@ -914,6 +1199,28 @@ function getSecond() {
     return time.getSeconds();
 }
 
+/**
+ * Add a new inventory item to the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error adding the inventory item.
+ *
+ * @example
+ * // Example usage:
+ * // POST /api/addInventoryItem
+ * // {
+ * //   "itemName": "Coffee Beans",
+ * //   "stock": 100,
+ * //   "cost": 5.99,
+ * //   "minStockWarning": 20
+ * // }
+ * app.post('/api/addInventoryItem', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.post('/api/addInventoryItem', async (req, res) => {
     const {
         itemName,
@@ -943,8 +1250,32 @@ app.post('/api/addInventoryItem', async (req, res) => {
     }
 });
 
-
-// Endpoint to add a new entree item
+/**
+ * Add a new entree item to the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error adding the entree item.
+ *
+ * @example
+ * // Example usage:
+ * // POST /api/addEntreeItem
+ * // {
+ * //   "name": "Grilled Salmon",
+ * //   "price": 15.99,
+ * //   "togo": true,
+ * //   "seasonal": true,
+ * //   "ingredients": [
+ * //     {"id": 1, "quantity": 2},
+ * //     {"id": 2, "quantity": 1}
+ * //   ]
+ * // }
+ * app.post('/api/addEntreeItem', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.post('/api/addEntreeItem', async (req, res) => {
     const {
         name,
@@ -997,7 +1328,36 @@ app.post('/api/addEntreeItem', async (req, res) => {
     }
 });
 
-// Endpoint to add a new drink item
+/**
+ * Add a new drink item to the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error adding the drink item.
+ *
+ * @example
+ * // Example usage:
+ * // POST /api/addDrinkItem
+ * // {
+ * //   "name": "Mojito",
+ * //   "price": 8.99,
+ * //   "togo": true,
+ * //   "alcoholic": true,
+ * //   "happyhourbeer": false,
+ * //   "happyhourwine": false,
+ * //   "cocktail": true,
+ * //   "brunch": false,
+ * //   "ingredients": [
+ * //     {"id": 1, "quantity": 2},
+ * //     {"id": 2, "quantity": 1}
+ * //   ]
+ * // }
+ * app.post('/api/addDrinkItem', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.post('/api/addDrinkItem', async (req, res) => {
     const {
         name,
@@ -1052,6 +1412,22 @@ app.post('/api/addDrinkItem', async (req, res) => {
     }
 });
 
+/**
+ * Retrieve all inventory items from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error fetching inventory items.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/inventoryItems
+ * app.get('/api/inventoryItems', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/inventoryItems', async (req, res) => {
     try {
         const result = await pool.query('SELECT id, item_name FROM inventory ORDER BY item_name;');
@@ -1062,7 +1438,22 @@ app.get('/api/inventoryItems', async (req, res) => {
     }
 });
 
-// Endpoint to get all users
+/**
+ * Retrieve all users from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error fetching users.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/users
+ * app.get('/api/users', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/users', async (req, res) => {
     try {
         const users = await User.find({}); // Fetch all documents from the users collection
@@ -1073,6 +1464,22 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
+/**
+ * Delete a user based on the provided user ID.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error deleting the user.
+ *
+ * @example
+ * // Example usage:
+ * // DELETE /api/users/123
+ * app.delete('/api/users/:userId', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.delete('/api/users/:userId', async (req, res) => {
     const {
         userId
@@ -1103,7 +1510,15 @@ app.delete('/api/users/:userId', async (req, res) => {
     }
 });
 
-// New endpoint to get employee status
+/**
+ * Get employee status by name.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error fetching employee status.
+ */
 app.get('/api/employeeStatus/:name', async (req, res) => {
     const {
         name
@@ -1134,6 +1549,28 @@ app.get('/api/employeeStatus/:name', async (req, res) => {
     }
 });
 
+/**
+ * Update the status of an employee based on the provided information.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error updating the employee status.
+ *
+ * @example
+ * // Example usage:
+ * // POST /api/updateEmployeeStatus
+ * // {
+ * //   "name": "JohnDoe",
+ * //   "isEmployee": true,
+ * //   "isManager": false,
+ * //   "isClockedIn": true
+ * // }
+ * app.post('/api/updateEmployeeStatus', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.post('/api/updateEmployeeStatus', async (req, res) => {
     const {
         name,
@@ -1178,7 +1615,22 @@ app.post('/api/updateEmployeeStatus', async (req, res) => {
     }
 });
 
-
+/**
+ * Retrieve the manager status for a given employee name.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} A promise that resolves when the function completes.
+ *
+ * @throws {Error} If there is an error checking the manager status.
+ *
+ * @example
+ * // Example usage:
+ * // GET /api/isManager?name=JohnDoe
+ * app.get('/api/isManager', async (req, res) => {
+ *   // ... function implementation ...
+ * });
+ */
 app.get('/api/isManager', async (req, res) => {
     const { name } = req.query;
 
@@ -1199,7 +1651,19 @@ app.get('/api/isManager', async (req, res) => {
 });
 
 
-
+/**
+ * Start the server and listen for incoming requests on the specified port.
+ *
+ * @param {number} PORT - The port on which the server will listen.
+ * @param {function} callback - A callback function to be executed once the server is successfully listening.
+ * @returns {void}
+ *
+ * @example
+ * // Start the server on port 3000
+ * app.listen(3000, () => {
+ *   console.log('Server is running on http://localhost:3000');
+ * });
+ */
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
