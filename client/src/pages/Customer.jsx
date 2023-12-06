@@ -2,12 +2,11 @@ import '../styles/Customer.css';
 import '../styles/Customer_HC.css';
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { TextField, Grid, Tooltip, TablePagination, TooltipProps, tooltipClasses } from '@mui/material';
+import { Grid, Tooltip, InputLabel } from '@mui/material';
 import axios from 'axios';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import {styled} from '@mui/material/styles';
 import Collapse from '@mui/material/Collapse';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -23,16 +22,16 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-//import downarrow from '../media/down-arrow-svgrepo-com.svg';
-//import uparrow from '../media/up-arrow-svgrepo-com.svg';
-//import 'java.util.Dictionary';
+import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
 
 function Customer({ isHighContrast }) {
   const [entrees, setEntrees] = useState([]);
   const [drinks, setDrinks] = useState([]);
+  //current order
   const [order, setOrder] = useState([]);
   const [orderPrices, setOrderPrices] = useState([]);
-
+  //visual settings
   const [showEntrees, setShowEntrees] = useState(true);
   const [showDrinks, setShowDrinks] = useState(true);
   const [loading, setLoad] = useState(true);
@@ -41,16 +40,14 @@ function Customer({ isHighContrast }) {
   const [orderHist, setHist] = useState([]);
   //for each order's items
   const [orderInst, setInst] = useState([]);
-  //const orderInst = new FormData();
-  //var orderInst = [];
+  //order history
   const [popup, setPop] = useState(false);
+  //to-go
   const [check, setCheck] = useState(false);
   const custName = JSON.stringify(JSON.parse(localStorage.getItem('user')).name).replace(/\"/g, "");
-  //const custName = "Name1";
   const namePass = 'customer';
 
-  //console.log(getHour());
-
+  //obtains menu information, sets up default view
   useEffect(() => {
     setLoad(true);
     const backendURL = process.env.NODE_ENV === 'production'
@@ -66,8 +63,8 @@ function Customer({ isHighContrast }) {
         const response = await fetch(backendURL);
         const res = await response.json();
 
-        setEntrees((res.entrees));
-        setDrinks((res.drinks));
+        setEntrees(res.entrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name)))
+        setDrinks(res.drinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name)))
 
         const response2 = await axios.get(backendURL3, {
           params: {
@@ -87,6 +84,7 @@ function Customer({ isHighContrast }) {
     setLoad(false);
   }, []);
 
+  //adds item to order list
   const handleAddItem = (itemName, itemPrice) => {
     var addon = "";
     if (check == true) {
@@ -126,6 +124,39 @@ function Customer({ isHighContrast }) {
     ))
   }
 
+  function handleSort(event) {
+    var num = event.target.value;
+    const newEntrees = [...entrees];
+    const newDrinks = [...drinks];
+    if (num == 0) {
+      newEntrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name))
+      setDrinks(newDrinks);
+    }
+    //reverse alphabetical
+    else if (num == 1) {
+      newEntrees.sort((a,b) => b.entree_name.localeCompare(a.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.drink_name.localeCompare(a.drink_name))
+      setDrinks(newDrinks);
+    }
+    //price
+    else if (num == 2) {
+      newEntrees.sort((a,b) => a.price - b.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.price - b.price)
+      setDrinks(newDrinks);
+    }
+    //reverse price
+    else if (num == 3) {
+      newEntrees.sort((a,b) => b.price - a.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.price - a.price)
+      setDrinks(newDrinks);
+    }
+  }
+
   const handleOpen = () => setPop(true);
   const handleClose = () => setPop(false); 
 
@@ -145,7 +176,6 @@ function Customer({ isHighContrast }) {
   const handlePlaceOrder = () => {
     console.log('Order placed:', order, orderPrices);
     console.log("customer name: " + custName);
-    // TODO: Need to update inventory, employee id
     placeOrder();
     handleClearOrder();
   };
@@ -181,22 +211,22 @@ function Customer({ isHighContrast }) {
   const theme = createTheme({
     typography: {
       subtitle1: {
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'none'
       },
       subtitle2: {
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'none'
       },
       h6: {
         fontSize: 22
       },
       h5: {
-        fontSize: 20,
+        fontSize: 22,
         textTransform: 'none'
       },
       h4: {
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'none'
       },
       body1: {
@@ -205,16 +235,18 @@ function Customer({ isHighContrast }) {
       },
       body2: {
         fontsize: 20
-      }
+      },
+    }
+  })
+
+  const styles = theme => ({
+    tablecell: {
+      fontSize: '40pt',
     }
   })
 
   function Row(props) {
     const [open, setOpen] = useState(false);
-    /*console.log(orderHist);
-    console.log(orderInst);
-    console.log(props.index);
-    console.log(getTimeFromTimestamp(orderHist[0].order_timestamp));*/
     return (
       <React.Fragment>
         <ThemeProvider theme={theme}>
@@ -228,16 +260,15 @@ function Customer({ isHighContrast }) {
           <TableCell>
             <Button variant='text' onClick={() => reorder(props.od.id)}><Typography variant='subtitle1'>Order</Typography></Button>
           </TableCell>
-          <TableCell>{<Typography variant='subtitle1'>{props.od.id}</Typography>}</TableCell>
-          <TableCell>{<Typography variant='subtitle1'>{getDateFromTimestamp(props.od.order_timestamp)}</Typography>}</TableCell>
-          <TableCell>{<Typography variant='subtitle1'>{props.od.price_total}</Typography>}</TableCell>
+          <TableCell className={'body'}>{props.od.id}</TableCell>
+          <TableCell className={'body'}>{getDateFromTimestamp(props.od.order_timestamp)}</TableCell>
+          <TableCell className={'body'}>{props.od.price_total}</TableCell>
         </TableRow>
 
         <TableRow>
           <TableCell style={{paddingBottom:0, paddingTop:0}} colSpan={5}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{margin:1}}>
-
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -249,10 +280,10 @@ function Customer({ isHighContrast }) {
                   <TableBody>
                     {orderInst && orderInst.filter(val => val.id == props.od.id).map((item) => (
                       <TableRow key={item.drink_name || item.entree_name}>
-                        <TableCell>
-                          <Typography variant='body1'>{item.drink_name || item.entree_name}</Typography>
+                        <TableCell className={'body'} >
+                          {item.drink_name || item.entree_name}
                         </TableCell>
-                        <TableCell><Typography variant='body1'>{item.price}</Typography></TableCell>
+                        <TableCell>{item.price}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -273,7 +304,7 @@ function Customer({ isHighContrast }) {
       <ThemeProvider theme={theme}>
       <Grid container spacing={2}>
         {/* Left side */}
-        <Grid item xs={8}> {/* 75% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
+        <Grid item xs={8.6}> {/* 75% of 12 (Grid's default breakpoint system) is approximately 8.4 */}
           <Button variant="contained" onClick={() => setShowEntrees(!showEntrees)}>
             {showEntrees ? <Typography variant='subtitle2'>Hide Entrees</Typography> : <Typography variant='subtitle2'>Show Entrees</Typography>}
           </Button>
@@ -285,6 +316,15 @@ function Customer({ isHighContrast }) {
           <Button variant="contained" onClick={handleOpen}>
           <Typography variant='subtitle2'>Order History</Typography>
           </Button>
+          <FormControl sx={{m:.5}} size="small">
+            <InputLabel variant='standard' htmlFor='uncontrolled-native'>Sort By</InputLabel>
+            <NativeSelect label='SortBy' onClick={handleSort}>
+              <option value={0}>Alphabetical</option>
+              <option value={1}>Reverse Alphabetical</option>
+              <option value={2}>Price (low to high)</option>
+              <option value={3}>Price (high to low)</option>
+            </NativeSelect>
+          </FormControl>
           <Modal
             hidebackDrop
             centered
@@ -339,10 +379,12 @@ function Customer({ isHighContrast }) {
                       '&:hover': {
                         backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
                       },
+                      fontSize: '17px',
+                      textTransform: 'inherit'                      
                       // Add other styles as needed
                     }}
                 >
-                  {<Typography variety='body1'>{getName(entree.entree_name)}</Typography>}
+                  {getName(entree.entree_name)}
                 </Button>
                   ) : (
                     <Button
@@ -360,10 +402,12 @@ function Customer({ isHighContrast }) {
                         '&:hover': {
                           backgroundColor: (isHighContrast ? '#000' : '#81c784'),
                         },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
                         // Add other styles as needed
                       }}
                   >
-                    {<Typography variety='body1'>{getName(entree.entree_name)}</Typography>}
+                    {getName(entree.entree_name)}
                   </Button>
                   )}
                   </Tooltip>
@@ -396,10 +440,12 @@ function Customer({ isHighContrast }) {
                         '&:hover': {
                           backgroundColor: (isHighContrast ? '#000' : '#f5aa42'),
                         },
+                        fontSize: '17px',
+                        textTransform: 'inherit'
                         // Add other styles as needed
                       }}
                   >
-                    {<Typography variant='body1'>{getName(drink.drink_name)}</Typography>}
+                    {getName(drink.drink_name)}
                   </Button>
                   ) : (
                     <Button
@@ -416,10 +462,12 @@ function Customer({ isHighContrast }) {
                         '&:hover': {
                           backgroundColor: (isHighContrast ? '#000' : '#81c784'),
                         },
+                        textTransform: 'inherit',
+                        fontSize: '17px'
                         // Add other styles as needed
                       }}
                   >
-                    {<Typography variant='body1'>{getName(drink.drink_name)}</Typography>}
+                    {getName(drink.drink_name)}
                   </Button>
                   )}
                   </Tooltip>
@@ -430,7 +478,7 @@ function Customer({ isHighContrast }) {
         </Grid>
 
         {/* Right side */}
-        <Grid item xs={3.6}> {/* 30% of 12*/}
+        <Grid item xs={3.4}> {/* 30% of 12*/}
 
         <Grid container spacing={1}>
             <Grid item xs={8.1} className={'Ordersign' + (isHighContrast ? "-HC" : "")}>
@@ -473,9 +521,13 @@ function Customer({ isHighContrast }) {
               '&:hover': {
                 backgroundColor: '#ffa726',
               },
+              textTransform: 'inherit',
+              fontSize: '20px'
             }}
-            onClick={handleRemoveLastItem}>
-            Remove Last Item
+            onClick={handleRemoveLastItem}
+            className='body'
+            >
+            Remove Last
           </Button>
           <Button
             sx={{
@@ -484,8 +536,12 @@ function Customer({ isHighContrast }) {
               '&:hover': {
                 backgroundColor: '#ffa726',
               },
+              textTransform: 'inherit',
+              fontSize: '20px'
             }}
-            onClick={handleClearOrder}>
+            onClick={handleClearOrder}
+            className='body'
+            >
             Clear Order
           </Button>
           <Button
@@ -495,11 +551,14 @@ function Customer({ isHighContrast }) {
               '&:hover': {
                 backgroundColor: '#ff9800',
               },
+              textTransform: 'inherit',
+              fontSize: '20px'
             }}
-            onClick={handlePlaceOrder}>
+            onClick={handlePlaceOrder}
+            className='body'
+            >
             Place Order
           </Button>
-
 
         </Grid>
       </Grid>

@@ -6,6 +6,7 @@
     /* background-color: #f4f4f4; Light cream background */
     color: #0a3a0a; /* Dark green text */
     height: auto;
+    font-size: large;
   }
   
   /*h2 {
@@ -85,4 +86,8 @@
     min-height: 50%;
     max-height: 50%;
     width: 19%;
+  }
+
+  .body {
+    font-size:large
   }
