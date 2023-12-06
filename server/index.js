@@ -118,6 +118,11 @@ app.get('/api/managerMenu', async (req, res) => {
     }
 });
 
+/**
+ * Gets order history of an user
+ * @param custName The name of the user
+ * @return array Array of 2 dictionaries, one with order instances, second with the congregated details of all orders
+ */
 app.get('/orderHistory', async (req, res) => {
     try {
         const custName = req.query.custName;
@@ -311,6 +316,12 @@ app.get('/api/isEmployee', async (req, res) => {
 
 /**
  * Called when an order is placed. Will update the orders, orderentreecontents, and orderdrinkcontents tables.
+ * @param orders The names of ordered menu items 
+ * @param orderPrices The prices of ordered menu items 
+ * @param custName The name of the orderer
+ * @param employeeName The name of the employee taking the order
+ * @param employeeId The ID of the employee taking the order
+ * @return void
  */
 app.post('/postid', async (req, res) => {
     const orders = req.body['order'];
@@ -716,6 +727,10 @@ app.get('/api/orderContents', async (req, res) => {
 });
 //END OF MANAGER ORDER VIEWER ----------------------------------------------
 
+/**
+ * returns the current timestamp
+ * @returns timestamp
+ */
 function getTimeDate() {
     const time = new Date();
     const year = getYear();
@@ -727,36 +742,63 @@ function getTimeDate() {
     return(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
 }
 
+/**
+ * @returns current year
+ */
 function getYear() {
     const time = new Date();
     return time.getFullYear();
 }
 
+/**
+ * 
+ * @returns current month
+ */
 function getMonth() {
     const time = new Date();
     return time.getMonth() + 1;
 }
 
+/**
+ * 
+ * @returns current week
+ */
 Date.prototype.getWeek = function() {
     var start = new Date(this.getFullYear(), 0, 1);
     return Math.ceil((((this - start) / 86400000) + start.getDay() + 1) / 7);
 }
 
+/**
+ * 
+ * @returns current day
+ */
 function getDay() {
     const time = new Date();
     return time.toLocaleString("en-US", { day : '2-digit'})
 }
 
+/**
+ * 
+ * @returns current hour
+ */
 function getHour() {
     const time = new Date();
     return time.getHours();
 }
 
+/**
+ * 
+ * @returns current minute
+ */
 function getMinute() {
     const time = new Date();
     return time.getMinutes();
 }
 
+/**
+ * 
+ * @returns current second
+ */
 function getSecond() {
     const time = new Date();
     return time.getSeconds();

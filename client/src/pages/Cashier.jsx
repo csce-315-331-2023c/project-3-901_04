@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Cashier.css';
 import Button from '@mui/material/Button';
-import { TextField, Grid, Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
-//import { getTime } from 'date-fns'; 
+import { TextField, Grid, Tooltip, InputLabel } from '@mui/material';
 import axios from 'axios';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
 
 function Cashier() {
   const [entrees, setEntrees] = useState([]);
@@ -34,8 +35,8 @@ function Cashier() {
         const response = await fetch(backendURL);
         const res = await response.json();
 
-        setEntrees(res.entrees);
-        setDrinks(res.drinks);
+        setEntrees(res.entrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name)))
+        setDrinks(res.drinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name)))
       } catch (e) {
         console.log(e);
       }
@@ -76,7 +77,38 @@ function Cashier() {
     setCheck(event.target.checked);
   };
 
-
+  function handleSort(event) {
+    var num = event.target.value;
+    const newEntrees = [...entrees];
+    const newDrinks = [...drinks];
+    if (num == 0) {
+      newEntrees.sort((a,b) => a.entree_name.localeCompare(b.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.drink_name.localeCompare(b.drink_name))
+      setDrinks(newDrinks);
+    }
+    //reverse alphabetical
+    else if (num == 1) {
+      newEntrees.sort((a,b) => b.entree_name.localeCompare(a.entree_name))
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.drink_name.localeCompare(a.drink_name))
+      setDrinks(newDrinks);
+    }
+    //price
+    else if (num == 2) {
+      newEntrees.sort((a,b) => a.price - b.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => a.price - b.price)
+      setDrinks(newDrinks);
+    }
+    //reverse price
+    else if (num == 3) {
+      newEntrees.sort((a,b) => b.price - a.price)
+      setEntrees(newEntrees)
+      newDrinks.sort((a,b) => b.price - a.price)
+      setDrinks(newDrinks);
+    }
+  }
 
   function getName(original) {
     original = JSON.stringify(original).replace(/['"]+/g, '');
@@ -107,7 +139,6 @@ function Cashier() {
   const handlePlaceOrder = () => {
     console.log('Order placed:', order, orderPrices);
     console.log("customer name: " + custName);
-    // TODO: Need to update inventory, employee id
     placeOrder();
     handleClearOrder();
   };
@@ -152,12 +183,21 @@ function Cashier() {
             <Button sx={{fontSize: '20px', textTransform: 'inherit',}}variant="contained" onClick={() => setShowDrinks(!showDrinks)}>
               {showDrinks ? 'Hide Drinks' : 'Show Drinks'}
             </Button>
+            <FormControl sx={{m:.5}} size="small">
+              <InputLabel variant='standard' htmlFor='uncontrolled-native'>Sort By</InputLabel>
+              <NativeSelect label='SortBy' onClick={handleSort}>
+                <option value={0}>Alphabetical</option>
+                <option value={1}>Reverse Alphabetical</option>
+                <option value={2}>Price (low to high)</option>
+                <option value={3}>Price (high to low)</option>
+              </NativeSelect>
+            </FormControl>
 
             {/* Display Entrees or Drinks based on state */}
             {showEntrees && (
               <div>
                 <h2 class="heading">Entrees</h2>
-                {entrees.sort((a,b) => a.entree_name[0].localeCompare(b.entree_name[0])).map((entree) => (
+                {entrees.map((entree) => (
                   <Tooltip 
                     title={<React.Fragment><Typography variant='subtitle1'>{entree.entree_name + ' (' + entree.price + ')'}</Typography></React.Fragment>}
                     placement='top' 
@@ -219,7 +259,7 @@ function Cashier() {
             {showDrinks && (
               <div>
                 <h2 class="heading">Drinks</h2>
-                {drinks.sort((a,b) => a.drink_name[0].localeCompare(b.drink_name[0])).map((drink) => (
+                {drinks.map((drink) => (
                   <Tooltip 
                   title={<Typography variant='subtitle1'>{drink.drink_name + ' (' + drink.price + ')'}</Typography>}
                   placement='top' 
